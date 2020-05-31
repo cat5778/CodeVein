@@ -74,6 +74,7 @@ private:
 	map<const _tchar*, CResources*>*			m_pMapResources = nullptr;
 	_ushort										m_wSize = 0;
 
+
 public:
 	virtual void Free(void);
 

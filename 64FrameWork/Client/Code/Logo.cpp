@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Logo.h"
 #include "Stage.h"
+#include "MainApp.h"
 
 #include "Export_Function.h"
 
@@ -30,12 +31,20 @@ HRESULT CLogo::Ready_Scene(void)
 
 _int CLogo::Update_Scene(const _float& fTimeDelta)
 {
+	
+
 	_int iExit = Engine::CScene::Update_Scene(fTimeDelta);
+	m_ppPathlist;
 
 	if (true == m_pLoading->Get_Finish())
 	{
+		*m_ppPathlist = m_pLoading->Get_PathList();
+
+
+
 		if (Engine::Get_DIKeyState(DIK_RETURN) & 0x80)
 		{
+
 			Engine::CScene*		pScene = CStage::Create(m_pGraphicDev);
 			NULL_CHECK_RETURN(pScene, E_FAIL);
 
@@ -44,6 +53,9 @@ _int CLogo::Update_Scene(const _float& fTimeDelta)
 			return iExit;
 		}		
 	}
+
+
+
 	return iExit;
 }
 
@@ -80,6 +92,12 @@ HRESULT CLogo::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	pGameObject = CBackGround::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"BackGround", pGameObject), E_FAIL);
+
+
+
+
+
+
 
 	m_pLayerMap.emplace(pLayerTag, pLayer);
 

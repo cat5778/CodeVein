@@ -2,7 +2,6 @@
 #define Export_Resources_h__
 
 #include "ResourcesMgr.h"
-
 BEGIN(Engine)
 
 // ResourcesMgr

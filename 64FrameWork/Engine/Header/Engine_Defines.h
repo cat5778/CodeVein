@@ -12,6 +12,7 @@
 #include <functional>
 #include <ctime>
 #include <process.h>
+#include <stdlib.h>
 #pragma warning(disable : 4251)
 
 #define	DIRECTINPUT_VERSION		0x0800
@@ -23,7 +24,6 @@
 #include "Engine_Function.h"
 #include "Engine_Struct.h"
 #include "Engine_Enum.h"
-#include <stdlib.h>
 #include <cassert>
 //#ifdef _DEBUG
 #include <iostream>

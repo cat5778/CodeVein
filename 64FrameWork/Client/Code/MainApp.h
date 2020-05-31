@@ -12,6 +12,7 @@ class CGraphicDev;
 class CManagement;
 
 END
+class CLogo;
 class CMainApp : public CBase
 {
 private: // 생성자, 소멸자
@@ -30,10 +31,10 @@ public:
 	// private 함수, 변수
 
 private:
-	HRESULT		SetUp_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev);
+	HRESULT					SetUp_DefaultSetting(LPDIRECT3DDEVICE9* ppGraphicDev);
 
-	HRESULT		Ready_Scene(LPDIRECT3DDEVICE9& pGraphicDev, 
-							Engine::CManagement** ppManagement);
+	HRESULT					Ready_Scene(LPDIRECT3DDEVICE9& pGraphicDev, 
+										Engine::CManagement** ppManagement);
 
 
 
@@ -42,7 +43,7 @@ private:
 	Engine::CManagement*			m_pManagement = nullptr;
 	LPDIRECT3DDEVICE9				m_pGraphicDev = nullptr;
 	_int							m_iEvent;
-
+	list<MESH_PATH*>				m_ppPathList;
 	
 public:
 	// 생성 함수
