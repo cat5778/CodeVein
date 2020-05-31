@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
+#include <fstream>
 
 #include "Export_Function.h"
 
@@ -17,7 +18,8 @@ CPlayer::~CPlayer(void)
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-
+	Load_Text(L"../../Resource/Data/NavMash/Nav1.txt");
+	m_pNaviCom->Set_Index(0);
 	m_pMeshCom->Set_AnimationSet(57);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
@@ -29,13 +31,13 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 	//SetUp_OnTerrain();
 	Key_Input(fTimeDelta);
+	_matrix mat = m_pTransformCom->m_matWorld;
 
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
 	m_pMeshCom->Play_Animation(fTimeDelta);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-
 
 	return 0;
 }
@@ -44,8 +46,9 @@ void CPlayer::Render_GameObject(void)
 {
 	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
 	//m_pMeshCom->Render_Meshes();
+	m_pNaviCom->Render_NaviMesh();
 
-
+	_matrix mat = m_pTransformCom->m_matWorld;
 
 	LPD3DXEFFECT	pEffect = m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
@@ -77,6 +80,11 @@ HRESULT CPlayer::Add_Component(void)
 	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Player"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+
+	pComponent = m_pNaviCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Navi"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
+
 
 	pComponent = m_pTransformCom = Engine::CTransform::Create();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
@@ -113,10 +121,22 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
+		_vec3	vPos, vDir;
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+		D3DXVec3Normalize(&vDir, &vDir);
+		//vPos += vDir*fTimeDelta;
+		//m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z);
+		_vec3 vOutPos;
+		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
+		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
+		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		m_pMeshCom->Set_AnimationSet(54);
+
 		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
 		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
 
-		m_pMeshCom->Set_AnimationSet(54);
+		//m_pMeshCom->Set_AnimationSet(54);
 
 	}
 	
@@ -147,6 +167,9 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (true == m_pMeshCom->Is_AnimationSetEnd())
 		m_pMeshCom->Set_AnimationSet(57);
+
+	_matrix mat = m_pTransformCom->m_matWorld;
+
 }
 
 HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
@@ -194,6 +217,67 @@ HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 	return S_OK;
 
 }
+
+HRESULT CPlayer::Load_Text(const TCHAR * pFilePath)
+{
+	ifstream fin;
+	fin.open(pFilePath);
+	if (fin.fail())
+		return E_FAIL;
+	wstring wstrTemp;
+	char cTemp[MIN_STR];
+	_uint uidx = 0;
+	while (!fin.eof())
+	{
+		fin.getline(cTemp, MIN_STR);
+		wchar_t* ppwchar = CharToWChar(cTemp);
+		wstrTemp = ppwchar;
+		delete ppwchar;
+		
+		if (wstrTemp.compare(L"") == 0)
+			break;
+
+		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
+		//pNaviData->vPosition1.x = atof(cTemp);
+
+		pNaviData->vPosition1.x = _wtof(wstrTemp.c_str()); 
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition1.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition1.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition2.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition3.z = atof(cTemp);
+
+		pNaviData->uiIdx = uidx;
+
+		m_pNaviCom->Add_Cell(pNaviData);
+		uidx++;
+	}
+	fin.close();
+	return S_OK;
+}
+
+wchar_t * CPlayer::CharToWChar(const char * pstrSrc)
+{
+	int nLen = strlen(pstrSrc) + 1;
+	wchar_t* pwstr = (LPWSTR)malloc(sizeof(wchar_t)* nLen);
+	mbstowcs(pwstr, pstrSrc, nLen);
+	return pwstr;
+}
+
+
 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {

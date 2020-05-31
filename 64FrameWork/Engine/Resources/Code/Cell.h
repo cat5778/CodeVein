@@ -30,7 +30,7 @@ public:
 	Engine::NAVI_DATA 	Get_NaviData();
 	LPD3DXMESH			Get_SphereMesh(int iPointNum) { return m_pSphereMesh[iPointNum]; }
 	_matrix				Get_MatWorldSphere(int iPointNum) { return m_matSphereWorld[iPointNum]; }
-
+	void				Set_CellIdx(_uint uiIdx) { m_uiIdx = uiIdx; }
 public:
 	HRESULT		Ready_Cell(	const _ulong& dwIndex,
 							const _vec3* pPointA,
@@ -54,7 +54,7 @@ private:
 	LPD3DXMESH				m_pSphereMesh[POINT_END] = { nullptr,nullptr,nullptr };
 	SPHERE_DATA				m_tSphereData[POINT_END];
 	_matrix					m_matSphereWorld[POINT_END];
-	
+	_uint					m_uiIdx=0;
 	LPD3DXLINE				m_pD3DXLine;
 	_ulong					m_dwIndex;
 	LPDIRECT3DDEVICE9		m_pGraphicDev;

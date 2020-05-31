@@ -121,7 +121,7 @@ void CDynamicCamera::Key_Input(const _float& fTimeDelta)
 		m_vEye += vLength;
 		m_vAt += vLength;
 	}
-	if (Engine::Get_DIKeyState(DIK_O) & 0x80)
+	if (m_pKeyMgr->KeyDown(KEY_O))
 	{
 		m_iPickMode ? m_iPickMode = 0 : m_iPickMode = 1;
 	}

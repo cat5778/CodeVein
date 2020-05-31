@@ -51,6 +51,8 @@ BEGIN_MESSAGE_MAP(CNavMeshTool, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CNavMeshTool::OnNavMeshCreateButton)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, &CNavMeshTool::OnSelectNavMesh)
 	ON_BN_CLICKED(IDC_BUTTON2, &CNavMeshTool::OnBnClickedDeleteButton)
+	ON_BN_CLICKED(IDC_BUTTON3, &CNavMeshTool::OnBnClickedSaveButton)
+	ON_BN_CLICKED(IDC_BUTTON4, &CNavMeshTool::OnBnClickedLoadButton)
 END_MESSAGE_MAP()
 
 void CNavMeshTool::OnNavMeshCreateButton()
@@ -163,7 +165,7 @@ void CNavMeshTool::Set_NavMeshData()
 
 	for (int i = 0; i < m_uiChangeIdx; i++)
 		hChildItem = m_NavMeshTree.GetNextItem(hChildItem, TVGN_NEXT);
-
+	m_pNavDataVec[m_uiSelectNavIdx]->uiIdx = m_uiSelectNavIdx;
 	switch (m_uiChangeIdx)
 	{
 	case 0:
@@ -195,6 +197,112 @@ void CNavMeshTool::Set_NavMeshData()
 	m_pNaviCom->Link_Cell();
 	//dynamic_cast<CTestStage*>(m_pScene)->Set_MeshVec(m_pNavDataVec);
 			
+}
+
+HRESULT CNavMeshTool::Save_Text(const TCHAR * pFilePath)
+{
+	ofstream fout;
+	fout.open(pFilePath, ios::trunc);
+	if (fout.fail())
+		return E_FAIL;
+	for (auto pCell : (*m_ppCellVec))
+	{
+		Engine::NAVI_DATA tNaviData = pCell->Get_NaviData();
+		fout << tNaviData.vPosition1.x<< endl;
+		fout << tNaviData.vPosition1.y << endl;
+		fout << tNaviData.vPosition1.z << endl;
+		fout << tNaviData.vPosition2.x << endl;
+		fout << tNaviData.vPosition2.y << endl;
+		fout << tNaviData.vPosition2.z << endl;
+		fout << tNaviData.vPosition3.x << endl;
+		fout << tNaviData.vPosition3.y << endl;
+		fout << tNaviData.vPosition3.z << endl;
+
+	}
+	fout.close();
+
+	return S_OK;
+}
+
+HRESULT CNavMeshTool::Load_Text(const TCHAR * pFilePath)
+{
+	ifstream fin;
+	fin.open(pFilePath);
+	if (fin.fail())
+		return E_FAIL;
+	wstring wstrTemp;
+	CString csTemp;
+	char cTemp[MIN_STR];
+	_uint uidx = 0;
+	while (!fin.eof())
+	{
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		csTemp = cTemp;
+		wstrTemp = csTemp.GetString();
+		if (wstrTemp.compare(L"") == 0)
+			break;
+
+		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
+		pNaviData->vPosition1.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition1.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition1.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition2.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition3.z = atof(cTemp);
+
+		pNaviData->uiIdx = uidx;
+
+		m_pNaviCom->Add_Cell(pNaviData);
+		(*m_ppCellVec)[uidx]->Set_NaviData(*pNaviData);
+		m_pNavDataVec.push_back(pNaviData);
+		uidx++;
+	}
+	fin.close();
+
+	_uint uiNavIdx;
+	uiNavIdx = m_ppCellVec->size();
+	m_NavMeshTree.DeleteAllItems();
+	m_hRoot = m_NavMeshTree.InsertItem(TEXT("NavMesh"), 0, 0, TVI_ROOT, TVI_LAST);
+	//
+
+	//
+	if (m_ppCellVec != nullptr)
+	{
+		_uint uiCellIdx = 0;
+		for (auto pCell : (*m_ppCellVec))
+		{
+			Engine::NAVI_DATA pNaviData = pCell->Get_NaviData();
+
+
+			CString csTemp;
+			csTemp.Format(_T("Nav%d"), pNaviData.uiIdx);
+
+			m_hNavMeshIdx = m_NavMeshTree.InsertItem(csTemp, 0, 0, m_hRoot, TVI_LAST);
+			csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), 0, pNaviData.vPosition1.x, pNaviData.vPosition1.y, pNaviData.vPosition1.z);
+			m_hNavMeshPoint = m_NavMeshTree.InsertItem(csTemp, 0, 0, m_hNavMeshIdx, TVI_LAST);
+
+			csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), 1, pNaviData.vPosition2.x, pNaviData.vPosition2.y, pNaviData.vPosition2.z);
+			m_hNavMeshPoint = m_NavMeshTree.InsertItem(csTemp, 0, 0, m_hNavMeshIdx, TVI_LAST);
+
+			csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), 2, pNaviData.vPosition3.x, pNaviData.vPosition3.y, pNaviData.vPosition3.z);
+			m_hNavMeshPoint = m_NavMeshTree.InsertItem(csTemp, 0, 0, m_hNavMeshIdx, TVI_LAST);
+			uiCellIdx++;
+		}
+	}
+	return S_OK;
 }
 
 //vector<NAV_MESH*>& CNavMeshTool::Get_NavMeshVec()
@@ -289,7 +397,17 @@ void CNavMeshTool::OnBnClickedDeleteButton()
 		else
 			itr++;
 	}
-
+	for (auto itr = m_pNavDataVec.begin(); itr != m_pNavDataVec.end(); i++)
+	{
+		if (m_uiSelectNavIdx == i)
+		{
+			delete (*itr);
+			itr = m_pNavDataVec.erase(itr);
+			break;
+		}
+		else
+			itr++;
+	}
 	_uint uiNavIdx;
 	uiNavIdx = m_ppCellVec->size();
 	m_NavMeshTree.DeleteAllItems();
@@ -328,4 +446,51 @@ void CNavMeshTool::OnBnClickedDeleteButton()
 
 
 
+}
+
+
+void CNavMeshTool::OnBnClickedSaveButton()
+{
+	CFileDialog dlgFile(FALSE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ", this);
+
+	dlgFile.m_ofn.lpstrTitle = L"NavMesh Save";
+
+	_tchar szPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szPath);
+	::PathRemoveFileSpec(szPath);
+	::PathRemoveFileSpec(szPath);
+	CString csDataPath = szPath;
+	csDataPath += ".\\Resource.\\Data.\\NavMash";
+	dlgFile.m_ofn.lpstrInitialDir = csDataPath;
+	if (IDOK == dlgFile.DoModal())
+	{
+		Save_Text(dlgFile.GetPathName());
+		//CString pathName = dlgFile.GetPathName();
+		//MessageBox(pathName);
+
+	}
+}
+
+
+void CNavMeshTool::OnBnClickedLoadButton()
+{
+	CFileDialog dlgFile(TRUE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ", this);
+
+	dlgFile.m_ofn.lpstrTitle = L"NavMesh Load";
+
+	_tchar szPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szPath);
+	::PathRemoveFileSpec(szPath);
+	::PathRemoveFileSpec(szPath);
+	CString csDataPath = szPath;
+	csDataPath += ".\\Resource.\\Data.\\NavMash";
+	dlgFile.m_ofn.lpstrInitialDir = csDataPath;
+
+	if (IDOK == dlgFile.DoModal())
+	{
+		Load_Text(dlgFile.GetPathName());
+
+	}
 }
