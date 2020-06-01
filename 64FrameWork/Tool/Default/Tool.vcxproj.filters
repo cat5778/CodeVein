@@ -31,9 +31,6 @@
     <Filter Include="03. View\00. MyForm\00. Tab">
       <UniqueIdentifier>{57491197-2fd1-40de-99a6-c2af22d12102}</UniqueIdentifier>
     </Filter>
-    <Filter Include="80. Camera">
-      <UniqueIdentifier>{0e48b3cc-4fd9-4336-b9ab-9a2c5c570d33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10. GameObject\00. Terrain">
       <UniqueIdentifier>{3d827834-8e7d-4b49-881a-e7e70a9d0c8c}</UniqueIdentifier>
     </Filter>
@@ -73,6 +70,9 @@
     <Filter Include="90. Managers\00. KeyManager">
       <UniqueIdentifier>{dbecf580-f051-4052-813b-018266be1e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="90. Managers\80. Camera">
+      <UniqueIdentifier>{0e48b3cc-4fd9-4336-b9ab-9a2c5c570d33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -97,7 +97,7 @@
       <Filter>98. Stdafx</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\DynamicCamera.h">
-      <Filter>80. Camera</Filter>
+      <Filter>90. Managers\80. Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\TestStage.h">
       <Filter>05. Scene</Filter>
@@ -150,7 +150,7 @@
       <Filter>99. Default</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\DynamicCamera.cpp">
-      <Filter>80. Camera</Filter>
+      <Filter>90. Managers\80. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\TestStage.cpp">
       <Filter>05. Scene</Filter>

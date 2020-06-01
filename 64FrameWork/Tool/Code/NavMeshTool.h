@@ -52,14 +52,15 @@ private:
 	_vec3								m_vPos;
 	_uint								m_uiChangeIdx = 0;
 	_uint								m_uiSelectNavIdx = 0;
-	bool								m_bIsColl=false;
+	_uint								m_uiSelcetCellIdx = 0;
+	_uint								m_uiPointIdx = 0;
+	bool								m_bIsColl = false;
 
 	_uint								m_uiOldCellVecIDx=0;
 	Engine::CNaviMesh*					m_pNaviCom = nullptr;
 	vector<Engine::CCell*>*				m_ppCellVec = nullptr;
 	vector<Engine::NAVI_DATA*>			m_pNavDataVec;
-	
-
+	CString								m_csPosition[3];
 	//Engine::CNaviMesh*					m_pNavMesh;
 
 	//vector<NAV_MESH*>					m_pNavMeshVec;
@@ -73,4 +74,10 @@ public:
 	
 	afx_msg void OnBnClickedSaveButton();
 	afx_msg void OnBnClickedLoadButton();
+	afx_msg void OnEnChangeEditPosX();
+	afx_msg void OnEnChangeEditPosZ();
+	afx_msg void OnEnChangeEditPosY();
+	afx_msg void OnDeltaposNavPosXSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposNavPosYSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposNavPosZSpin(NMHDR *pNMHDR, LRESULT *pResult);
 };

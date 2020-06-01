@@ -48,12 +48,15 @@
 #define IDC_EDIT1                       1033
 #define IDC_EditPosX                    1033
 #define IDC_SPIN1                       1034
+#define IDC_NavPosXSPIN                 1034
 #define IDC_EDIT2                       1035
 #define IDC_EditPosY                    1035
 #define IDC_SPIN2                       1036
+#define IDC_NavPosYSPIN                 1036
 #define IDC_EDIT3                       1037
 #define IDC_EditPosZ                    1037
 #define IDC_SPIN3                       1038
+#define IDC_NavPosZSPIN                 1038
 #define IDC_BUTTON3                     1039
 #define IDC_BUTTON4                     1040
 #define IDC_EditScaleX                  1041

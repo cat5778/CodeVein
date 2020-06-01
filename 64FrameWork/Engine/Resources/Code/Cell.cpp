@@ -215,12 +215,11 @@ void Engine::CCell::Render_Cell(void)
 		if (m_pSphereMesh[i] == nullptr)
 			continue;
 
-
 		_matrix  matScale, matTrans;
-
 		D3DXMatrixTranslation(&matTrans, m_tSphereData[i].vPosition.x, m_tSphereData[i].vPosition.y, m_tSphereData[i].vPosition.z);
 		D3DXMatrixScaling(&matScale, m_tSphereData[i].fRadius, m_tSphereData[i].fRadius, m_tSphereData[i].fRadius);
 		m_matSphereWorld[i] = matScale * matTrans;
+
 		m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_matSphereWorld[i]);
 
 		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);

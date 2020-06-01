@@ -27,7 +27,6 @@ public:
 
 	virtual _int				Update_GameObject(const _float& fTimeDelta) override;
 public:
-
 	_vec3						Get_PickPos() { return m_vPickPos; }
 	wstring						Get_PickName() { return m_wstrPickName; }
 	void						Init_PickName();
@@ -36,12 +35,15 @@ public:
 	void						Set_PickMode(_int iPickMode) { m_iPickMode = iPickMode; }
 	Engine::CTransform*			Get_PickTransform() {return m_pPickTransform;}
 	_bool						IsPick() { return m_bIsPick; }
+
+
 private:
 	void						Key_Input(const _float& fTimeDelta);
 	void						Mouse_Move(const _float& fTimeDelta);
 	void						Mouse_Fix(void);
 	void						Picking_Mesh();
 	void						Pickint_Nav();
+
 private :
 	_int						m_iPickMode=0;
 	_bool						m_bClick;
