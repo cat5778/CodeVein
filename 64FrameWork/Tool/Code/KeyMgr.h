@@ -31,6 +31,7 @@ const DWORD KEY_H		= 0x00800000;
 const DWORD KEY_J		= 0x01000000;
 const DWORD KEY_K		= 0x02000000;
 const DWORD KEY_U		= 0x04000000;
+const DWORD KEY_O		= 0x08000000;
 
 class  CKeyMgr : public CBase
 {

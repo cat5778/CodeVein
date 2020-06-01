@@ -27,10 +27,14 @@ HRESULT CMainApp::Ready_MainApp(void)
 
 _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
-	Engine::Set_InputDev();
 
+	Engine::Set_InputDev();
 	if (nullptr != m_pManagement)
 		m_pManagement->Update_Scene(fTimeDelta);
+	if (!m_ppPathList.empty())
+	{
+		int a = 3;
+	}
 
 
 	return 0;
@@ -97,10 +101,13 @@ HRESULT CMainApp::Ready_Scene(LPDIRECT3DDEVICE9& pGraphicDev,
 	//FAILED_CHECK_RETURN(Engine::Create_Management(ppManagement), E_FAIL);
 	//(*ppManagement)->AddRef();
 
-	pScene = CLogo::Create(pGraphicDev);
+	pScene =CLogo::Create(pGraphicDev);
+
 	NULL_CHECK_RETURN(pScene, E_FAIL);
 
 	FAILED_CHECK_RETURN((*ppManagement)->SetUp_Scene(pScene), E_FAIL);
+
+	dynamic_cast<CLogo*>(pScene)->Set_PathList(&m_ppPathList);
 	
 	return S_OK;
 }
@@ -117,10 +124,24 @@ CMainApp* CMainApp::Create(void)
 
 void CMainApp::Free(void)
 {
+
+
+
 	Engine::Safe_Release(m_pGraphicDev);
 	Engine::Safe_Release(m_pDeviceClass);
 	Engine::Safe_Release(m_pManagement);
 
+	for (auto itr = m_ppPathList.begin(); itr != m_ppPathList.end();)
+	{
+		if ((*itr) != nullptr)
+		{
+			delete (*itr);
+			(*itr) = nullptr;
+			itr = m_ppPathList.erase(itr);
+		}
+		else
+			itr++;
+	}
 	Engine::Release_Resources();
 	Engine::Release_Utility();
 	Engine::Release_System();

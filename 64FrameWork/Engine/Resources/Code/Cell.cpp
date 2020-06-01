@@ -20,7 +20,7 @@ void CCell::Set_NaviData(Engine::NAVI_DATA naviData)
 	m_vPoint[POINT_A] = naviData.vPosition1;
 	m_vPoint[POINT_B] = naviData.vPosition2;
 	m_vPoint[POINT_C] = naviData.vPosition3;
-
+	m_uiIdx= naviData.uiIdx;
 	for (int i = 0; i < POINT_END; i++)
 		m_tSphereData[i].vPosition = m_vPoint[i];
 
@@ -56,7 +56,7 @@ Engine::NAVI_DATA CCell::Get_NaviData()
 	naviMesh.vPosition1 = m_vPoint[POINT_A];
 	naviMesh.vPosition2 = m_vPoint[POINT_B];
 	naviMesh.vPosition3 = m_vPoint[POINT_C];
-
+	naviMesh.uiIdx = m_uiIdx;
 	return naviMesh;
 }
 

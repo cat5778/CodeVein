@@ -154,7 +154,6 @@ _bool CLoading::Ready_Mesh(MESH_PATH * pPathInfo)
 _bool CLoading::Mesh_Loading() //텍스트 읽고와서 메쉬 로딩
 {
 	TCHAR szFileName[MAX_STR] = L"../../Resource/Data/PathInfo.txt";
-	list<MESH_PATH*>	m_pPathList;
 
 	ifstream fin;
 
@@ -200,7 +199,11 @@ _bool CLoading::Mesh_Loading() //텍스트 읽고와서 메쉬 로딩
 		delete ppwchar;
 
 		if (pPathInfo->wstrName.empty())
+		{
+			delete pPathInfo;
+			pPathInfo = nullptr;
 			continue;
+		}
 		else
 			m_pPathList.push_back(pPathInfo);
 	}
@@ -224,6 +227,9 @@ _bool CLoading::Mesh_Loading() //텍스트 읽고와서 메쉬 로딩
 		else
 			continue;
 	}
+
+	
+
 
 	return false;
 }

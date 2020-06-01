@@ -263,7 +263,7 @@ HRESULT CObjectTool::Load_Text(const TCHAR * pFilePathS)
 		return E_FAIL;
 
 	wstring wstrTemp;
-	
+
 	CString csTemp;
 	char cTemp[MIN_STR];
 	Transform_Info tInfo;
@@ -880,7 +880,7 @@ void CObjectTool::OnDeltaposSpinPositionZ(NMHDR *pNMHDR, LRESULT *pResult)
 void CObjectTool::OnBnClickedObjectSaveButton()
 {
 	CFileDialog dlgFile(FALSE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||",this);
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ",this);
 	
 	dlgFile.m_ofn.lpstrTitle = L"Object Save";
 
@@ -904,7 +904,7 @@ void CObjectTool::OnBnClickedObjectSaveButton()
 void CObjectTool::OnBnClickedObjectLoadButton()
 {
 	CFileDialog dlgFile(TRUE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||", this);
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ", this);
 
 	dlgFile.m_ofn.lpstrTitle = L"Object Load";
 

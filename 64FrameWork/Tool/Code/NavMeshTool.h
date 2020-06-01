@@ -25,11 +25,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnNavMeshCreateButton();
-
+	afx_msg void OnSelectNavMesh(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedDeleteButton();
 public:
 	HRESULT								Update(const _float& fTimeDelta);
 private:
 	void								Set_NavMeshData();
+	HRESULT								Save_Text(const TCHAR * pFilePath);
+	HRESULT								Load_Text(const TCHAR * pFilePath);
 	//vector<NAV_MESH*>&					Get_NavMeshVec();
 private:
 	HTREEITEM							m_hRoot, m_hNavMeshIdx, m_hNavMeshPoint;
@@ -65,8 +68,9 @@ private:
 
 public:
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelectNavMesh(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void OnOK();
 	virtual void OnCancel();
-	afx_msg void OnBnClickedDeleteButton();
+	
+	afx_msg void OnBnClickedSaveButton();
+	afx_msg void OnBnClickedLoadButton();
 };

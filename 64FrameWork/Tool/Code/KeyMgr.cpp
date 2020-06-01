@@ -71,7 +71,8 @@ void CKeyMgr::Update()
 		m_dwCurKey |= KEY_K;
 	if (GetAsyncKeyState('U') & 0x8000)
 		m_dwCurKey |= KEY_U;
-
+	if (GetAsyncKeyState('O') & 0x8000)
+		m_dwCurKey |= KEY_O;
 }
 
 bool CKeyMgr::KeyDown(DWORD dwKey)

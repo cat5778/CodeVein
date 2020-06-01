@@ -33,8 +33,12 @@ HRESULT CNaviMesh::Add_Cell(NAVI_DATA* naviData)
 	
 	if(pCell==nullptr)
 		return E_FAIL;
+	
 	m_vecCell.push_back(pCell);
+	pCell->Set_CellIdx(m_vecCell.size());
 	FAILED_CHECK_RETURN(Link_Cell(), E_FAIL);
+
+
 }
 
 vector<CCell*>& CNaviMesh::Get_CellVec()
@@ -105,8 +109,43 @@ _vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 
 	else if(CCell::COMPARE_STOP == m_vecCell[m_dwIndex]->Compare(&vEndPos, &m_dwIndex))
 		return *pTargetPos;
-}
 
+
+}
+bool CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir, _vec3* _out)
+{
+	_vec3   vEndPos = *pTargetPos + *pTargetDir;
+
+	D3DXPLANE tPlane;
+	_vec3 vPos0, vPos1, vPos2;
+
+	vPos0 = *m_vecCell[m_dwIndex]->Get_Point(CCell::POINT_A);
+	vPos1 = *m_vecCell[m_dwIndex]->Get_Point(CCell::POINT_B);
+	vPos2 = *m_vecCell[m_dwIndex]->Get_Point(CCell::POINT_C);
+
+	D3DXPlaneFromPoints(&tPlane, &vPos0, &vPos1, &vPos2);
+	float fResult = D3DXPlaneDotCoord(&tPlane, &vEndPos);
+
+	float y = (tPlane.a * vEndPos.x) + (tPlane.c * vEndPos.z) + tPlane.d;
+	y /= tPlane.b * -1;
+	vEndPos.y = y;
+
+	memcpy(_out, &vEndPos, sizeof(_vec3));
+
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwIndex]->Compare(&vEndPos, &m_dwIndex))
+		return true;
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwIndex]->Compare(&vEndPos, &m_dwIndex))
+	{
+		*_out = *pTargetPos;
+		return false;
+	}
+	else
+	{
+		*_out = *pTargetPos;
+
+		return false;
+	}
+}
 HRESULT Engine::CNaviMesh::Link_Cell(void)
 {
 	_ulong	dwSize = m_vecCell.size();

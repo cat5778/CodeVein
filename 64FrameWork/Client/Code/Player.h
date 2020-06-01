@@ -5,7 +5,7 @@
 #include "GameObject.h"
 
 BEGIN(Engine)
-
+class CNaviMesh;
 class CDynamicMesh;
 class CTransform;
 class CRenderer;
@@ -30,6 +30,8 @@ private:
 	HRESULT		Add_Component(void);
 	void		Key_Input(const _float& fTimeDelta);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
+	HRESULT		Load_Text(const TCHAR * pFilePath);
+	wchar_t*	CharToWChar(const char* pstrSrc);
 
 	//void		SetUp_OnTerrain(void);
 	//_vec3		PickUp_OnTerrain(void);
@@ -39,6 +41,7 @@ private:
 	Engine::CRenderer*		m_pRendererCom = nullptr;
 	Engine::CCalculator*	m_pCalculatorCom = nullptr;
 	Engine::CDynamicMesh*	m_pMeshCom = nullptr;
+	Engine::CNaviMesh*		m_pNaviCom = nullptr;
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
 

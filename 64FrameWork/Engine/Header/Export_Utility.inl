@@ -110,6 +110,8 @@ void			Render_DebugBuffer(const _tchar* pMRTTag)
 // Utility Release
 void			Release_Utility(void)
 {
+	CRenderTargetMgr::GetInstance()->DestroyInstance();
+	CPrototypeMgr::GetInstance()->DestroyInstance();
 	CLightMgr::GetInstance()->DestroyInstance();
 	CRenderer::GetInstance()->DestroyInstance();
 	CManagement::GetInstance()->DestroyInstance();
