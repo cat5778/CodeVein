@@ -381,7 +381,8 @@ void CDynamicCamera::Pickint_Nav()
 	m_ppCellVec = &dynamic_cast<Engine::CNaviMesh*>(Engine::Get_Layer(L"GameLogic")->Get_GameObject(L"Player")->Get_Component(L"Com_Navi", Engine::ID_STATIC))->Get_CellVec();
 	int iCellIdx = 0;
 	int iPoint = 0;
-
+	int iMinCellIdx = 0;
+	int iMinPointIdx = 0;
 	_vec3 vNavPos = { INIT_VEC3 };
 	for (auto pCell : (*m_ppCellVec))//TODO: 피킹 이함함 체크
 	{
@@ -434,13 +435,11 @@ void CDynamicCamera::Pickint_Nav()
 						m_wstrPickName = L"NavPoint "+to_wstring(iCellIdx) + L"_" + to_wstring(iPoint);
 						fMinDist = fDist;
 						m_bIsNavPick = true;
+
+						iMinCellIdx = iCellIdx;
+						iMinPointIdx = iPoint;
 						break;
 
-
-						//PickWorldMat = pCellWorldMat;
-						//tPickRay = tConvertRay;
-						//m_matPickWorldNav = pCellWorldMat;
-						//m_pPickTransform= pCellWorldMat;
 					}
 				}
 			}
@@ -451,17 +450,16 @@ void CDynamicCamera::Pickint_Nav()
 			Safe_Release(pIB);
 			Safe_Release(pMesh);
 
-			if (m_bIsNavPick)
-			{
-				m_bIsPick = false;
-				m_vPickPos = *(*m_ppCellVec)[iCellIdx]->Get_Point((Engine::CCell::POINT)iPoint);
-				cout << m_vPickPos.x << m_vPickPos.y << m_vPickPos.z << endl;
-				return;
-			}
 		}
-	
 		iCellIdx++;
 	
+	}
+	if (m_bIsNavPick)
+	{
+		m_bIsPick = false;
+		m_vPickPos = *(*m_ppCellVec)[iMinCellIdx]->Get_Point((Engine::CCell::POINT)iMinPointIdx);
+		cout << m_vPickPos.x << m_vPickPos.y << m_vPickPos.z << endl;
+		return;
 	}
 
 }
