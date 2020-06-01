@@ -70,6 +70,8 @@ void CStaticObject::Render_GameObject(void)
 
 	pEffect->End();
 
+
+
 	Safe_Release(pEffect);
 
 }
