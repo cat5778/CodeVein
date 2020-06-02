@@ -70,12 +70,6 @@ void CNavMeshTool::OnNavMeshCreateButton()
 	{
 		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
 		memset(pNaviData,0, sizeof(Engine::NAVI_DATA));
-		//pNaviData->uiIdx = 0;
-		//pNaviData->vPosition1 = {0.f,0.f,0.f};
-		//pNaviData->vPosition2 = {0.f,0.f,0.f};
-		//pNaviData->vPosition3 = {0.f,0.f,0.f};
-		//pNaviData->uiIdx=(*m_ppCellVec).size();
-		
 		pNaviData->uiIdx =(*m_ppCellVec).size();
 
 		CString csTemp;
@@ -172,7 +166,7 @@ void CNavMeshTool::Set_NavMeshData()
 	for (int i = 0; i < m_uiChangeIdx; i++)
 		hChildItem = m_NavMeshTree.GetNextItem(hChildItem, TVGN_NEXT);
 
-	m_pNavDataVec[m_uiSelcetCellIdx]->uiIdx = m_uiSelcetCellIdx;
+	//m_pNavDataVec[m_uiSelcetCellIdx]->uiIdx = m_uiSelcetCellIdx;
 	
 	switch (m_uiChangeIdx)
 	{
@@ -353,10 +347,16 @@ void CNavMeshTool::OnSelectNavMesh(NMHDR *pNMHDR, LRESULT *pResult)
 	
 	m_csCurNav= m_csCurParentItem = m_NavMeshTree.GetItemText(hParentItem);
 	csCurText = m_NavMeshTree.GetItemText(hCurITem);
-	m_uiSelcetCellIdx =csCurText.Find('v');
-	csNaviDataIdx = csCurText.Right(m_uiSelcetCellIdx -1);
+	m_uiSelcetCellIdx = csCurText.Find('v');
+	csNaviDataIdx = csCurText.Right(m_uiSelcetCellIdx - 1);
 	m_uiSelcetCellIdx = _ttoi(csNaviDataIdx);
 
+	
+	//_int iCellIdx = csCurText.Find(L'v');
+	//CString csCellIdx = csCurText.Mid(iCellIdx + 1, iPointIdx - iCellIdx - 1);
+
+	//m_uiPointIdx = iPointIdx = _tstoi(csPointIdx);
+	//m_uiSelcetCellIdx = iCellIdx = _tstoi(csCellIdx);
 
 
 	//csCurText.Find
@@ -372,8 +372,14 @@ void CNavMeshTool::OnSelectNavMesh(NMHDR *pNMHDR, LRESULT *pResult)
 	if (m_csCurNav.Compare(L"NavMesh") < 0)
 		m_csCurNav = m_csCurNav + "_" + csSub;
 	else
-		m_csCurNav= csCurText;
+	{
+		m_csCurNav = csCurText;
+		m_uiSelcetCellIdx = csCurText.Find('v');
+		csNaviDataIdx = csCurText.Right(csCurText.GetLength()-(m_uiSelcetCellIdx+1));
+		m_uiSelcetCellIdx = _ttoi(csNaviDataIdx);
 
+
+	}
 	m_EditMeshLeaf.SetWindowTextW(m_csCurNav);
 	
 	if (m_ppCellVec!=nullptr&&(*m_ppCellVec).size()>= m_uiSelcetCellIdx)
@@ -578,58 +584,54 @@ void CNavMeshTool::OnBnClickedLoadButton()
 
 	}
 }
-void CNavMeshTool::OnEnChangeEditPosX()
-{}
-//void CNavMeshTool::OnEnChangeEditPosY()
-//{}
-void CNavMeshTool::OnEnChangeEditPosZ()
-{}
-void CNavMeshTool::OnDeltaposNavPosXSpin(NMHDR *pNMHDR, LRESULT *pResult)
-{}
-//void CNavMeshTool::OnDeltaposNavPosYSpin(NMHDR *pNMHDR, LRESULT *pResult)
-//{}
-void CNavMeshTool::OnDeltaposNavPosZSpin(NMHDR *pNMHDR, LRESULT *pResult)
-{}
 
 //
-//
-//void CNavMeshTool::OnEnChangeEditPosX()
-//{
-//
-//	if (m_ppCellVec != nullptr)
-//	{
-//		GetDlgItemText(IDC_EditPosX, m_csPosition[0]);
-//		_float fPosX = _tstof(m_csPosition[0]);
-//
-//		_int iPointIdx = m_csCurNav.ReverseFind(L'_');
-//		if (iPointIdx == -1 || m_csCurNav.GetLength() == 1)
-//			return;
-//
-//		CString csPointIdx = m_csCurNav.Right(m_csCurNav.GetLength() - (iPointIdx + 1));
-//
-//		_int iCellIdx= m_csCurNav.Find(L'v');
-//		CString csCellIdx = m_csCurNav.Mid(iCellIdx+1, iPointIdx-iCellIdx-1);
-//
-//		iPointIdx = _tstoi(csPointIdx);
-//		iCellIdx = _tstoi(csCellIdx);
-//
-//		switch (iPointIdx)
-//		{
-//		case 0:
-//			m_pNavDataVec[iCellIdx]->vPosition1.x = fPosX;
-//			break;
-//		case 1:
-//			m_pNavDataVec[iCellIdx]->vPosition2.x = fPosX;
-//			break;
-//		case 2:
-//			m_pNavDataVec[iCellIdx]->vPosition3.x = fPosX;
-//			break;
-//		}
-//		(*m_ppCellVec)[iCellIdx]->Set_NaviData(*m_pNavDataVec[iCellIdx]);
-//	}
-//
-//	
-//}
+
+void CNavMeshTool::OnEnChangeEditPosX()
+{
+
+	if (m_ppCellVec != nullptr)
+	{
+		GetDlgItemText(IDC_EditPosX, m_csPosition[0]);
+		_float fPosX = _tstof(m_csPosition[0]);
+
+		_int iPointIdx = m_csCurNav.ReverseFind(L'_');
+		if (iPointIdx == -1 || m_csCurNav.GetLength() == 1)
+			return;
+
+		CString csPointIdx = m_csCurNav.Right(m_csCurNav.GetLength() - (iPointIdx + 1));
+
+		_int iCellIdx= m_csCurNav.Find(L'v');
+		CString csCellIdx = m_csCurNav.Mid(iCellIdx+1, iPointIdx-iCellIdx-1);
+
+		m_uiPointIdx = iPointIdx = _tstoi(csPointIdx);
+		m_uiSelcetCellIdx = iCellIdx = _tstoi(csCellIdx);
+
+		switch (iPointIdx)
+		{
+		case 0:
+			m_pNavDataVec[iCellIdx]->vPosition1.x = fPosX;
+			break;
+		case 1:
+			m_pNavDataVec[iCellIdx]->vPosition2.x = fPosX;
+			break;
+		case 2:
+			m_pNavDataVec[iCellIdx]->vPosition3.x = fPosX;
+			break;
+		}
+		(*m_ppCellVec)[iCellIdx]->Set_NaviData(*m_pNavDataVec[iCellIdx]);
+
+		_vec3 PointPos = *(*m_ppCellVec)[iCellIdx]->Get_Point((Engine::CCell::POINT)iPointIdx);
+		HTREEITEM hCurITem = m_NavMeshTree.GetSelectedItem();
+		CString csTemp;
+		csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), iPointIdx, fPosX, PointPos.y, PointPos.z);
+
+
+		m_NavMeshTree.SetItemText(hCurITem, csTemp);
+
+	
+	}
+}
 
 void CNavMeshTool::OnEnChangeEditPosY()
 {
@@ -646,8 +648,8 @@ void CNavMeshTool::OnEnChangeEditPosY()
 		_int iCellIdx = m_csCurNav.Find(L'v');
 		CString csCellIdx = m_csCurNav.Mid(iCellIdx + 1, iPointIdx - iCellIdx - 1);
 
-		iPointIdx = _tstoi(csPointIdx);
-		iCellIdx = _tstoi(csCellIdx);
+		m_uiPointIdx = iPointIdx = _tstoi(csPointIdx);
+		m_uiSelcetCellIdx= iCellIdx = _tstoi(csCellIdx);
 
 		switch (iPointIdx)
 		{
@@ -662,14 +664,13 @@ void CNavMeshTool::OnEnChangeEditPosY()
 			break;
 		}
 		(*m_ppCellVec)[iCellIdx]->Set_NaviData(*m_pNavDataVec[iCellIdx]);
-
+		_vec3 PointPos = *(*m_ppCellVec)[iCellIdx]->Get_Point((Engine::CCell::POINT)iPointIdx);
 		HTREEITEM hCurITem = m_NavMeshTree.GetSelectedItem();
-		//m_csPosition[1].Format(_T("%d (X= %f  Y= %f  Z=%f)"), 0, pNaviData.vPosition1.x, fPosY, pNaviData.vPosition1.z);
-		//TODO: 요기 고치기
-		m_csPosition[1].Format(_T("%f"), fPosY);
+		CString csTemp;
+		csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), iPointIdx, PointPos.x, fPosY, PointPos.z);
 		
 
-		m_NavMeshTree.SetItemText(hCurITem,m_csPosition[1]);
+		m_NavMeshTree.SetItemText(hCurITem, csTemp);
 
 
 
@@ -677,72 +678,78 @@ void CNavMeshTool::OnEnChangeEditPosY()
 
 }
 
-//void CNavMeshTool::OnEnChangeEditPosZ()
-//{
-//	if (m_ppCellVec != nullptr)
-//	{
-//		GetDlgItemText(IDC_EditPosZ, m_csPosition[2]);
-//		_float fPosZ = _tstof(m_csPosition[2]);
-//
-//		_int iPointIdx = m_csCurNav.ReverseFind(L'_');
-//		if (iPointIdx == -1 || m_csCurNav.GetLength() == 1)
-//			return;
-//
-//		CString csPointIdx = m_csCurNav.Right(m_csCurNav.GetLength() - (iPointIdx + 1));
-//
-//		_int iCellIdx = m_csCurNav.Find(L'v');
-//		CString csCellIdx = m_csCurNav.Mid(iCellIdx + 1, iPointIdx - iCellIdx - 1);
-//
-//		iPointIdx = _tstoi(csPointIdx);
-//		iCellIdx = _tstoi(csCellIdx);
-//
-//		switch (iPointIdx)
-//		{
-//		case 0:
-//			m_pNavDataVec[iCellIdx]->vPosition1.z = fPosZ;
-//			break;
-//		case 1:
-//			m_pNavDataVec[iCellIdx]->vPosition2.z = fPosZ;
-//			break;
-//		case 2:
-//			m_pNavDataVec[iCellIdx]->vPosition3.z = fPosZ;
-//			break;
-//		}
-//		(*m_ppCellVec)[iCellIdx]->Set_NaviData(*m_pNavDataVec[iCellIdx]);
-//	}
-//
-//}
-//
-//void CNavMeshTool::OnDeltaposNavPosXSpin(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-//	_float fPosX = _tstof(m_csPosition[0]);
-//
-//	if (pNMUpDown->iDelta < 0)
-//		fPosX += 0.01f;
-//	else
-//		fPosX -= 0.01f;
-//
-//	m_csPosition[0].Format(_T("%f"), fPosX);
-//	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
-//
-//	switch (m_uiPointIdx)
-//	{
-//	case 0:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition1.x = fPosX;
-//		break;
-//	case 1:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition2.x = fPosX;
-//		break;
-//	case 2:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition3.x = fPosX;
-//		break;
-//	}
-//		
-//	(*m_ppCellVec)[m_uiSelcetCellIdx]->Set_NaviData(*m_pNavDataVec[m_uiSelcetCellIdx]);
-//
-//	*pResult = 0;
-//}
+void CNavMeshTool::OnEnChangeEditPosZ()
+{
+	if (m_ppCellVec != nullptr)
+	{
+		GetDlgItemText(IDC_EditPosZ, m_csPosition[2]);
+		_float fPosZ = _tstof(m_csPosition[2]);
+
+		_int iPointIdx = m_csCurNav.ReverseFind(L'_');
+		if (iPointIdx == -1 || m_csCurNav.GetLength() == 1)
+			return;
+
+		CString csPointIdx = m_csCurNav.Right(m_csCurNav.GetLength() - (iPointIdx + 1));
+
+		_int iCellIdx = m_csCurNav.Find(L'v');
+		CString csCellIdx = m_csCurNav.Mid(iCellIdx + 1, iPointIdx - iCellIdx - 1);
+
+		m_uiPointIdx= iPointIdx = _tstoi(csPointIdx);
+		m_uiSelcetCellIdx = iCellIdx = _tstoi(csCellIdx);
+
+
+		switch (iPointIdx)
+		{
+		case 0:
+			m_pNavDataVec[iCellIdx]->vPosition1.z = fPosZ;
+			break;
+		case 1:
+			m_pNavDataVec[iCellIdx]->vPosition2.z = fPosZ;
+			break;
+		case 2:
+			m_pNavDataVec[iCellIdx]->vPosition3.z = fPosZ;
+			break;
+		}
+		(*m_ppCellVec)[iCellIdx]->Set_NaviData(*m_pNavDataVec[iCellIdx]);
+
+		_vec3 PointPos = *(*m_ppCellVec)[iCellIdx]->Get_Point((Engine::CCell::POINT)iPointIdx);
+		HTREEITEM hCurITem = m_NavMeshTree.GetSelectedItem();
+		CString csTemp;
+		csTemp.Format(_T("%d (X= %f  Y= %f  Z=%f)"), iPointIdx, PointPos.x, PointPos.y, fPosZ);
+		m_NavMeshTree.SetItemText(hCurITem, csTemp);
+	}
+}
+
+void CNavMeshTool::OnDeltaposNavPosXSpin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	_float fPosX = _tstof(m_csPosition[0]);
+
+	if (pNMUpDown->iDelta < 0)
+		fPosX += 0.01f;
+	else
+		fPosX -= 0.01f;
+
+	m_csPosition[0].Format(_T("%f"), fPosX);
+	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+
+	switch (m_uiPointIdx)
+	{
+	case 0:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition1.x = fPosX;
+		break;
+	case 1:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition2.x = fPosX;
+		break;
+	case 2:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition3.x = fPosX;
+		break;
+	}
+		
+	(*m_ppCellVec)[m_uiSelcetCellIdx]->Set_NaviData(*m_pNavDataVec[m_uiSelcetCellIdx]);
+
+	*pResult = 0;
+}
 
 
 void CNavMeshTool::OnDeltaposNavPosYSpin(NMHDR *pNMHDR, LRESULT *pResult)
@@ -776,32 +783,32 @@ void CNavMeshTool::OnDeltaposNavPosYSpin(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-//void CNavMeshTool::OnDeltaposNavPosZSpin(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-//	_float fPosZ = _tstof(m_csPosition[2]);
-//
-//	if (pNMUpDown->iDelta < 0)
-//		fPosZ += 0.001f;
-//	else
-//		fPosZ -= 0.001f;
-//
-//	m_csPosition[2].Format(_T("%f"), fPosZ);
-//	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
-//
-//	switch (m_uiPointIdx)
-//	{
-//	case 0:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition1.z = fPosZ;
-//		break;
-//	case 1:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition2.z = fPosZ;
-//		break;
-//	case 2:
-//		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition3.z = fPosZ;
-//		break;
-//	}
-//
-//	(*m_ppCellVec)[m_uiSelcetCellIdx]->Set_NaviData(*m_pNavDataVec[m_uiSelcetCellIdx]);
-//	*pResult = 0;
-//}
+void CNavMeshTool::OnDeltaposNavPosZSpin(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	_float fPosZ = _tstof(m_csPosition[2]);
+
+	if (pNMUpDown->iDelta < 0)
+		fPosZ += 0.01f;
+	else
+		fPosZ -= 0.01f;
+
+	m_csPosition[2].Format(_T("%f"), fPosZ);
+	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+
+	switch (m_uiPointIdx)
+	{
+	case 0:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition1.z = fPosZ;
+		break;
+	case 1:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition2.z = fPosZ;
+		break;
+	case 2:
+		m_pNavDataVec[m_uiSelcetCellIdx]->vPosition3.z = fPosZ;
+		break;
+	}
+
+	(*m_ppCellVec)[m_uiSelcetCellIdx]->Set_NaviData(*m_pNavDataVec[m_uiSelcetCellIdx]);
+	*pResult = 0;
+}

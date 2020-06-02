@@ -18,8 +18,8 @@ CPlayer::~CPlayer(void)
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	Load_Text(L"../../Resource/Data/NavMash/Nav1.txt");
-	m_pNaviCom->Set_Index(0);
+	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
+	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
 	m_pMeshCom->Set_AnimationSet(57);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);

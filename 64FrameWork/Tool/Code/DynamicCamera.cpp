@@ -432,7 +432,7 @@ void CDynamicCamera::Pickint_Nav()
 				{
 					if (fDist < fMinDist)
 					{
-						m_wstrPickName = L"NavPoint "+to_wstring(iCellIdx) + L"_" + to_wstring(iPoint);
+						m_wstrPickName = L"NavPoint " + to_wstring(iCellIdx) + L"_" + to_wstring(iPoint);
 						fMinDist = fDist;
 						m_bIsNavPick = true;
 
@@ -458,6 +458,8 @@ void CDynamicCamera::Pickint_Nav()
 	{
 		m_bIsPick = false;
 		m_vPickPos = *(*m_ppCellVec)[iMinCellIdx]->Get_Point((Engine::CCell::POINT)iMinPointIdx);
+		m_wstrPickName = L"NavPoint " + to_wstring(iMinCellIdx) + L"_" + to_wstring(iMinPointIdx);
+
 		cout << m_vPickPos.x << m_vPickPos.y << m_vPickPos.z << endl;
 		return;
 	}
