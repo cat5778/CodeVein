@@ -116,7 +116,7 @@ _uint CLoading::Loading_ForStage(void)
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 
-
+/*
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_STAGE,
 		L"Mesh_Player",
@@ -124,9 +124,16 @@ _uint CLoading::Loading_ForStage(void)
 		L"../../Resource/Mesh/DynamicMesh/PlayerXfile/",
 		L"Player.X"),
 		E_FAIL);
+*/
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"Mesh_Player",
+			Engine::TYPE_DYNAMIC,
+			L"../../Resource/Mesh/DynamicMesh/Player2/",
+			L"Player2.X"),
+			E_FAIL);
 
 		Mesh_Loading();
-
 	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_STAGE,
 	//	L"Mesh_Sword",

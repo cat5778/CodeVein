@@ -20,7 +20,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
 	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
-	m_pMeshCom->Set_AnimationSet(57);
+	m_pMeshCom->Set_AnimationSet(m_iAnim);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
@@ -121,6 +121,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
+		m_iAnim++;
 		_vec3	vPos, vDir;
 		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
@@ -131,7 +132,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
 		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-		m_pMeshCom->Set_AnimationSet(54);
+		m_pMeshCom->Set_AnimationSet(m_iAnim);
 
 		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
 		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
@@ -162,11 +163,11 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (Engine::Get_DIKeyState(DIK_RETURN) & 0x80)
 	{
-		m_pMeshCom->Set_AnimationSet(30);
+		m_pMeshCom->Set_AnimationSet(0);
 	}
 
 	if (true == m_pMeshCom->Is_AnimationSetEnd())
-		m_pMeshCom->Set_AnimationSet(57);
+		m_pMeshCom->Set_AnimationSet(0);
 
 	_matrix mat = m_pTransformCom->m_matWorld;
 

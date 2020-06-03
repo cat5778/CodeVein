@@ -45,7 +45,7 @@ private:
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
 
-
+	_int					m_iAnim = 0;
 	_vec3					m_vDir;
 	_float					m_fSpeed = 20.f;
 public:

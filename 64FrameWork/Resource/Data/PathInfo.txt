@@ -13,6 +13,12 @@ Player
 
 
 DynamicMesh
+Player2.X
+Player2
+..\..\Resource\Mesh\DynamicMesh\Player2\
+
+
+DynamicMesh
 PlayerXfile.X
 PlayerXfile
 ..\..\Resource\Mesh\DynamicMesh\PlayerXfile\
