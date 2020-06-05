@@ -20,7 +20,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
 	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
-	m_pMeshCom->Set_AnimationSet(m_iAnim);
+	m_pMeshCom->Set_AnimationSet(0);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
@@ -76,8 +76,9 @@ void CPlayer::Render_GameObject(void)
 HRESULT CPlayer::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
-
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Player"));
+	
+		//pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Player"));
+	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_RussianHat"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
@@ -121,7 +122,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
-		m_iAnim++;
+		//m_iAnim++;
 		_vec3	vPos, vDir;
 		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
@@ -132,7 +133,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
 		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-		m_pMeshCom->Set_AnimationSet(m_iAnim);
+		m_pMeshCom->Set_AnimationSet(2);
 
 		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
 		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
@@ -149,11 +150,17 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
 		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
+		m_pMeshCom->Set_AnimationSet(1);
+	}
 
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
 		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
+		m_pMeshCom->Set_AnimationSet(0);
 
+	}
 	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
 	{
 		//_vec3		vPickPos = PickUp_OnTerrain();
