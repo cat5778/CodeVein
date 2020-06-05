@@ -121,7 +121,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
-		m_iAnim++;
+		//m_iAnim++;
 		_vec3	vPos, vDir;
 		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
@@ -132,8 +132,9 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
 		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		m_iAnim = 31;
 		m_pMeshCom->Set_AnimationSet(m_iAnim);
-
+		cout << m_iAnim << endl;
 		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
 		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
 
@@ -167,7 +168,10 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	if (true == m_pMeshCom->Is_AnimationSetEnd())
-		m_pMeshCom->Set_AnimationSet(0);
+	{
+		m_iAnim = 38;
+		m_pMeshCom->Set_AnimationSet(m_iAnim);
+	}
 
 	_matrix mat = m_pTransformCom->m_matWorld;
 
@@ -187,7 +191,6 @@ HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 
 	const D3DLIGHT9*		pLight = Engine::Get_LightInfo(0);
 	NULL_CHECK_RETURN(pLight, S_OK);
-
 
 	pEffect->SetVector("g_vLightDir", &_vec4(pLight->Direction, 0.f));
 	pEffect->SetVector("g_vLightDiffuse", (_vec4*)&pLight->Diffuse);
@@ -239,7 +242,6 @@ HRESULT CPlayer::Load_Text(const TCHAR * pFilePath)
 			break;
 
 		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
-		//pNaviData->vPosition1.x = atof(cTemp);
 
 		pNaviData->vPosition1.x = _wtof(wstrTemp.c_str()); 
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
@@ -264,6 +266,8 @@ HRESULT CPlayer::Load_Text(const TCHAR * pFilePath)
 		pNaviData->uiIdx = uidx;
 
 		m_pNaviCom->Add_Cell(pNaviData);
+
+		delete pNaviData;
 		uidx++;
 	}
 	fin.close();
