@@ -73,6 +73,9 @@
     <Filter Include="90. Managers\80. Camera">
       <UniqueIdentifier>{0e48b3cc-4fd9-4336-b9ab-9a2c5c570d33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. View\00. MyForm\00. Tab\03. ColliderTab">
+      <UniqueIdentifier>{40278f54-4ec1-4426-929b-30ec07fb7fe3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="..\Code\KeyMgr.h">
       <Filter>90. Managers\00. KeyManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\ColliderTool.h">
+      <Filter>03. View\00. MyForm\00. Tab\03. ColliderTab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -184,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\KeyMgr.cpp">
       <Filter>90. Managers\00. KeyManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ColliderTool.cpp">
+      <Filter>03. View\00. MyForm\00. Tab\03. ColliderTab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

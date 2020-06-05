@@ -1,6 +1,12 @@
 
 
 DynamicMesh
+Body.X
+Body
+..\..\Resource\Mesh\DynamicMesh\Body\
+
+
+DynamicMesh
 Juliet.X
 Juliet
 ..\..\Resource\Mesh\DynamicMesh\Juliet\
@@ -25,15 +31,9 @@ PlayerXfile
 
 
 DynamicMesh
-sylva.X
-sylva
-..\..\Resource\Mesh\DynamicMesh\sylva\
-
-
-DynamicMesh
-Yaiba.X
-Yaiba
-..\..\Resource\Mesh\DynamicMesh\Yaiba\
+RussianHat.X
+RussianHat
+..\..\Resource\Mesh\DynamicMesh\RussianHat\
 Celling
 Base
 StaticMesh
@@ -436,6 +436,12 @@ StaticMesh
 SM_NormalGreatSwordB_ba01.X
 SM_NormalGreatSwordB_ba01
 ..\..\Resource\Mesh\StaticMesh\Base\Weapon\SM_NormalGreatSwordB_ba01\
+Weapon
+Public
+StaticMesh
+RussianHatShield.X
+RussianHatShield
+..\..\Resource\Mesh\StaticMesh\Public\Weapon\RussianHatShield\
 Terrain
 Shop
 StaticMesh

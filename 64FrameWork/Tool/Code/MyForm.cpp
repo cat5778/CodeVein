@@ -9,6 +9,7 @@
 #include "NavMeshTool.h"
 #include "MainFrm.h"
 #include "ToolView.h"
+#include "ColliderTool.h"
 // CMyForm
 IMPLEMENT_DYNCREATE(CMyForm, CFormView)
 
@@ -67,6 +68,7 @@ void CMyForm::OnInitialUpdate()
 	m_TabCtrl.InsertItem(0, _T("Object"));
 	m_TabCtrl.InsertItem(1, _T("Camera"));
 	m_TabCtrl.InsertItem(2, _T("NavMesh"));
+	m_TabCtrl.InsertItem(3, _T("Collider"));
 	m_TabCtrl.GetCurSel();
 	CRect rect;
 	m_TabCtrl.GetWindowRect(&rect);
@@ -100,6 +102,12 @@ void CMyForm::OnInitialUpdate()
 	m_pNavMeshTool->MoveWindow(0, 21, rect.Width(), rect.Height());
 	m_pNavMeshTool->ShowWindow(SW_HIDE);
 
+	m_pColliderTool = new CColliderTool;
+	m_pColliderTool->Create(IDD_DIALOG4, &m_TabCtrl);
+	m_pColliderTool->MoveWindow(0, 21, rect.Width(), rect.Height());
+	m_pColliderTool->ShowWindow(SW_HIDE);
+
+
 	m_TabCtrl.SetCurSel(0);
 	m_pObjectTool->ShowWindow(SW_SHOW);
 
@@ -117,18 +125,25 @@ void CMyForm::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 		m_pObjectTool->ShowWindow(SW_SHOW);
 		m_pCameraTool->ShowWindow(SW_HIDE);
 		m_pNavMeshTool->ShowWindow(SW_HIDE);
-
+		m_pColliderTool->ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		m_pObjectTool->ShowWindow(SW_HIDE);
 		m_pCameraTool->ShowWindow(SW_SHOW);
 		m_pNavMeshTool->ShowWindow(SW_HIDE);
-
+		m_pColliderTool->ShowWindow(SW_HIDE);
 		break;
 	case 2:
 		m_pObjectTool->ShowWindow(SW_HIDE);
 		m_pCameraTool->ShowWindow(SW_HIDE);
 		m_pNavMeshTool->ShowWindow(SW_SHOW);
+		m_pColliderTool->ShowWindow(SW_HIDE);
+		break;
+	case 3:
+		m_pObjectTool->ShowWindow(SW_HIDE);
+		m_pCameraTool->ShowWindow(SW_HIDE);
+		m_pNavMeshTool->ShowWindow(SW_HIDE);
+		m_pColliderTool->ShowWindow(SW_SHOW);
 		break;
 	//default:
 	//	break;

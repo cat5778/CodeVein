@@ -85,6 +85,9 @@
     <Filter Include="02. GameObejct\02. Public\02 StaticObject">
       <UniqueIdentifier>{2d805841-3269-4960-884d-8c6f7bc5ded2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObejct\01. Stage\06. Shield">
+      <UniqueIdentifier>{79a75905-f53d-4da7-97b8-630c16a01d2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

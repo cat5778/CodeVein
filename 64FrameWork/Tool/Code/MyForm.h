@@ -5,6 +5,7 @@
 class CObjectTool;
 class CCameraTool;
 class CNavMeshTool;
+class CColliderTool;
 // CMyForm 폼 뷰입니다.
 
 class CMyForm : public CFormView
@@ -14,6 +15,7 @@ public:
 	CObjectTool*	m_pObjectTool;
 	CCameraTool*	m_pCameraTool;
 	CNavMeshTool*	m_pNavMeshTool;
+	CColliderTool*	m_pColliderTool;
 protected:
 	CMyForm();           // 동적 만들기에 사용되는 protected 생성자입니다.
 	virtual ~CMyForm();

@@ -10,6 +10,7 @@
 #define IDD_DIALOG1                     313
 #define IDD_DIALOG2                     314
 #define IDD_DIALOG3                     317
+#define IDD_DIALOG4                     319
 #define IDC_TAB2                        1002
 #define IDC_TREE1                       1004
 #define IDC_TREE_CONTROL                1004
@@ -64,14 +65,17 @@
 #define IDC_SaveButton                  1043
 #define IDC_ObjectSaveButton            1043
 #define IDC_ObjectLoadButton            1044
+#define IDC_BoneTREE                    1045
+#define IDC_DyMeshTREE                  1046
+#define IDC_CHECK1                      1047
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1045
+#define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           311
 #endif
 #endif

@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\CameraTool.h" />
+    <ClInclude Include="..\Code\ColliderTool.h" />
     <ClInclude Include="..\Code\DirectoryMgr.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\KeyMgr.h" />
@@ -235,6 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\CameraTool.cpp" />
+    <ClCompile Include="..\Code\ColliderTool.cpp" />
     <ClCompile Include="..\Code\DirectoryMgr.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\KeyMgr.cpp" />
