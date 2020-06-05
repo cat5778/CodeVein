@@ -67,7 +67,10 @@
 #define IDC_ObjectLoadButton            1044
 #define IDC_BoneTREE                    1045
 #define IDC_DyMeshTREE                  1046
-#define IDC_CHECK1                      1047
+#define IDC_ColliDeleteButton           1048
+#define IDC_ClliderCreateButton         1049
+#define IDC_ColliderSaveButton          1050
+#define IDC_ColliderLoadButton          1051
 
 // Next default values for new objects
 // 
@@ -75,7 +78,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1048
+#define _APS_NEXT_CONTROL_VALUE         1052
 #define _APS_NEXT_SYMED_VALUE           311
 #endif
 #endif

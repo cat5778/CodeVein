@@ -265,10 +265,10 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_DyMeshTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,7,296,156
     CONTROL         "",IDC_BoneTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,223,296,151
-    PUSHBUTTON      "Collider Create",IDC_BUTTON1,43,177,74,25
-    PUSHBUTTON      "Collider Delete",IDC_BUTTON2,181,178,73,25
-    PUSHBUTTON      "Save",IDC_BUTTON3,33,396,72,22
-    PUSHBUTTON      "Load",IDC_BUTTON4,179,396,69,22
+    PUSHBUTTON      "Collider Delete",IDC_ColliDeleteButton,174,175,73,25
+    PUSHBUTTON      "Save",IDC_ColliderSaveButton,33,396,72,22
+    PUSHBUTTON      "Load",IDC_ColliderLoadButton,179,396,69,22
+    PUSHBUTTON      "Collider Create",IDC_ClliderCreateButton,40,175,74,25
 END
 
 
