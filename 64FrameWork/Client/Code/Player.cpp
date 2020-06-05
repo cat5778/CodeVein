@@ -20,7 +20,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
 	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
-	m_pMeshCom->Set_AnimationSet(0);
+	m_pMeshCom->Set_AnimationSet(m_iAnim);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
@@ -76,9 +76,8 @@ void CPlayer::Render_GameObject(void)
 HRESULT CPlayer::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
-	
-		//pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Player"));
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_RussianHat"));
+
+	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, L"Mesh_Player"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
@@ -133,8 +132,9 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
 		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-		m_pMeshCom->Set_AnimationSet(2);
-
+		m_iAnim = 31;
+		m_pMeshCom->Set_AnimationSet(m_iAnim);
+		cout << m_iAnim << endl;
 		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
 		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
 
@@ -150,17 +150,11 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-	{
 		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
-		m_pMeshCom->Set_AnimationSet(1);
-	}
 
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-	{
 		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
-		m_pMeshCom->Set_AnimationSet(0);
 
-	}
 	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
 	{
 		//_vec3		vPickPos = PickUp_OnTerrain();
@@ -174,7 +168,10 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	if (true == m_pMeshCom->Is_AnimationSetEnd())
-		m_pMeshCom->Set_AnimationSet(0);
+	{
+		m_iAnim = 38;
+		m_pMeshCom->Set_AnimationSet(m_iAnim);
+	}
 
 	_matrix mat = m_pTransformCom->m_matWorld;
 
@@ -194,7 +191,6 @@ HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 
 	const D3DLIGHT9*		pLight = Engine::Get_LightInfo(0);
 	NULL_CHECK_RETURN(pLight, S_OK);
-
 
 	pEffect->SetVector("g_vLightDir", &_vec4(pLight->Direction, 0.f));
 	pEffect->SetVector("g_vLightDiffuse", (_vec4*)&pLight->Diffuse);
@@ -246,7 +242,6 @@ HRESULT CPlayer::Load_Text(const TCHAR * pFilePath)
 			break;
 
 		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
-		//pNaviData->vPosition1.x = atof(cTemp);
 
 		pNaviData->vPosition1.x = _wtof(wstrTemp.c_str()); 
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
@@ -271,6 +266,8 @@ HRESULT CPlayer::Load_Text(const TCHAR * pFilePath)
 		pNaviData->uiIdx = uidx;
 
 		m_pNaviCom->Add_Cell(pNaviData);
+
+		delete pNaviData;
 		uidx++;
 	}
 	fin.close();
