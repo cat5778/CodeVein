@@ -115,6 +115,7 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 					}
 
 
+
 					if(!bIsCompare)
 						m_hInstDynamic = m_ObjectTree.InsertItem(wstrObjName.c_str(), 0, 0, m_hDynamicRoot, TVI_LAST);
 				}
