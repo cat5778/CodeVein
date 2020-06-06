@@ -114,6 +114,7 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 							bIsCompare = true;
 					}
 
+					
 
 
 					if(!bIsCompare)
