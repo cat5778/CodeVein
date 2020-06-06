@@ -1,18 +1,6 @@
 
 
 DynamicMesh
-Body.X
-Body
-..\..\Resource\Mesh\DynamicMesh\Body\
-
-
-DynamicMesh
-Juliet.X
-Juliet
-..\..\Resource\Mesh\DynamicMesh\Juliet\
-
-
-DynamicMesh
 Player.X
 Player
 ..\..\Resource\Mesh\DynamicMesh\Player\

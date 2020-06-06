@@ -15,15 +15,17 @@ private:
 	virtual ~CDynamicMesh(void);
 
 public:
-	HRESULT			Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
-	void			Render_Meshes(void);
-	void			Render_Meshes(LPD3DXEFFECT& pEffect);
-	const  D3DXFRAME_DERIVED*	Get_FrameByName(const char* pFrameName);
+	HRESULT							Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
+	void							Render_Meshes(void);
+	void							Render_Meshes(LPD3DXEFFECT& pEffect);
+	const  D3DXFRAME_DERIVED*		Get_FrameByName(const char* pFrameName);
 	_bool							Is_AnimationSetEnd(void);
-public:
-	void			Set_AnimationSet(const _uint& iIndex);
-	void			Play_Animation(const _float& fTimeDelta);
 
+public:
+	void								Set_AnimationSet(const _uint& iIndex);
+	void								Play_Animation(const _float& fTimeDelta);
+	D3DXFRAME*							Get_RootFrame();
+	list<D3DXMESHCONTAINER_DERIVED*>*	Get_pMeshContainerList();
 private:
 
 	// 모든 뼈들을 순회하면서 뼈들이 갖고 있는 TransformationMatrix와 pParentMatrix를 결합하여 CombinedTransformationMatrix를 만들어주는 함수

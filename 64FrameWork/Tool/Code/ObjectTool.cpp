@@ -10,8 +10,11 @@
 #include "ToolView.h"
 #include "MyForm.h"
 #include "StaticObject.h"
+#include "DynamicObject.h"
 #include "TestStage.h"
 #include "DynamicCamera.h"
+
+
 // CObjectTool 대화 상자입니다.
 
 IMPLEMENT_DYNAMIC(CObjectTool, CDialogEx)
@@ -415,10 +418,10 @@ BOOL CObjectTool::OnInitDialog()
 	for (auto pPathInfo : m_pMeshList)
 	{
 		//bool f;
-		if (pPathInfo->wstrMeshType.compare(L"StaticMesh") == 0)
+		if (pPathInfo->wstrMeshType.compare(L"StaticMesh") == 0) //스태틱매쉬 인지 검사
 		{
 			bool bIsMap = false;
-			if (m_StaticTree.ItemHasChildren(m_hStaticMesh))
+			if (m_StaticTree.ItemHasChildren(m_hStaticMesh)) 
 			{
 				m_hMap = m_StaticTree.GetChildItem(m_hStaticMesh);
 				CString csMap = m_StaticTree.GetItemText(m_hMap);
@@ -453,19 +456,20 @@ BOOL CObjectTool::OnInitDialog()
 					}
 
 				}
-				if (!bIsMap) 
+				if (!bIsMap) //
 				{
-					while ( m_hMap = m_StaticTree.GetNextSiblingItem(m_hMap))//
-					{
-						csMap = m_StaticTree.GetItemText(m_hMap);
-						if (csMap.Find(pPathInfo->wstrMap.c_str()) != -1) //있음
-						{
-							bIsMap = true;
+					//while ( m_hMap = m_StaticTree.GetNextSiblingItem(m_hMap))//
+					//{
+						//csMap = m_StaticTree.GetItemText(m_hMap);
+						//if (csMap.Find(pPathInfo->wstrMap.c_str()) != -1) //있음
+						//{
+							//bIsMap = true;
+							m_hMap = m_StaticTree.InsertItem(pPathInfo->wstrMap.c_str(), 0, 0, m_hStaticMesh, TVI_SORT);
 							m_hGroup = m_StaticTree.InsertItem(pPathInfo->wstrGroup.c_str(), 0, 0, m_hMap, TVI_SORT);
 							m_hFloor = m_StaticTree.InsertItem(pPathInfo->wstrObjectType.c_str(), 0, 0, m_hGroup, TVI_SORT);
-						}
+						//}
 
-					}
+					//}
 				}
 
 			}
@@ -480,7 +484,12 @@ BOOL CObjectTool::OnInitDialog()
 		}
 		else if (pPathInfo->wstrMeshType.compare(L"DynamicMesh") == 0)
 		{
+			if (pPathInfo->wstrObjectType.compare(L"PlayerXfile") == 0)
+				continue;;
 			m_hEtc = m_StaticTree.InsertItem(pPathInfo->wstrObjectType.c_str(), 0, 0, m_hDynamicMesh, TVI_SORT);
+			if (Engine::Ready_Meshes(m_pDevice, RESOURCE_STAGE, pPathInfo->wstrObjectType.c_str(), Engine::TYPE_DYNAMIC, pPathInfo->wstrRelative.c_str(), pPathInfo->wstrName.c_str()) < 0)
+				return false;
+
 		}
 		else
 		{
@@ -515,7 +524,8 @@ void CObjectTool::OnBnClickedMeshCreate()
 	wstring wstrName = m_csSelectMesh;
 	_uint uiChildCount = 0;
 	wstring wstrNameIdx;
-	if (m_InstanceTree.ItemHasChildren(m_hStaticRoot))
+	_bool bIsDynamic=false;
+	if (m_InstanceTree.ItemHasChildren(m_hStaticRoot)) //스태틱매쉬에있는지 검사
 	{
 		HTREEITEM hChild = m_InstanceTree.GetChildItem(m_hStaticRoot);
 		CString csText = m_InstanceTree.GetItemText(hChild);
@@ -529,8 +539,27 @@ void CObjectTool::OnBnClickedMeshCreate()
 		}
 
 	}
+	if (m_InstanceTree.ItemHasChildren(m_hDynamicMesh)) //다이나믹매쉬에있는지 검사
+	{
+		HTREEITEM hChild = m_InstanceTree.GetChildItem(m_hDynamicMesh);
+		CString csText = m_InstanceTree.GetItemText(hChild);
+		if (csText.Find(wstrName.c_str()) != -1) //있음
+		{
+			uiChildCount++;
+			bIsDynamic = true;
+		}
+		while (hChild = m_InstanceTree.GetNextSiblingItem(hChild))//
+		{
+			CString csText = m_InstanceTree.GetItemText(hChild);
+			if (csText.Find(wstrName.c_str()) != -1)
+			{
+				uiChildCount++;
+				bIsDynamic = true;
+			}
+		}
 
-
+	}
+	
 	wstrNameIdx = wstrName + L"_" + to_wstring(uiChildCount);
 	m_hInstStatic = m_InstanceTree.InsertItem(wstrNameIdx.c_str(), 0, 0, m_hStaticRoot, TVI_LAST);
 
@@ -549,12 +578,20 @@ void CObjectTool::OnBnClickedMeshCreate()
 		tInfo.vRotation = { INIT_VEC3 };
 		tInfo.vScale	= { DEFAULT_MESH_SCALE};
 
-		pGameObject = CStaticObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx, tInfo);
+		if (bIsDynamic)
+			pGameObject = CDynamicObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx, tInfo);
+		else
+			pGameObject = CStaticObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx, tInfo);
+
 		NULL_CHECK(pGameObject);
 	}
 	else
 	{
-		pGameObject = CStaticObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx);
+		if (bIsDynamic)
+			pGameObject = CDynamicObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx);
+		else
+			pGameObject = CStaticObject::Create(m_pDevice, wstrObjEraseIdx, uiObjIdx);
+
 		NULL_CHECK(pGameObject);
 	}
 	

@@ -16,6 +16,7 @@
 class CToolView;
 class CObjectTool;
 class CNavMeshTool;
+class CColliderTool;
 class CToolApp : public CWinApp
 {
 public:
@@ -36,6 +37,7 @@ private:
 	CToolView*			m_pToolView;
 	CObjectTool*		m_pObjectTool;
 	CNavMeshTool*		m_pNavMeshTool;
+	CColliderTool*		m_pColliderTool;
 };
 
 extern CToolApp theApp;

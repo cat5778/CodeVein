@@ -157,6 +157,16 @@ void CDynamicMesh::Play_Animation(const _float & fTimeDelta)
 	Update_FrameMatrices((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixRotationY(&matTemp, D3DXToRadian(180.f)));
 }
 
+D3DXFRAME * CDynamicMesh::Get_RootFrame()
+{
+	return m_pRootFrame;
+}
+
+list<D3DXMESHCONTAINER_DERIVED*>* CDynamicMesh::Get_pMeshContainerList()
+{
+	return &m_MeshContainerList;
+}
+
 void Engine::CDynamicMesh::Update_FrameMatrices(D3DXFRAME_DERIVED* pFrame, const _matrix* pParentMatrix)
 {
 	if (nullptr == pFrame)

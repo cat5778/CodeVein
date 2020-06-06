@@ -138,6 +138,9 @@
     <ClInclude Include="..\Code\ColliderTool.h">
       <Filter>03. View\00. MyForm\00. Tab\03. ColliderTab</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\DynamicObject.h">
+      <Filter>10. GameObject\20.TempObject\01. DynamicObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\ColliderTool.cpp">
       <Filter>03. View\00. MyForm\00. Tab\03. ColliderTab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\DynamicObject.cpp">
+      <Filter>10. GameObject\20.TempObject\01. DynamicObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

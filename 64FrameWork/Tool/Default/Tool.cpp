@@ -11,6 +11,7 @@
 #include "ToolView.h"
 #include "ObjectTool.h"
 #include "NavMeshTool.h"
+#include "ColliderTool.h"
 #include "MyForm.h"
 
 
@@ -131,6 +132,7 @@ BOOL CToolApp::InitInstance()
 	m_pToolView = (CToolView*)mainFrm->m_MainSplitter.GetPane(0, 1);
 	m_pObjectTool = ((CMyForm*)mainFrm->m_MainSplitter.GetPane(0, 0))->m_pObjectTool;
 	m_pNavMeshTool = ((CMyForm*)mainFrm->m_MainSplitter.GetPane(0, 0))->m_pNavMeshTool;
+	m_pColliderTool = ((CMyForm*)mainFrm->m_MainSplitter.GetPane(0, 0))->m_pColliderTool;
 
 	FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_Immediate"), FALSE);
 	FAILED_CHECK_RETURN(Engine::Ready_Timer(L"Timer_FPS : 60"), FALSE);
@@ -221,6 +223,8 @@ BOOL CToolApp::OnIdle(LONG lCount)
 				m_pObjectTool->Update(fTimer_FPS60);
 			if (m_pNavMeshTool->IsWindowVisible())
 				m_pNavMeshTool->Update(fTimer_FPS60);
+			if (m_pColliderTool->IsWindowVisible())
+				m_pColliderTool->Update(fTimer_FPS60);
 
 		}
 	}
