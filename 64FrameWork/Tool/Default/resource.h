@@ -17,6 +17,7 @@
 #define IDC_EDIT4                       1011
 #define IDC_SPIN4                       1012
 #define IDC_SpinScaleX                  1012
+#define IDC_SPINRadius                  1012
 #define IDC_EDIT5                       1013
 #define IDC_EditScaleY                  1013
 #define IDC_EditRadius                  1013
@@ -50,14 +51,17 @@
 #define IDC_EditPosX                    1033
 #define IDC_SPIN1                       1034
 #define IDC_NavPosXSPIN                 1034
+#define IDC_SPINPosX                    1034
 #define IDC_EDIT2                       1035
 #define IDC_EditPosY                    1035
 #define IDC_SPIN2                       1036
 #define IDC_NavPosYSPIN                 1036
+#define IDC_SPINPosY                    1036
 #define IDC_EDIT3                       1037
 #define IDC_EditPosZ                    1037
 #define IDC_SPIN3                       1038
 #define IDC_NavPosZSPIN                 1038
+#define IDC_SPINPosZ                    1038
 #define IDC_BUTTON3                     1039
 #define IDC_BUTTON4                     1040
 #define IDC_EditScaleX                  1041

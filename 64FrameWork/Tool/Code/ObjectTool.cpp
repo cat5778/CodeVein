@@ -544,18 +544,27 @@ void CObjectTool::OnBnClickedMeshCreate()
 		HTREEITEM hChild = m_InstanceTree.GetChildItem(m_hDynamicMesh);
 		CString csText = m_InstanceTree.GetItemText(hChild);
 		if (csText.Find(wstrName.c_str()) != -1) //있음
+			bIsDynamic = true;
+		while (hChild = m_InstanceTree.GetNextSiblingItem(hChild))//
+		{
+			CString csText = m_InstanceTree.GetItemText(hChild);
+			if (csText.Find(wstrName.c_str()) != -1)
+				bIsDynamic = true;
+		}
+	}
+	if (m_InstanceTree.ItemHasChildren(m_hDynamicRoot)) //인스턴스화된 매쉬 검사 인덱스 추출
+	{
+		HTREEITEM hChild = m_InstanceTree.GetChildItem(m_hDynamicRoot);
+		CString csText = m_InstanceTree.GetItemText(hChild);
+		if (csText.Find(wstrName.c_str()) != -1) //있음
 		{
 			uiChildCount++;
-			bIsDynamic = true;
 		}
 		while (hChild = m_InstanceTree.GetNextSiblingItem(hChild))//
 		{
 			CString csText = m_InstanceTree.GetItemText(hChild);
 			if (csText.Find(wstrName.c_str()) != -1)
-			{
 				uiChildCount++;
-				bIsDynamic = true;
-			}
 		}
 
 	}
@@ -671,7 +680,6 @@ void CObjectTool::OnTvnSelchangedInstancetree(NMHDR *pNMHDR, LRESULT *pResult)
 
 			m_csPosition[2].Format(_T("%f"), m_pTransform->m_vInfo[Engine::INFO_POS].z);
 			SetDlgItemTextW(IDC_EditPositionZ, m_csPosition[2]);
-
 
 		}
 	}

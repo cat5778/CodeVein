@@ -25,7 +25,7 @@ public:
 	void								Set_AnimationSet(const _uint& iIndex);
 	void								Play_Animation(const _float& fTimeDelta);
 	D3DXFRAME*							Get_RootFrame();
-	list<D3DXMESHCONTAINER_DERIVED*>*	Get_pMeshContainerList();
+	list<D3DXMESHCONTAINER_DERIVED*>*	Get_MeshContainerList();
 private:
 
 	// 모든 뼈들을 순회하면서 뼈들이 갖고 있는 TransformationMatrix와 pParentMatrix를 결합하여 CombinedTransformationMatrix를 만들어주는 함수

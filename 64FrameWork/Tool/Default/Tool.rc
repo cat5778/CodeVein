@@ -263,12 +263,25 @@ IDD_DIALOG4 DIALOGEX 0, 0, 310, 474
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DyMeshTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,7,296,156
-    CONTROL         "",IDC_BoneTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,223,296,151
-    PUSHBUTTON      "Collider Delete",IDC_ColliDeleteButton,174,175,73,25
-    PUSHBUTTON      "Save",IDC_ColliderSaveButton,33,396,72,22
-    PUSHBUTTON      "Load",IDC_ColliderLoadButton,179,396,69,22
-    PUSHBUTTON      "Collider Create",IDC_ClliderCreateButton,40,175,74,25
+    CONTROL         "",IDC_DyMeshTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,7,139,158
+    PUSHBUTTON      "Collider Create",IDC_ClliderCreateButton,53,199,94,25
+    PUSHBUTTON      "Collider Delete",IDC_ColliDeleteButton,163,199,91,25
+    EDITTEXT        IDC_EditPosX,47,179,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPINPosX,"msctls_updown32",UDS_AUTOBUDDY | UDS_ARROWKEYS,87,179,11,14
+    EDITTEXT        IDC_EditPosY,105,179,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPINPosY,"msctls_updown32",UDS_ARROWKEYS,145,179,11,14
+    EDITTEXT        IDC_EditPosZ,161,179,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPINPosZ,"msctls_updown32",UDS_ARROWKEYS,201,179,10,14
+    EDITTEXT        IDC_EditRadius,221,179,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPINRadius,"msctls_updown32",UDS_ARROWKEYS,261,179,10,14
+    CONTROL         "",IDC_BoneTREE,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,152,7,151,157
+    PUSHBUTTON      "Save",IDC_ColliderSaveButton,45,428,72,22
+    PUSHBUTTON      "Load",IDC_ColliderLoadButton,183,427,69,22
+    LTEXT           "PositionX ",IDC_STATIC,52,168,32,8
+    LTEXT           "PositionY",IDC_STATIC,110,168,30,8
+    LTEXT           "PositionZ",IDC_STATIC,167,168,30,8
+    LTEXT           "Radius",IDC_STATIC,227,168,22,8
+    CONTROL         "",IDC_TREE1,"SysTreeView32",WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,228,296,151
 END
 
 

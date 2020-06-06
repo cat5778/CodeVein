@@ -162,7 +162,7 @@ D3DXFRAME * CDynamicMesh::Get_RootFrame()
 	return m_pRootFrame;
 }
 
-list<D3DXMESHCONTAINER_DERIVED*>* CDynamicMesh::Get_pMeshContainerList()
+list<D3DXMESHCONTAINER_DERIVED*>* CDynamicMesh::Get_MeshContainerList()
 {
 	return &m_MeshContainerList;
 }

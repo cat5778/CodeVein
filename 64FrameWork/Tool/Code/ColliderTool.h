@@ -1,5 +1,6 @@
 #pragma once
 #include "afxcmn.h"
+#include "afxwin.h"
 
 
 // CColliderTool 대화 상자입니다.
@@ -44,6 +45,9 @@ public:
 	CTreeCtrl							m_ObjectTree;
 	CTreeCtrl							m_BoneTree;
 
+public:
+	void								Get_BoneName();
+
 private:
 	Engine::CGraphicDev*				m_pDeviceClass = nullptr;
 	LPDIRECT3DDEVICE9					m_pDevice = nullptr;
@@ -51,7 +55,8 @@ private:
 	CKeyMgr*							m_pKeyManager = nullptr;
 	CDynamicCamera*						m_pCamera = nullptr;
 	Engine::CScene*						m_pScene = nullptr;
-	CDynamicObject*						m_pDynamicObject=nullptr;
+	CDynamicObject*						m_pDynamicObject = nullptr;
+	CDynamicObject*						m_pCurSelectObj= nullptr;
 
 
 	_uint								m_uiMapSize=0;
@@ -67,4 +72,9 @@ private:
 	
 	map<wstring, Engine::CGameObject*>*	m_ppGameObjectMap = nullptr;
 
+public:
+	afx_msg void OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult);
+	CTreeCtrl m_ColliderTree;
+	CEdit m_EditPositionX;
+	CEdit m_EditPositionY;
 };

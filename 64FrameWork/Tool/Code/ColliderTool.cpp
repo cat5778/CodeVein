@@ -33,6 +33,9 @@ void CColliderTool::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_DyMeshTREE, m_ObjectTree);
 	DDX_Control(pDX, IDC_BoneTREE, m_BoneTree);
+	DDX_Control(pDX, IDC_TREE1, m_ColliderTree);
+	DDX_Control(pDX, IDC_EditPosX, m_EditPositionX);
+	DDX_Control(pDX, IDC_EditPosY, m_EditPositionY);
 }
 
 
@@ -41,6 +44,7 @@ BEGIN_MESSAGE_MAP(CColliderTool, CDialogEx)
 	ON_BN_CLICKED(IDC_ClliderCreateButton, &CColliderTool::OnBnClickedClliderCreateButton)
 	ON_BN_CLICKED(IDC_ColliderSaveButton, &CColliderTool::OnBnClickedColliderSaveButton)
 	ON_BN_CLICKED(IDC_ColliderLoadButton, &CColliderTool::OnBnClickedColliderLoadButton)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_DyMeshTREE, &CColliderTool::OnTvnSelchangedDymeshTree)
 END_MESSAGE_MAP()
 
 
@@ -133,6 +137,34 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 	return S_OK;
 }
 
+void CColliderTool::Get_BoneName()
+{
+	Engine::CDynamicMesh* pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_DynamicMesh", Engine::ID_STATIC));
+	if (pDynamicMesh == nullptr)
+	{
+		cout << "Collider Tool 141 Error DynamicMesh is nullptr" << endl;
+		return;
+	}
+	m_BoneTree.DeleteAllItems();
+
+	list<Engine::D3DXMESHCONTAINER_DERIVED*>* list_Mesh = pDynamicMesh->Get_MeshContainerList();
+
+	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator iter = list_Mesh->begin();
+	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator end_iter = list_Mesh->end();
+
+	for (; iter != end_iter; ++iter)
+	{
+		DWORD iNum = (*iter)->pSkinInfo->GetNumBones();
+
+		for (size_t i = 0; i < iNum; ++i)
+		{
+			(*iter)->pSkinInfo->GetBoneName(i);
+			cout << (*iter)->pSkinInfo->GetBoneName(i) << endl;
+			//SetListBoxBoneName((*iter)->pSkinInfo->GetBoneName(i));
+		}
+	}
+}
+
 
 BOOL CColliderTool::OnInitDialog()
 {
@@ -160,4 +192,24 @@ BOOL CColliderTool::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+
+	HTREEITEM hCurITem = m_ObjectTree.GetSelectedItem();
+	m_csSelectMesh = m_ObjectTree.GetItemText(hCurITem);
+	wstring wstrSelectMesh = m_csSelectMesh;
+	wstrSelectMesh += L"_0";
+	if (m_ppGameObjectMap != nullptr)
+	{
+		m_pCurSelectObj = dynamic_cast<CDynamicObject*>((*(*m_ppGameObjectMap).find(wstrSelectMesh)).second);
+		if (m_pDynamicObject != nullptr)
+			Get_BoneName();
+	}
+
+
+	*pResult = 0;
 }
