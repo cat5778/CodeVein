@@ -34,12 +34,21 @@ public:
 	afx_msg void OnBnClickedClliderCreateButton();
 	afx_msg void OnBnClickedColliderSaveButton();
 	afx_msg void OnBnClickedColliderLoadButton();
+	afx_msg void OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void OnOK();
+	virtual void OnCancel();
 public:
 	HRESULT								Update(const _float& fTimeDelta);
 private:
+	CTreeCtrl							m_ColliderTree;
+	CEdit								m_EditPositionX;
+	CEdit								m_EditPositionY;
+	CEdit								m_EditPositionZ;
+	CEdit								m_EditRadius;
+
+
 	HTREEITEM							m_hDynamicMesh, m_hStaticMesh;
-	HTREEITEM							m_hStaticRoot, m_hDynamicRoot, m_hInstDynamic, m_hInstStatic;
+	HTREEITEM							m_hStaticRoot, m_hDynamicRoot, m_hInstDynamic, m_hInstStatic, m_hSelectBone;
 
 public:
 	CTreeCtrl							m_ObjectTree;
@@ -57,7 +66,7 @@ private:
 	Engine::CScene*						m_pScene = nullptr;
 	CDynamicObject*						m_pDynamicObject = nullptr;
 	CDynamicObject*						m_pCurSelectObj= nullptr;
-
+	Engine::CDynamicMesh*				m_pDynamicMesh = nullptr;
 
 	_uint								m_uiMapSize=0;
 	CString								m_csSelectMesh;
@@ -73,8 +82,5 @@ private:
 	map<wstring, Engine::CGameObject*>*	m_ppGameObjectMap = nullptr;
 
 public:
-	afx_msg void OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult);
-	CTreeCtrl m_ColliderTree;
-	CEdit m_EditPositionX;
-	CEdit m_EditPositionY;
+	afx_msg void OnTvnSelchangedBoneTree(NMHDR *pNMHDR, LRESULT *pResult);
 };

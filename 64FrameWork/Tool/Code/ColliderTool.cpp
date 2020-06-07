@@ -36,6 +36,8 @@ void CColliderTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TREE1, m_ColliderTree);
 	DDX_Control(pDX, IDC_EditPosX, m_EditPositionX);
 	DDX_Control(pDX, IDC_EditPosY, m_EditPositionY);
+	DDX_Control(pDX, IDC_EditPosZ, m_EditPositionZ);
+	DDX_Control(pDX, IDC_EditRadius, m_EditRadius);
 }
 
 
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(CColliderTool, CDialogEx)
 	ON_BN_CLICKED(IDC_ColliderSaveButton, &CColliderTool::OnBnClickedColliderSaveButton)
 	ON_BN_CLICKED(IDC_ColliderLoadButton, &CColliderTool::OnBnClickedColliderLoadButton)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_DyMeshTREE, &CColliderTool::OnTvnSelchangedDymeshTree)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_BoneTREE, &CColliderTool::OnTvnSelchangedBoneTree)
 END_MESSAGE_MAP()
 
 
@@ -78,9 +81,11 @@ void CColliderTool::OnBnClickedColliderLoadButton()
 
 void CColliderTool::OnOK()
 {
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-
 	//CDialogEx::OnOK();
+}
+void CColliderTool::OnCancel()
+{
+	//CDialogEx::OnCancel();
 }
 
 HRESULT CColliderTool::Update(const _float & fTimeDelta)
@@ -118,8 +123,6 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 							bIsCompare = true;
 					}
 
-					
-
 
 					if(!bIsCompare)
 						m_hInstDynamic = m_ObjectTree.InsertItem(wstrObjName.c_str(), 0, 0, m_hDynamicRoot, TVI_LAST);
@@ -139,30 +142,45 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 
 void CColliderTool::Get_BoneName()
 {
-	Engine::CDynamicMesh* pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_DynamicMesh", Engine::ID_STATIC));
-	if (pDynamicMesh == nullptr)
+	m_pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_DynamicMesh", Engine::ID_STATIC));
+	if (m_pDynamicMesh == nullptr)
 	{
 		cout << "Collider Tool 141 Error DynamicMesh is nullptr" << endl;
 		return;
 	}
 	m_BoneTree.DeleteAllItems();
 
-	list<Engine::D3DXMESHCONTAINER_DERIVED*>* list_Mesh = pDynamicMesh->Get_MeshContainerList();
-
+	list<Engine::D3DXMESHCONTAINER_DERIVED*>* list_Mesh = m_pDynamicMesh->Get_MeshContainerList();
 	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator iter = list_Mesh->begin();
 	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator end_iter = list_Mesh->end();
 
-	for (; iter != end_iter; ++iter)
+	//const Engine::D3DXFRAME_DERIVED* ptr = nullptr;
+	//ptr = pDynamicMesh->Get_FrameByName("RightHandAttach");
+
+
+	for (iter; iter != end_iter; ++iter)
 	{
+		//DWORD iNum= (*iter)->dwNumBones;
+
 		DWORD iNum = (*iter)->pSkinInfo->GetNumBones();
 
 		for (size_t i = 0; i < iNum; ++i)
 		{
-			(*iter)->pSkinInfo->GetBoneName(i);
-			cout << (*iter)->pSkinInfo->GetBoneName(i) << endl;
-			//SetListBoxBoneName((*iter)->pSkinInfo->GetBoneName(i));
+			string strBone= (*iter)->pSkinInfo->GetBoneName(i);
+			//const char* ch = (*iter)->pSkinInfo->GetBoneName(i);
+			//string strBone = ch;
+			wstring wstrBone;
+			wstrBone.assign(strBone.begin(), strBone.end());
+			
+			//Engine::D3DXFRAME_DERIVED*	pBone = (Engine::D3DXFRAME_DERIVED*)D3DXFrameFind(pDynamicMesh->Get_RootFrame(), ch);
+
+			m_BoneTree.InsertItem(wstrBone.c_str(), 0, 0, TVI_ROOT, TVI_SORT); //<-TODO: 고치는중 
 		}
 	}
+
+
+
+
 }
 
 
@@ -209,6 +227,28 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 		if (m_pDynamicObject != nullptr)
 			Get_BoneName();
 	}
+
+
+	*pResult = 0;
+}
+
+
+
+
+void CColliderTool::OnTvnSelchangedBoneTree(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	m_hSelectBone =m_BoneTree.GetSelectedItem();
+	CString csBone= m_BoneTree.GetItemText(m_hSelectBone);
+	CStringA strA(csBone);
+	const char* pszBone = (char *)(LPWSTR)(LPCSTR)strA;
+	m_csPosition[0].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 1));
+	m_csPosition[1].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 2));
+	m_csPosition[2].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 3));
+
+
+	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
 
 
 	*pResult = 0;
