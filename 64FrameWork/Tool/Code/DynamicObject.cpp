@@ -29,19 +29,19 @@ HRESULT CDynamicObject::Ready_GameObject()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Set_TransformData();
+
+	m_pMeshCom->Set_AnimationSet(0);
+
 	return S_OK;
 }
 
 _int CDynamicObject::Update_GameObject(const _float & fTimeDelta)
 {
+	m_pMeshCom->Set_AnimationSet(m_uiAni);
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
+	m_pMeshCom->Play_Animation(fTimeDelta);
+
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-	
-	//m_pMeshCom->Get_FrameByName();
-
-	//D3DXFRAME* pRootFrame=m_pMeshCom->Get_RootFrame();
-	//pRootFrame->sd
-
 
 	return S_OK;
 }
@@ -62,7 +62,7 @@ HRESULT CDynamicObject::Add_Component(void)
 
 	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(RESOURCE_STAGE, m_ObjName.c_str()));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_DynamicMesh", pComponent);// 변경
+	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);// 변경
 
 	pComponent = m_pTransformCom = Engine::CTransform::Create();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);

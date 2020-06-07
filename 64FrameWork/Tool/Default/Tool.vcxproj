@@ -224,6 +224,7 @@
     <ClInclude Include="..\Code\ObjectTool.h" />
     <ClInclude Include="..\Code\PathManager.h" />
     <ClInclude Include="..\Code\Player.h" />
+    <ClInclude Include="..\Code\SphereCollider.h" />
     <ClInclude Include="..\Code\StaticObject.h" />
     <ClInclude Include="..\Code\Terrain.h" />
     <ClInclude Include="..\Code\TestStage.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\Code\ObjectTool.cpp" />
     <ClCompile Include="..\Code\PathManager.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
+    <ClCompile Include="..\Code\SphereCollider.cpp" />
     <ClCompile Include="..\Code\StaticObject.cpp" />
     <ClCompile Include="..\Code\Terrain.cpp" />
     <ClCompile Include="..\Code\TestStage.cpp" />

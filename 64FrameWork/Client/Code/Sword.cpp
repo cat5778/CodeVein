@@ -50,7 +50,7 @@ _int CSword::Update_GameObject(const _float& fTimeDelta)
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
 
 	m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
-		
+
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 

@@ -12,7 +12,7 @@
 #include "DynamicObject.h"
 #include "TestStage.h"
 #include "DynamicCamera.h"
-
+#include "SphereCollider.h"
 
 // CColliderTool 대화 상자입니다.
 
@@ -38,6 +38,7 @@ void CColliderTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EditPosY, m_EditPositionY);
 	DDX_Control(pDX, IDC_EditPosZ, m_EditPositionZ);
 	DDX_Control(pDX, IDC_EditRadius, m_EditRadius);
+	DDX_Control(pDX, IDC_EDITAnim, m_EditAnim);
 }
 
 
@@ -48,6 +49,12 @@ BEGIN_MESSAGE_MAP(CColliderTool, CDialogEx)
 	ON_BN_CLICKED(IDC_ColliderLoadButton, &CColliderTool::OnBnClickedColliderLoadButton)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_DyMeshTREE, &CColliderTool::OnTvnSelchangedDymeshTree)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_BoneTREE, &CColliderTool::OnTvnSelchangedBoneTree)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINPosX, &CColliderTool::OnDeltaposSpinPosX)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINPosY, &CColliderTool::OnDeltaposSpinPosY)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINPosZ, &CColliderTool::OnDeltaposSpinPosZ)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINRadius, &CColliderTool::OnDeltaposSpinRadius)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINAnim, &CColliderTool::OnDeltaposSpinAnim)
+	ON_EN_CHANGE(IDC_EditRadius, &CColliderTool::OnEnChangeEditRadius)
 END_MESSAGE_MAP()
 
 
@@ -63,7 +70,23 @@ void CColliderTool::OnBnClickedCollideleteButton()
 
 void CColliderTool::OnBnClickedClliderCreateButton()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	Engine::CGameObject* pGameObject=nullptr;
+	pGameObject=m_pSphereColl =CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
+	wstring wstrColl = m_wstrSelectBone + L"_SphereCollider";
+
+	(*m_ppGameObjectMap).insert(make_pair(wstrColl, pGameObject));
+
+	m_vPosition =dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS];
+
+	m_csPosition[0].Format(_T("%f"),m_vPosition.x);
+	m_csPosition[1].Format(_T("%f"),m_vPosition.y);
+	m_csPosition[2].Format(_T("%f"),m_vPosition.z);
+
+	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
+	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+
+
 }
 
 
@@ -124,16 +147,17 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 					}
 
 
-					if(!bIsCompare)
+					if (!bIsCompare)
+					{
 						m_hInstDynamic = m_ObjectTree.InsertItem(wstrObjName.c_str(), 0, 0, m_hDynamicRoot, TVI_LAST);
+						m_wstrSelectObject= pObject.first;
+					}
 				}
 
 
 			}
 
 		}
-
-
 
 	}
 
@@ -142,10 +166,11 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 
 void CColliderTool::Get_BoneName()
 {
-	m_pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_DynamicMesh", Engine::ID_STATIC));
+	m_pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_Mesh", Engine::ID_STATIC));
 	if (m_pDynamicMesh == nullptr)
 	{
-		cout << "Collider Tool 141 Error DynamicMesh is nullptr" << endl;
+		DE_COUT("Collider Tool 141 Error DynamicMesh is nullptr");
+
 		return;
 	}
 	m_BoneTree.DeleteAllItems();
@@ -167,18 +192,13 @@ void CColliderTool::Get_BoneName()
 		for (size_t i = 0; i < iNum; ++i)
 		{
 			string strBone= (*iter)->pSkinInfo->GetBoneName(i);
-			//const char* ch = (*iter)->pSkinInfo->GetBoneName(i);
-			//string strBone = ch;
 			wstring wstrBone;
 			wstrBone.assign(strBone.begin(), strBone.end());
-			
 			//Engine::D3DXFRAME_DERIVED*	pBone = (Engine::D3DXFRAME_DERIVED*)D3DXFrameFind(pDynamicMesh->Get_RootFrame(), ch);
 
 			m_BoneTree.InsertItem(wstrBone.c_str(), 0, 0, TVI_ROOT, TVI_SORT); //<-TODO: 고치는중 
 		}
 	}
-
-
 
 
 }
@@ -187,10 +207,10 @@ void CColliderTool::Get_BoneName()
 BOOL CColliderTool::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
-	//m_hStaticMesh = m_StaticTree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT, TVI_LAST);
-	//m_hDynamicMesh = m_StaticTree.InsertItem(TEXT("DynamicMesh"), 0, 0, TVI_ROOT, TVI_LAST);
-
+	
+	for(int i=0; i<3; i++)
+		m_csPosition[i].Format(_T("%f"), 0.f);
+	m_csRadius.Format(_T("%f"), m_fRadius);
 
 	if (m_pDeviceClass == nullptr)
 	{
@@ -203,6 +223,7 @@ BOOL CColliderTool::OnInitDialog()
 		m_pScene = m_pMyform->Get_Scene();
 		m_pKeyManager = CKeyMgr::GetInstance();
 	}
+
 	//m_hStaticRoot	=	m_ObjectTree.InsertItem(TEXT("StaticObject"), 0, 0, TVI_ROOT, TVI_LAST);
 	m_hDynamicRoot = m_ObjectTree.InsertItem(TEXT("DynamicObject"), 0, 0, TVI_ROOT, TVI_LAST);
 
@@ -219,15 +240,19 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 
 	HTREEITEM hCurITem = m_ObjectTree.GetSelectedItem();
 	m_csSelectMesh = m_ObjectTree.GetItemText(hCurITem);
+	
+	
 	wstring wstrSelectMesh = m_csSelectMesh;
 	wstrSelectMesh += L"_0";
-	if (m_ppGameObjectMap != nullptr)
+	if (wstrSelectMesh.find(L"Object") == wstring::npos)
 	{
-		m_pCurSelectObj = dynamic_cast<CDynamicObject*>((*(*m_ppGameObjectMap).find(wstrSelectMesh)).second);
-		if (m_pDynamicObject != nullptr)
-			Get_BoneName();
+		if (m_ppGameObjectMap != nullptr)
+		{
+			m_pCurSelectObj = dynamic_cast<CDynamicObject*>((*(*m_ppGameObjectMap).find(wstrSelectMesh)).second);
+			if (m_pDynamicObject != nullptr)
+				Get_BoneName();
+		}
 	}
-
 
 	*pResult = 0;
 }
@@ -238,18 +263,137 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 void CColliderTool::OnTvnSelchangedBoneTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+
 	m_hSelectBone =m_BoneTree.GetSelectedItem();
 	CString csBone= m_BoneTree.GetItemText(m_hSelectBone);
+
+	m_wstrSelectBone = csBone;
+
 	CStringA strA(csBone);
 	const char* pszBone = (char *)(LPWSTR)(LPCSTR)strA;
 	m_csPosition[0].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 1));
 	m_csPosition[1].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 2));
 	m_csPosition[2].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 3));
-
-
+	
 	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
 	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
+	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
 
 
 	*pResult = 0;
+}
+
+
+void CColliderTool::OnDeltaposSpinPosX(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_vPosition.x = _tstof(m_csPosition[0]);
+
+	if (pNMUpDown->iDelta < 0)
+		m_vPosition.x += 1.0f;
+	else
+		m_vPosition.x -= 1.0f;
+
+	m_csPosition[0].Format(_T("%f"), m_vPosition.x);
+	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+	if (m_pSphereColl!=nullptr)
+		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform",Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].x = m_vPosition.x;
+
+	*pResult = 0;
+}
+
+
+void CColliderTool::OnDeltaposSpinPosY(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_vPosition.y = _tstof(m_csPosition[1]);
+
+	if (pNMUpDown->iDelta < 0)
+		m_vPosition.y += 1.0f;
+	else
+		m_vPosition.y -= 1.0f;
+
+	m_csPosition[1].Format(_T("%f"), m_vPosition.y);
+	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
+
+	if (m_pSphereColl != nullptr)
+		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].y = m_vPosition.y;
+
+
+
+	*pResult = 0;
+}
+
+
+void CColliderTool::OnDeltaposSpinPosZ(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_vPosition.z = _tstof(m_csPosition[2]);
+
+	if (pNMUpDown->iDelta < 0)
+		m_vPosition.z += 1.0f;
+	else
+		m_vPosition.z -= 1.0f;
+
+	m_csPosition[2].Format(_T("%f"), m_vPosition.z);
+	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+	if (m_pSphereColl != nullptr)
+		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].z = m_vPosition.z;
+
+	*pResult = 0;
+}
+
+
+void CColliderTool::OnDeltaposSpinRadius(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+
+	m_fRadius = _tstof(m_csRadius);
+
+	if (pNMUpDown->iDelta < 0)
+		m_fRadius += 1.f;
+	else
+		m_fRadius -= 1.f;
+
+	m_csRadius.Format(_T("%f"), m_fRadius);
+	SetDlgItemTextW(IDC_EditRadius, m_csRadius);
+
+	if (m_pSphereColl != nullptr)
+		m_pSphereColl->Set_Radius(m_fRadius);
+
+
+	*pResult = 0;
+}
+
+
+void CColliderTool::OnDeltaposSpinAnim(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	
+	m_uiAnim = _tstoi(m_csAnim);
+
+	if (pNMUpDown->iDelta < 0)
+		m_uiAnim += 1;
+	else
+	{
+		if (m_uiAnim > 0)
+			m_uiAnim -= 1;
+	}
+	m_csAnim.Format(_T("%d"), m_uiAnim);
+	SetDlgItemTextW(IDC_EDITAnim, m_csAnim);
+
+	if (m_pSphereColl != nullptr)
+		m_pCurSelectObj->Set_AnimationIdx(m_uiAnim);
+	
+	
+	*pResult = 0;
+}
+
+
+void CColliderTool::OnEnChangeEditRadius()
+{
+	GetDlgItemText(IDC_EditRadius, m_csRadius);
+	if (m_pSphereColl != nullptr)
+		m_pSphereColl->Set_Radius(_tstof(m_csRadius));
+
 }

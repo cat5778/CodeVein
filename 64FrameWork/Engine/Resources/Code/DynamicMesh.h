@@ -29,21 +29,21 @@ public:
 private:
 
 	// 모든 뼈들을 순회하면서 뼈들이 갖고 있는 TransformationMatrix와 pParentMatrix를 결합하여 CombinedTransformationMatrix를 만들어주는 함수
-	void			Update_FrameMatrices(D3DXFRAME_DERIVED* pFrame, const _matrix* pParentMatrix);
+	void									Update_FrameMatrices(D3DXFRAME_DERIVED* pFrame, const _matrix* pParentMatrix);
 
 	// CombinedTransformationMatrix의 주소값을 얻어와서 채워주는 함수
-	void			SetUp_FrameMatrixPointer(D3DXFRAME_DERIVED* pFrame);
+	void									SetUp_FrameMatrixPointer(D3DXFRAME_DERIVED* pFrame);
 
 private:
-	D3DXFRAME*				m_pRootFrame;
-	CHierarchyLoader*		m_pLoader;
-	CAniCtrl*				m_pAniCtrl;
-	list<D3DXMESHCONTAINER_DERIVED*>			m_MeshContainerList;
+	D3DXFRAME*								m_pRootFrame;
+	CHierarchyLoader*						m_pLoader;
+	CAniCtrl*								m_pAniCtrl;
+	list<D3DXMESHCONTAINER_DERIVED*>		m_MeshContainerList;
 
 public:
-	static	CDynamicMesh*		Create(LPDIRECT3DDEVICE9 pGraphicDev, const _tchar* pFilePath, const _tchar* pFileName);
-	virtual CResources*			Clone(void);
-	virtual void				Free(void);
+	static	CDynamicMesh*					Create(LPDIRECT3DDEVICE9 pGraphicDev, const _tchar* pFilePath, const _tchar* pFileName);
+	virtual CResources*						Clone(void);
+	virtual void							Free(void);
 };
 
 END

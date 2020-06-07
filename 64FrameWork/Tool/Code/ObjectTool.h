@@ -2,8 +2,6 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 
-
-
 class CDynamicCamera;
 class CMyForm;
 class CKeyMgr;

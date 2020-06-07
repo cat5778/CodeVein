@@ -76,6 +76,9 @@
     <Filter Include="03. View\00. MyForm\00. Tab\03. ColliderTab">
       <UniqueIdentifier>{40278f54-4ec1-4426-929b-30ec07fb7fe3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="11. SphereCollider">
+      <UniqueIdentifier>{ac17df6e-c537-4b4c-b16b-efd764deec75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -141,6 +144,9 @@
     <ClInclude Include="..\Code\DynamicObject.h">
       <Filter>10. GameObject\20.TempObject\01. DynamicObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\SphereCollider.h">
+      <Filter>11. SphereCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -199,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\DynamicObject.cpp">
       <Filter>10. GameObject\20.TempObject\01. DynamicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SphereCollider.cpp">
+      <Filter>11. SphereCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

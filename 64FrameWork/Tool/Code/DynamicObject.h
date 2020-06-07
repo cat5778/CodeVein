@@ -26,7 +26,9 @@ public:
 	virtual _int			Update_GameObject(const _float& fTimeDelta) override;
 	virtual void			Render_GameObject(void) override;
 
-
+public:
+	_uint					Get_AnimationIdx() { return m_uiAni; }
+	void					Set_AnimationIdx(_uint uiAnim) { m_uiAni= uiAnim; }
 private:
 	HRESULT					Add_Component(void);
 private:
@@ -40,6 +42,7 @@ private:
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	TRANSFORM_INFO			m_tTransformInfo;
 	_bool					m_bIsRespawn = false;
+	_uint					m_uiAni = 0;
 public:
 	static CDynamicObject*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);
 	static CDynamicObject*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo);

@@ -623,7 +623,7 @@ void CObjectTool::OnDeltaposSpinScaleX(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	m_vScale.x = _tstof(m_csScale[0]);
-	
+
 	if (pNMUpDown->iDelta < 0)
 		m_vScale.x+=0.001f;
 	else

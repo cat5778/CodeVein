@@ -108,8 +108,6 @@ void CTestStage::Free(void)
 HRESULT CTestStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 {
 
-
-
 	m_pLayer= Engine::CLayer::Create();
 	NULL_CHECK_RETURN(m_pLayer, E_FAIL);
 

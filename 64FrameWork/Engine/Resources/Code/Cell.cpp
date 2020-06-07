@@ -167,8 +167,6 @@ void Engine::CCell::Render_Cell(void)
 	//m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	//m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
-
-
 	_vec3	vPoint[4];
 
 	vPoint[0] = m_vPoint[POINT_A];
