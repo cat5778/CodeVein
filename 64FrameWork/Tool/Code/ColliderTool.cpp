@@ -67,7 +67,6 @@ END_MESSAGE_MAP()
 
 void CColliderTool::OnBnClickedCollideleteButton()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
 
 
@@ -83,13 +82,16 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
 	_uint uiIdx = 0;
 	wstring wstrColl = m_csSelectMesh;
+	
 	wstrColl += L"_" + m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
 
 	while ((*m_ppGameObjectMap).find(wstrColl) != (*m_ppGameObjectMap).end())
 	{
+		wstrColl = m_csSelectMesh;
 		uiIdx++;
 		wstrColl +=  L"_"+ m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
 	}
+
 
 	(*m_ppGameObjectMap).insert(make_pair(wstrColl, pGameObject));
 
@@ -153,15 +155,53 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 
 void CColliderTool::OnBnClickedColliderSaveButton()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CFileDialog dlgFile(FALSE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ", this);
 
+	dlgFile.m_ofn.lpstrTitle = L"Colliders Save";
+
+	_tchar szPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szPath);
+	::PathRemoveFileSpec(szPath);
+	::PathRemoveFileSpec(szPath);
+
+	CString csDataPath = szPath;
+	csDataPath += ".\\Resource.\\Data.\\Collider";
+	dlgFile.m_ofn.lpstrInitialDir = csDataPath;
+	if (IDOK == dlgFile.DoModal())
+	{
+		Save_Text(dlgFile.GetPathName());
+
+	}
 	//TODO: Save Text연동
 }
 
 
 void CColliderTool::OnBnClickedColliderLoadButton()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	CFileDialog dlgFile(TRUE, L".txt", L".txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt||Data Files(*.dat) | *.dat | ", this);
+
+	dlgFile.m_ofn.lpstrTitle = L"Object Load";
+
+	_tchar szPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, szPath);
+	::PathRemoveFileSpec(szPath);
+	::PathRemoveFileSpec(szPath);
+	CString csDataPath = szPath;
+	csDataPath += ".\\Resource.\\Data.\\Collider";
+	dlgFile.m_ofn.lpstrInitialDir = csDataPath;
+
+	if (IDOK == dlgFile.DoModal())
+	{
+		Load_Text(dlgFile.GetPathName());
+
+	}
+
+
+
+
 }
 
 
@@ -329,25 +369,18 @@ HRESULT CColliderTool::Load_Text(const TCHAR * pFilePath)
 		fRadius = atof(cTemp);
 
 		COLL_DATA* pCollData = new COLL_DATA;
-		//pCollData->wstrObject= wstrTemp.find()
+		
 		wstring wstObject, wstrBone;
 		_uint uiIdx = 0;
 		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
-		//_uint uiNameCnt = wstrTemp.find_last_of(L'_');
-		//wstring wstrObjectName = wstrTemp.substr(0, uiNameCnt);
+		int a = 3;
+		wstObject += L"_0";
+		Engine::CGameObject* pGameObject = nullptr;
+		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
+		m_pSphereColl->Set_Radius(fRadius);
+		m_pSphereColl->Set_Position(vPos);
 
-		//_uint uiObjIdx = 0;
-		//uiObjIdx = _wtoi(wstrTemp.substr(uiNameCnt + 1, wstring::npos).c_str());
-
-		//Engine::CGameObject*		pGameObject = nullptr;
-		//pGameObject = CStaticObject::Create(m_pDevice, wstrObjectName, uiObjIdx, tInfo);
-
-
-		//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-		//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
-
-
-		//m_hInstStatic = m_InstanceTree.InsertItem(wstrTemp.c_str(), 0, 0, m_hStaticRoot, TVI_LAST);
+		(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
 
 
 
@@ -506,7 +539,7 @@ void CColliderTool::OnDeltaposSpinPosX(NMHDR *pNMHDR, LRESULT *pResult)
 	m_csPosition[0].Format(_T("%f"), m_vPosition.x);
 	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
 	if (m_pSphereColl!=nullptr)
-		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform",Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].x = m_vPosition.x;
+		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].x = m_vPosition.x;
 
 	*pResult = 0;
 }

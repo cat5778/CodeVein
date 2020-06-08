@@ -28,6 +28,7 @@ public:
 
 public:
 	void					Set_Radius(_float fRadius) { m_fRadius = fRadius; }
+	void					Set_Position(_vec3 vPos) { m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos; }
 	_float 					Get_Radius() { return m_fRadius; }
 
 	const Engine::_vec3*	Get_Position() { return m_pTransformCom->Get_Info(Engine::INFO_POS); }
