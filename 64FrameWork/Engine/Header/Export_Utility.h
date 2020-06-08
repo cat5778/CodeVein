@@ -9,7 +9,6 @@
 #include "Calculator.h"
 #include "LightMgr.h"
 #include "Collider.h"
-
 #include "PrototypeMgr.h"
 #include "Shader.h"
 #include "RenderTargetMgr.h"
@@ -41,6 +40,7 @@ inline const D3DLIGHT9*		Get_LightInfo(const _uint& iIndex = 0);
 inline HRESULT		Ready_Light(LPDIRECT3DDEVICE9 pGraphicDev,
 								const D3DLIGHT9* pLightInfo,
 								const _uint& iIndex);
+inline 	void			Render_Light(LPD3DXEFFECT& pEffect);
 
 // PrototypeMgr
 // Get
@@ -52,6 +52,8 @@ inline CComponent*		Clone_Prototype(const _tchar* pProtoTag);
 // RenderTargetMgr
 // Get
 // Set
+inline void				SetUp_OnShader(LPD3DXEFFECT& pEffect, const _tchar* pTargetTag, const char* pContantName);
+
 // General
 inline HRESULT			Ready_RenderTarget(LPDIRECT3DDEVICE9 pGraphicDev, const _tchar* pTargetTag, const _uint& iWidth, const _uint& iHeight, D3DFORMAT Format, D3DXCOLOR Color);
 inline HRESULT			Ready_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);

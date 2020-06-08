@@ -29,6 +29,7 @@ public:
 	void			Get_WorldMatrix(_matrix* pWorld) const;
 
 	void			Set_ParentMatrix(const _matrix* pMatrix);
+	void			Set_WorldMatrix(const _matrix* pMatrix);
 	const _matrix*	Get_WorldMatrixPointer(void)const { return &m_matWorld; }
 
 public:

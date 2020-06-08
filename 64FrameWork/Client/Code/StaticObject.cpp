@@ -55,24 +55,18 @@ void CStaticObject::Render_GameObject(void)
 	LPD3DXEFFECT	pEffect = m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	pEffect->AddRef();
-
 	_uint	iPassMax = 0;
-
 	SetUp_ConstantTable(pEffect);
-
 	pEffect->Begin(&iPassMax, 0);
-
 	pEffect->BeginPass(0);
-
 	m_pMeshCom->Render_Meshes(pEffect);
-
 	pEffect->EndPass();
 
 	pEffect->End();
 
-
-
 	Safe_Release(pEffect);
+
+
 
 }
 
@@ -84,10 +78,77 @@ HRESULT CStaticObject::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
+
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
+
+	Engine::SetUp_OnShader(pEffect, L"Target_Depth", "g_DepthTexture");
+
+	//_float		fRange = 5.f;
+	//pEffect->SetFloat("g_fRange", fRange);
+
+
+/*
+	_matrix			matWorld, matView, matProj;
+
+	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture1", 1);
+	m_pFilterCom->Set_Texture(pEffect, "g_FilterTexture");
+	m_pAuraCom->Set_Texture(pEffect, "g_AuraTexture");
+
+	pEffect->SetFloat("g_fDetail", 20.f);
+
+
+	const D3DLIGHT9*		pLight = Engine::Get_LightInfo(0);
+	NULL_CHECK_RETURN(pLight, S_OK);
+
+
+	pEffect->SetVector("g_vLightDir", &_vec4(pLight->Direction, 0.f));
+	pEffect->SetVector("g_vLightDiffuse", (_vec4*)&pLight->Diffuse);
+	pEffect->SetVector("g_vLightSpecular", (_vec4*)&pLight->Specular);
+	pEffect->SetVector("g_vLightAmbient", (_vec4*)&pLight->Ambient);
+
+
+	D3DMATERIAL9		tMtrlInfo;
+	ZeroMemory(&tMtrlInfo, sizeof(D3DMATERIAL9));
+
+	tMtrlInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tMtrlInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tMtrlInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tMtrlInfo.Emissive = D3DXCOLOR(0.f, 0.f, 0.f, 1.f);
+	tMtrlInfo.Power = 100.f;
+
+	pEffect->SetVector("g_vMtrlDiffuse", (_vec4*)&tMtrlInfo.Diffuse);
+	pEffect->SetVector("g_vMtrlSpecular", (_vec4*)&tMtrlInfo.Specular);
+	pEffect->SetVector("g_vMtrlAmbient", (_vec4*)&tMtrlInfo.Ambient);
+
+	_vec4		vCamPos;
+	D3DXMatrixInverse(&matView, NULL, &matView);
+	memcpy(&vCamPos, &matView.m[3][0], sizeof(_vec4));
+
+	pEffect->SetVector("g_vCamPos", &vCamPos);
+	pEffect->SetFloat("g_fPower", tMtrlInfo.Power);
+
+
+	_vec4		vPosition = _vec4(5.f, 0.f, 5.f, 1.f);
+
+	Engine::CTransform*		pPlayerTransform = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+
+	pEffect->SetVector("g_vAuraPos", &vPosition);
+
+	_float		fRange = 5.f;
+	pEffect->SetFloat("g_fRange", fRange);
+*/
 	return S_OK;
 
 }

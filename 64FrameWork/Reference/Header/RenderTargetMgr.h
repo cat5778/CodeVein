@@ -12,36 +12,37 @@ class ENGINE_DLL CRenderTargetMgr : public CBase
 	DECLARE_SINGLETON(CRenderTargetMgr)
 
 private:
-	explicit CRenderTargetMgr(void);
-	virtual ~CRenderTargetMgr(void);
+	explicit								CRenderTargetMgr(void);
+	virtual									~CRenderTargetMgr(void);
 
 public:
-	
+	void									SetUp_OnShader(LPD3DXEFFECT& pEffect, const _tchar* pTargetTag, const char* pContantName);
+
 
 public:
-	HRESULT			Ready_RenderTarget(LPDIRECT3DDEVICE9 pGraphicDev,
-										const _tchar* pTargetTag,
-										const _uint& iWidth,
-										const _uint& iHeight, 
-										D3DFORMAT Format, 
-										D3DXCOLOR Color);
+	HRESULT									Ready_RenderTarget(LPDIRECT3DDEVICE9 pGraphicDev,
+																const _tchar* pTargetTag,
+																const _uint& iWidth,
+																const _uint& iHeight, 
+																D3DFORMAT Format, 
+																D3DXCOLOR Color);
 
-	HRESULT			Ready_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
+	HRESULT									Ready_MRT(const _tchar* pMRTTag, const _tchar* pTargetTag);
 	
-	HRESULT			Begin_MRT(const _tchar* pMRTTag);
-	HRESULT			End_MRT(const _tchar* pMRTTag);
+	HRESULT									Begin_MRT(const _tchar* pMRTTag);
+	HRESULT									End_MRT(const _tchar* pMRTTag);
 
-	HRESULT			Ready_DebugBuffer(const _tchar* pTargetTag,
-										const _float& fX,
-										const _float& fY,
-										const _float& fSizeX,
-										const _float& fSizeY);
+	HRESULT									Ready_DebugBuffer(const _tchar* pTargetTag,
+																const _float& fX,
+																const _float& fY,
+																const _float& fSizeX,
+																const _float& fSizeY);
 
-	void			Render_DebugBuffer(const _tchar* pMRTTag);
+	void									Render_DebugBuffer(const _tchar* pMRTTag);
 
 private:
-	CRenderTarget*				Find_RenderTarget(const _tchar* pTargetTag);
-	list<CRenderTarget*>*		Find_MRT(const _tchar* pMRTTag);
+	CRenderTarget*							Find_RenderTarget(const _tchar* pTargetTag);
+	list<CRenderTarget*>*					Find_MRT(const _tchar* pMRTTag);
 
 
 
@@ -52,7 +53,7 @@ private:
 
 
 private:
-	virtual void		Free(void);
+	virtual void							Free(void);
 };
 
 END

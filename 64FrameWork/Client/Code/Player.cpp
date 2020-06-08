@@ -197,7 +197,6 @@ HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 	pEffect->SetVector("g_vLightSpecular", (_vec4*)&pLight->Specular);
 	pEffect->SetVector("g_vLightAmbient", (_vec4*)&pLight->Ambient);
 
-
 	D3DMATERIAL9		tMtrlInfo;
 	ZeroMemory(&tMtrlInfo, sizeof(D3DMATERIAL9));
 

@@ -35,7 +35,7 @@ private:
 	HRESULT		Ready_GameLogic_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_LightInfo(void);
-	HRESULT		Ready_Prototype(void);
+	//HRESULT		Ready_Prototype(void);
 
 	HRESULT		Load_Text(const _tchar * pFilePath);
 	wchar_t*	CharToWChar(const char* pstrSrc);

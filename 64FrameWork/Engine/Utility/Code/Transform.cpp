@@ -137,6 +137,11 @@ void Engine::CTransform::Set_ParentMatrix(const _matrix* pMatrix)
 	m_matWorld *= *pMatrix;
 }
 
+void CTransform::Set_WorldMatrix(const _matrix * pMatrix)
+{
+	m_matWorld = *pMatrix;
+}
+
 void Engine::CTransform::Get_WorldMatrix(_matrix* pWorld) const
 {
 	*pWorld = m_matWorld;

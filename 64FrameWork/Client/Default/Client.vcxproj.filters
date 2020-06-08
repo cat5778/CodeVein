@@ -88,6 +88,9 @@
     <Filter Include="02. GameObejct\01. Stage\06. Shield">
       <UniqueIdentifier>{79a75905-f53d-4da7-97b8-630c16a01d2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObejct\01. Stage\07. Effect">
+      <UniqueIdentifier>{ab92ecc8-6f4f-4843-bb0e-b0412f6e6f0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -147,6 +150,9 @@
     <ClInclude Include="..\Code\StaticObject.h">
       <Filter>02. GameObejct\02. Public\02 StaticObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Effect.h">
+      <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -202,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\StaticObject.cpp">
       <Filter>02. GameObejct\02. Public\02 StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Effect.cpp">
+      <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

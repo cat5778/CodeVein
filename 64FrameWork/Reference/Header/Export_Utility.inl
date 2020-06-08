@@ -54,6 +54,12 @@ HRESULT		Ready_Light(LPDIRECT3DDEVICE9 pGraphicDev,
 {
 	return CLightMgr::GetInstance()->Ready_Light(pGraphicDev, pLightInfo, iIndex);
 }
+
+void			Render_Light(LPD3DXEFFECT& pEffect)
+{
+	CLightMgr::GetInstance()->Render_Light(pEffect);
+}
+
 // PrototypeMgr
 // Get
 // Set
@@ -65,6 +71,11 @@ HRESULT			Ready_Prototype(const _tchar* pProtoTag, CComponent* pInstance)
 CComponent*		Clone_Prototype(const _tchar* pProtoTag)
 {
 	return CPrototypeMgr::GetInstance()->Clone_Prototype(pProtoTag);
+}
+void SetUp_OnShader(LPD3DXEFFECT & pEffect, const _tchar * pTargetTag, const char * pContantName)
+{
+	CRenderTargetMgr::GetInstance()->SetUp_OnShader(pEffect, pTargetTag, pContantName);
+
 }
 // RenderTargetMgr
 // Get

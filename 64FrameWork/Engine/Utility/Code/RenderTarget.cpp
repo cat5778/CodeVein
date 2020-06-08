@@ -159,3 +159,9 @@ void CRenderTarget::Render_DebugBuffer(void)
 	m_pGraphicDev->SetIndices(m_pIB);
 	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
 }
+
+void CRenderTarget::SetUp_OnShader(LPD3DXEFFECT & pEffect, const char * pContantName)
+{
+	pEffect->SetTexture(pContantName, m_pTargetTexture);
+
+}

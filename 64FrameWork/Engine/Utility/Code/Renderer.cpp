@@ -7,18 +7,80 @@ USING(Engine)
 IMPLEMENT_SINGLETON(CRenderer)
 
 Engine::CRenderer::CRenderer(void)
+	: m_pVB(nullptr)
+	, m_pIB(nullptr)
 {
 
 }
 
 Engine::CRenderer::~CRenderer(void)
 {
+	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
+
 	Free();
 }
 
 void CRenderer::Set_Perspective(const _matrix & matPerspective)
 {
 	m_matPerspective = matPerspective;
+}
+
+HRESULT CRenderer::Ready_Renderer(LPDIRECT3DDEVICE9 & pGraphicDev)
+{
+	FAILED_CHECK_RETURN(pGraphicDev->CreateVertexBuffer(sizeof(VTXSCREEN) * 4,
+		0,
+		FVF_SCREEN,
+		D3DPOOL_MANAGED,
+		&m_pVB,
+		NULL),
+		E_FAIL);
+
+
+	FAILED_CHECK_RETURN(pGraphicDev->CreateIndexBuffer(sizeof(INDEX16) * 2,	// 생성할 인덱스 버퍼의 크기
+		0,					// 버퍼의 종류(숫자가 0인 경우 정적 버퍼)
+		D3DFMT_INDEX16,			// 생성하는 인덱스의 속성값
+		D3DPOOL_MANAGED,	// 메모리 풀의 설정
+		&m_pIB,
+		NULL),
+		E_FAIL);
+
+	D3DVIEWPORT9		ViewPort;
+	pGraphicDev->GetViewport(&ViewPort);
+
+	VTXSCREEN*		pVertex = nullptr;
+
+	m_pVB->Lock(0, 0, (void**)&pVertex, 0);
+
+	pVertex[0].vPos = _vec4(0.f, 0.f, 0.f, 1.f);
+	pVertex[0].vTexUV = _vec2(0.f, 0.f);
+
+	pVertex[1].vPos = _vec4(_float(ViewPort.Width), 0.f, 0.f, 1.f);
+	pVertex[1].vTexUV = _vec2(1.f, 0.f);
+
+	pVertex[2].vPos = _vec4(_float(ViewPort.Width), _float(ViewPort.Height), 0.f, 1.f);
+	pVertex[2].vTexUV = _vec2(1.f, 1.f);
+
+	pVertex[3].vPos = _vec4(0.f, _float(ViewPort.Height), 0.f, 1.f);
+	pVertex[3].vTexUV = _vec2(0.f, 1.f);
+
+	m_pVB->Unlock();
+
+	INDEX16*		pIndex = nullptr;
+
+	m_pIB->Lock(0, 0, (void**)&pIndex, 0);
+
+	// 0
+	pIndex[0]._0 = 0;
+	pIndex[0]._1 = 1;
+	pIndex[0]._2 = 2;
+
+	// 1
+	pIndex[1]._0 = 0;
+	pIndex[1]._1 = 2;
+	pIndex[1]._2 = 3;
+
+	m_pIB->Unlock();
 }
 
 void Engine::CRenderer::Add_RenderGroup(RENDERID eGroup, CGameObject* pGameObject)
@@ -55,11 +117,15 @@ void CRenderer::Render_GameObject(LPDIRECT3DDEVICE9 & pGraphicDev)
 	Render_Priority(pGraphicDev);
 
 	Render_Defferd(pGraphicDev);
+	Render_LightAcc(pGraphicDev);
+
+	Render_Blend(pGraphicDev);
 
 	Render_Alpha(pGraphicDev);
 	Render_UI(pGraphicDev);
 
 	Engine::Render_DebugBuffer(L"MRT_Defferd");
+	Engine::Render_DebugBuffer(L"MRT_LightAcc");
 
 	Clear_RenderGroup();
 }
@@ -156,6 +222,59 @@ void CRenderer::Render_UI(LPDIRECT3DDEVICE9 & pGraphicDev)
 	pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	pGraphicDev->SetRenderState(D3DRS_ZENABLE, TRUE);
 	pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+}
+
+void CRenderer::Render_Blend(LPDIRECT3DDEVICE9 & pGraphicDev)
+{
+	CShader*	pShader = dynamic_cast<Engine::CShader*>(Engine::Clone_Prototype(L"Shader_Blend"));
+	NULL_CHECK(pShader);
+
+	LPD3DXEFFECT pEffect = pShader->Get_EffectHandle();
+	pEffect->AddRef();
+
+	Engine::SetUp_OnShader(pEffect, L"Target_Albedo", "g_AlbedoTexture");
+	Engine::SetUp_OnShader(pEffect, L"Target_Light", "g_LightTexture");
+	Engine::SetUp_OnShader(pEffect, L"Target_Specular", "g_SpecularTexture");
+
+	pEffect->Begin(NULL, 0);
+	pEffect->BeginPass(0);
+
+	pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTXSCREEN));
+	pGraphicDev->SetFVF(FVF_SCREEN);
+	pGraphicDev->SetIndices(m_pIB);
+	pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
+
+	pEffect->EndPass();
+	pEffect->End();
+
+
+	Safe_Release(pEffect);
+	Safe_Release(pShader);
+}
+
+void CRenderer::Render_LightAcc(LPDIRECT3DDEVICE9 & pGraphicDev)
+{
+	Engine::Begin_MRT(L"MRT_LightAcc");
+
+	CShader*	pShader = dynamic_cast<Engine::CShader*>(Engine::Clone_Prototype(L"Shader_Light"));
+	NULL_CHECK(pShader);
+
+	LPD3DXEFFECT pEffect = pShader->Get_EffectHandle();
+	pEffect->AddRef();
+
+	Engine::SetUp_OnShader(pEffect, L"Target_Normal", "g_NormalTexture");
+	Engine::SetUp_OnShader(pEffect, L"Target_Depth", "g_DepthTexture");
+
+	pEffect->Begin(NULL, 0);
+
+	Engine::Render_Light(pEffect);
+
+	pEffect->End();
+
+	Engine::End_MRT(L"MRT_LightAcc");
+
+	Safe_Release(pEffect);
+	Safe_Release(pShader);
 }
 
 void Engine::CRenderer::Render_Defferd(LPDIRECT3DDEVICE9& pGraphicDev)

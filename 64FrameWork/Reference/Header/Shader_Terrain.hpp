@@ -6,9 +6,9 @@ sampler BaseSampler1 = sampler_state
 {
 	texture = g_BaseTexture1;
 
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
+minfilter = linear;
+magfilter = linear;
+mipfilter = linear;
 };
 
 texture g_FilterTexture;
@@ -17,9 +17,9 @@ sampler FilterSampler = sampler_state
 {
 	texture = g_FilterTexture;
 
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
+minfilter = linear;
+magfilter = linear;
+mipfilter = linear;
 };
 
 texture g_AuraTexture;
@@ -28,9 +28,9 @@ sampler AuraSampler = sampler_state
 {
 	texture = g_AuraTexture;
 
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
+minfilter = linear;
+magfilter = linear;
+mipfilter = linear;
 };
 
 
@@ -55,19 +55,19 @@ float		g_fRange;
 
 struct VS_IN
 {
-	vector		vPosition	: POSITION;	
-	vector		vNormal		: NORMAL;
-	float2		vTexUV		: TEXCOORD0;
+	vector		vPosition : POSITION;
+	vector		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
 
 };
 
 struct VS_OUT
 {
-	vector		vPosition	: POSITION;
-	vector		vShade		: COLOR0;
-	vector		vSpecular	: COLOR1;
-	float2		vTexUV		: TEXCOORD0;
-	vector		vWorldPos	: TEXCOORD1;
+	vector		vPosition : POSITION;
+	vector		vNormal : NORMAL;
+	float2		vTexUV : TEXCOORD0;
+	vector		vWorldPos : TEXCOORD1;
+	vector		vProjPos : TEXCOORD2;
 
 };
 
@@ -83,58 +83,43 @@ VS_OUT		VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition.xyz, 1.f), matWVP);
 
-	vector vWorldNormal = mul(vector(In.vNormal.xyz, 0.f), g_matWorld);
-	vector vWorldLight = g_vLightDir * -1.f;
-
-	float fIntensity = saturate(dot(normalize(vWorldNormal), normalize(vWorldLight)));
-	// float fIntensity = max(dot(normalize(vWorldNormal), normalize(vWorldLight)), 0.f);
-	
-	Out.vShade = fIntensity;
-	Out.vShade.a = 1.f;
-
-	// 정반사광
-	vector		vReflect = reflect(normalize(g_vLightDir), normalize(vWorldNormal));
 	vector		vWorldPos = mul(vector(In.vPosition.xyz, 1.f), g_matWorld);
-	vector		vLook = vWorldPos - g_vCamPos;
-
-	Out.vSpecular = pow(saturate(dot(normalize(vReflect), (normalize(vLook) * -1.f))), g_fPower);
-	Out.vSpecular.a = 1.f;
-
+	Out.vNormal = normalize(mul(vector(In.vNormal.xyz, 0.f), g_matWorld));
 	Out.vTexUV = In.vTexUV;
 	Out.vWorldPos = vWorldPos;
+
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
 
 struct PS_IN // 픽셀 쉐이더 구조체에서 POSITION이란 Semantic은 사용할 수 없다.
 {
-	vector			vShade		: COLOR0;
-	vector			vSpecular	: COLOR1;
-	float2			vTexUV		: TEXCOORD0;
-	vector			vWorldPos	: TEXCOORD1;
+
+	vector			vNormal : NORMAL;
+	float2			vTexUV : TEXCOORD0;
+	vector			vWorldPos : TEXCOORD1;
+	vector			vProjPos : TEXCOORD2;
 };
 
 struct PS_OUT
 {
 	vector			vColor : COLOR0;
 	vector			vNormal : COLOR1;
+	vector			vDepth : COLOR2;
 };
 
 PS_OUT		PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
-	
-	vector vColor   = tex2D(BaseSampler, In.vTexUV * g_fDetail);
-	vector vColor1  = tex2D(BaseSampler1, In.vTexUV* g_fDetail);
+
+	vector vColor = tex2D(BaseSampler, In.vTexUV * g_fDetail);
+	vector vColor1 = tex2D(BaseSampler1, In.vTexUV* g_fDetail);
 
 	vector	vFilter = tex2D(FilterSampler, In.vTexUV);
 
-	Out.vColor = vColor * vFilter + vColor1 * (1.f - vFilter); 
-
-
-	Out.vColor = (Out.vColor * In.vShade) * (g_vLightDiffuse * g_vMtrlDiffuse) + (g_vLightAmbient * g_vMtrlAmbient)
-		+ (In.vSpecular * (g_vLightSpecular * g_vMtrlSpecular));	
-
+	Out.vColor = vColor * vFilter + vColor1 * (1.f - vFilter);
+	Out.vColor.a = 1.f;
 
 	vector		vBrushColor = (vector)0.f;
 
@@ -151,11 +136,15 @@ PS_OUT		PS_MAIN(PS_IN In)
 		vBrushColor = tex2D(AuraSampler, vTexUV);
 	}
 
-
-
 	Out.vColor += vBrushColor;
 
-	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, // z나누기를 수행하여 0~1사이의 투영 z값을 만들고, 이를 텍스쳐 uv좌표로 판단
+		In.vProjPos.w * 0.001f,  // 뷰스페이스 상태의 z값을 텍스쳐의 uv로 변환
+		0.f,
+		0.f);
+
 
 	return Out;
 }
@@ -163,9 +152,8 @@ PS_OUT		PS_MAIN(PS_IN In)
 technique Default_Device
 {
 	pass
-	{
-
-		vertexshader = compile vs_3_0 VS_MAIN();		
-		pixelshader  = compile ps_3_0 PS_MAIN();	
-	}
+{
+	vertexshader = compile vs_3_0 VS_MAIN();
+pixelshader = compile ps_3_0 PS_MAIN();
+}
 };

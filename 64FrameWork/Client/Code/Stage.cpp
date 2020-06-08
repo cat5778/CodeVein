@@ -256,6 +256,19 @@ HRESULT CStage::Ready_LightInfo(void)
 	return S_OK;
 }
 
+//HRESULT CStage::Ready_Prototype(void)
+//{
+//	Engine::CComponent*		pComponent = nullptr;
+//
+//	// Optimization
+//	pComponent = Engine::COptimization::Create(m_pGraphicDev, Engine::COptimization::Enable, 129, 129);
+//	NULL_CHECK_RETURN(pComponent, E_FAIL);
+//	Engine::Ready_Prototype(L"Proto_Optimization", pComponent);
+//
+//
+//	return S_OK;
+//}
+//
 
 HRESULT CStage::Load_Text(const _tchar * pFilePath)
 {

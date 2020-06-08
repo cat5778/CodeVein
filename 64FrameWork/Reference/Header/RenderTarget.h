@@ -9,26 +9,27 @@ BEGIN(Engine)
 class ENGINE_DLL CRenderTarget : public CBase
 {
 private:
-	explicit CRenderTarget(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CRenderTarget(void);
+	explicit					CRenderTarget(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual						~CRenderTarget(void);
 
 public:
-	HRESULT		Ready_RenderTarget(const _uint& iWidth, 
-									const _uint& iHeight, 
-									D3DFORMAT Format, 
-									D3DXCOLOR Color);
+	HRESULT						Ready_RenderTarget(const _uint& iWidth, 
+													const _uint& iHeight, 
+													D3DFORMAT Format, 
+													D3DXCOLOR Color);
 
-	void		SetUp_RenderTarget(const _uint& iIndex);
+	void						SetUp_RenderTarget(const _uint& iIndex);
 
-	void		Clear_RenderTarget(void);
-	void		Release_OnGraphicDev(const _uint& iIndex);
+	void						Clear_RenderTarget(void);
+	void						Release_OnGraphicDev(const _uint& iIndex);
 
-	HRESULT			Ready_DebugBuffer(const _float& fX,
-										const _float& fY,
-										const _float& fSizeX,
-										const _float& fSizeY);
+	HRESULT						Ready_DebugBuffer(const _float& fX,
+													const _float& fY,
+													const _float& fSizeX,
+													const _float& fSizeY);
 
-	void			Render_DebugBuffer(void);
+	void						Render_DebugBuffer(void);
+	void						SetUp_OnShader(LPD3DXEFFECT& pEffect, const char* pContantName);
 
 
 private:

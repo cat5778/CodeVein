@@ -13,6 +13,16 @@ Engine::CRenderTargetMgr::~CRenderTargetMgr(void)
 	Free();
 }
 
+void CRenderTargetMgr::SetUp_OnShader(LPD3DXEFFECT & pEffect, const _tchar * pTargetTag, const char * pContantName)
+{
+	CRenderTarget*		pRenderTarget = Find_RenderTarget(pTargetTag);
+
+	if (nullptr == pRenderTarget)
+		return;
+
+	pRenderTarget->SetUp_OnShader(pEffect, pContantName);
+}
+
 HRESULT Engine::CRenderTargetMgr::Ready_RenderTarget(LPDIRECT3DDEVICE9 pGraphicDev,
 													const _tchar* pTargetTag,
 													const _uint& iWidth,

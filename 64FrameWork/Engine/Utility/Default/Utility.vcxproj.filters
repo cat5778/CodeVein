@@ -52,11 +52,14 @@
     <Filter Include="10. RenderTarget">
       <UniqueIdentifier>{45b6e1c9-813e-43c1-81ae-5362a7160e45}</UniqueIdentifier>
     </Filter>
-    <Filter Include="09. Shader\hpp">
-      <UniqueIdentifier>{883f4169-4817-4460-9e1d-082e0b367294}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10. RenderTarget\Manager">
       <UniqueIdentifier>{56da7522-3688-47dd-bb1e-10695a74652f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. Shader\Genaralhpp">
+      <UniqueIdentifier>{883f4169-4817-4460-9e1d-082e0b367294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09. Shader\Defferdhpp">
+      <UniqueIdentifier>{4a4209fe-c890-4d92-a83b-fd40a69df434}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,19 +115,28 @@
       <Filter>09. Shader</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Shader_Base.hpp">
-      <Filter>09. Shader\hpp</Filter>
+      <Filter>09. Shader\Genaralhpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Shader_Mesh.hpp">
-      <Filter>09. Shader\hpp</Filter>
+      <Filter>09. Shader\Genaralhpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Shader_Sample.hpp">
-      <Filter>09. Shader\hpp</Filter>
+      <Filter>09. Shader\Genaralhpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Shader_Terrain.hpp">
-      <Filter>09. Shader\hpp</Filter>
+      <Filter>09. Shader\Genaralhpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\RenderTargetMgr.h">
       <Filter>10. RenderTarget\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Effect.hpp">
+      <Filter>09. Shader\Defferdhpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Light.hpp">
+      <Filter>09. Shader\Defferdhpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Blend.hpp">
+      <Filter>09. Shader\Defferdhpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

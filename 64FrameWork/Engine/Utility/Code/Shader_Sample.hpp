@@ -1,6 +1,6 @@
 matrix		g_matWorld;			// 상수 테이블
-matrix		g_matView;	
-matrix		g_matProj;	
+matrix		g_matView;
+matrix		g_matProj;
 
 texture		g_BaseTexture;
 
@@ -8,18 +8,18 @@ sampler BaseSampler = sampler_state
 {
 	texture = g_BaseTexture;
 
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
+minfilter = linear;
+magfilter = linear;
+mipfilter = linear;
 
-	/*addressU = mirror;
-	addressV = mirror;*/
+/*addressU = mirror;
+addressV = mirror;*/
 };
 
 struct VS_IN
 {
-	vector		vPosition	: POSITION;	
-	float2		vTexUV		: TEXCOORD0;
+	vector		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
 
 };
 
@@ -62,7 +62,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);	// 2차원 상태의 텍스쳐의 UV좌표에 해당하는 값을 추출하는 함수(반환 타입은 VECTOR)
 
-	//Out.vColor.rg = 0.5f;
+												//Out.vColor.rg = 0.5f;
 
 	return Out;
 }
@@ -71,19 +71,19 @@ technique Default_Device
 {
 	// 기능의 캡슐화
 	pass		Temp
-	{
-		ALPHABLENDENABLE = true;
-		SrcBlENd = srcalpha;
-		DESTblend = invsrcalpha;
+{
+	ALPHABLENDENABLE = true;
+SrcBlENd = srcalpha;
+DESTblend = invsrcalpha;
 
-		vertexshader = compile vs_3_0 VS_MAIN();		// 버텍스 쉐이더의 진입점 함수 정의
-		pixelshader  = compile ps_3_0 PS_MAIN();		// 버텍스 쉐이더의 진입점 함수 정의
-	}
+vertexshader = compile vs_3_0 VS_MAIN();		// 버텍스 쉐이더의 진입점 함수 정의
+pixelshader = compile ps_3_0 PS_MAIN();		// 버텍스 쉐이더의 진입점 함수 정의
+}
 
-	pass	
-	{
-		vertexshader = compile vs_3_0 VS_MAIN();	
-		pixelshader = compile ps_3_0 PS_MAIN();	
-	}
+pass
+{
+	vertexshader = compile vs_3_0 VS_MAIN();
+pixelshader = compile ps_3_0 PS_MAIN();
+}
 
 };

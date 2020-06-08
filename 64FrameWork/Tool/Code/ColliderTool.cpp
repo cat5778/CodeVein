@@ -373,7 +373,8 @@ HRESULT CColliderTool::Load_Text(const TCHAR * pFilePath)
 		wstring wstObject, wstrBone;
 		_uint uiIdx = 0;
 		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
-		int a = 3;
+
+
 		wstObject += L"_0";
 		Engine::CGameObject* pGameObject = nullptr;
 		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
