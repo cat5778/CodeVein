@@ -76,7 +76,6 @@ HRESULT CObjectTool::Update(const _float & fTimeDelta)
 		Move_Obj();
 
 
-			//TODO: 매쉬 피킹된곳에 오브젝트 두기
 		if (m_pCamera->IsPick())
 		{
 			m_wstrSelectObject = m_pCamera->Get_PickName();
@@ -421,7 +420,7 @@ BOOL CObjectTool::OnInitDialog()
 		if (pPathInfo->wstrMeshType.compare(L"StaticMesh") == 0) //스태틱매쉬 인지 검사
 		{
 			bool bIsMap = false;
-			if (m_StaticTree.ItemHasChildren(m_hStaticMesh)) 
+			if (m_StaticTree.ItemHasChildren(m_hStaticMesh))
 			{
 				m_hMap = m_StaticTree.GetChildItem(m_hStaticMesh);
 				CString csMap = m_StaticTree.GetItemText(m_hMap);

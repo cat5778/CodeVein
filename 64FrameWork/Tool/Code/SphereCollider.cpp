@@ -15,6 +15,13 @@ CSphereCollider::CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjN
 	m_wstrBone = wstrBone;
 }
 
+CSphereCollider::CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjName, wstring wstBone, _bool bisStaticMesh)
+	: Engine::CGameObject(pGraphicDev)
+{
+	m_ObjName = wstrObjName;
+	m_wstrBone = wstBone;
+	m_bIsStatic = bisStaticMesh;
+}
 CSphereCollider::~CSphereCollider()
 {
 }
@@ -28,36 +35,10 @@ HRESULT CSphereCollider::Ready_GameObject()
 
 _int CSphereCollider::Update_GameObject(const _float & fTimeDelta)
 {
-	if (nullptr == m_pParentBoneMatrix && !m_ObjName.empty())
-	{
-		Engine::CDynamicMesh*	pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", m_ObjName.c_str(), L"Com_Mesh", Engine::ID_STATIC));
-		NULL_CHECK_RETURN(pMeshCom, 0);
-
-		string strBone ;
-		strBone.assign(m_wstrBone.begin(), m_wstrBone.end());
-		const char* pszName = strBone.c_str();
-		
-		//const Engine::D3DXFRAME_DERIVED* pBone = pMeshCom->Get_FrameByName("RightHandAttach");
-		const Engine::D3DXFRAME_DERIVED* pBone = pMeshCom->Get_FrameByName(pszName);
-		NULL_CHECK_RETURN(pBone, 0);
-
-		m_pParentBoneMatrix = &pBone->CombinedTransformationMatrix;
-
-		Engine::CTransform*	pObjTransCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", m_ObjName.c_str(), L"Com_Transform", Engine::ID_DYNAMIC));
-		NULL_CHECK_RETURN(pObjTransCom, 0);
-
-		m_pParentWorldMatrix = pObjTransCom->Get_WorldMatrixPointer();
-
-	}
+	if (m_bIsStatic)
+		Set_SMParentMatrix(fTimeDelta);
 	else
-	{
-		Engine::CGameObject::Update_GameObject(fTimeDelta);
-		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
-		m_pTransformCom->Set_Scale(m_fRadius, m_fRadius, m_fRadius);
-		m_pTransformCom->Move_Pos(&m_vPos);
-
-		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-	}
+		Set_DMParentMatrix(fTimeDelta);
 
 
 	return S_OK;
@@ -94,13 +75,14 @@ HRESULT CSphereCollider::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
+
+#ifdef _DEBUG
 	pComponent = m_pRendererCom = Engine::Get_Renderer();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	pComponent->AddRef();
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
 
-
-
+#endif // _DEBUG
 	return S_OK;
 }
 
@@ -132,31 +114,50 @@ void CSphereCollider::Ready_SphereMesh()
 
 }
 
-void CSphereCollider::Render_Mesh()
+
+
+HRESULT CSphereCollider::Set_DMParentMatrix(_float fTimeDelta)
+{
+	if (nullptr == m_pParentBoneMatrix && !m_ObjName.empty())
+	{
+		Engine::CDynamicMesh*	pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", m_ObjName.c_str(), L"Com_Mesh", Engine::ID_STATIC));
+		NULL_CHECK_RETURN(pMeshCom, 0);
+
+		string strBone;
+		strBone.assign(m_wstrBone.begin(), m_wstrBone.end());
+		const char* pszName = strBone.c_str();
+
+		//const Engine::D3DXFRAME_DERIVED* pBone = pMeshCom->Get_FrameByName("RightHandAttach");
+		const Engine::D3DXFRAME_DERIVED* pBone = pMeshCom->Get_FrameByName(pszName);
+		NULL_CHECK_RETURN(pBone, 0);
+
+		m_pParentBoneMatrix = &pBone->CombinedTransformationMatrix;
+
+		Engine::CTransform*	pObjTransCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", m_ObjName.c_str(), L"Com_Transform", Engine::ID_DYNAMIC));
+		NULL_CHECK_RETURN(pObjTransCom, 0);
+
+		m_pParentWorldMatrix = pObjTransCom->Get_WorldMatrixPointer();
+
+	}
+	else
+	{
+		Engine::CGameObject::Update_GameObject(fTimeDelta);
+		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+		m_pTransformCom->Set_Scale(m_fRadius, m_fRadius, m_fRadius);
+		m_pTransformCom->Move_Pos(&m_vPos);
+
+#ifdef _DEBUG
+		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+#endif // _DEBUG
+
+	}
+	return S_OK;
+}
+
+HRESULT CSphereCollider::Set_SMParentMatrix(_float fTimeDelta)
 {
 
-	if (m_pSphereMesh != nullptr)
-	{
-		//_matrix  matScale, matTrans;
-
-		//D3DXMatrixTranslation(&matTrans, );
-		//D3DXMatrixScaling(&matScale, );
-		//m_pTransformCom->Get_WorldMatrix(&m_matSphereWorld);
-		//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_matSphereWorld);
-
-		_matrix matOldWorld;
-	
-		m_pGraphicDev->BeginScene();
-		m_pGraphicDev->GetTransform(D3DTS_WORLD, &matOldWorld);
-		m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
-
-		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-		m_pSphereMesh->DrawSubset(0);
-		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-		m_pGraphicDev->SetTransform(D3DTS_WORLD, &matOldWorld);
-		m_pGraphicDev->EndScene();
-	}
-
+	return S_OK;
 }
 
 
@@ -172,6 +173,15 @@ CSphereCollider * CSphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 CSphereCollider * CSphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjName, wstring wstBone)
 {
 	CSphereCollider*	pInstance = new CSphereCollider(pGraphicDev, wstrObjName,  wstBone);
+
+	if (FAILED(pInstance->Ready_GameObject()))
+		Engine::Safe_Release(pInstance);
+
+	return pInstance;
+}
+CSphereCollider * CSphereCollider::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjName, wstring wstBone, _bool bisStaticMesh)
+{
+	CSphereCollider*	pInstance = new CSphereCollider(pGraphicDev, wstrObjName, wstBone,bisStaticMesh);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);

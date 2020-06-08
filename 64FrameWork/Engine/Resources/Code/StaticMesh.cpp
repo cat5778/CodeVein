@@ -122,7 +122,7 @@ HRESULT Engine::CStaticMesh::Ready_Meshes(const _tchar* pFilePath, const _tchar*
 	m_pMesh->UnlockVertexBuffer();
 
 	m_pMtrl = (D3DXMATERIAL*)m_pSubsetBuffer->GetBufferPointer();
-
+	
 	m_ppTexture = new LPDIRECT3DTEXTURE9[m_dwSubsetCnt];
 
 	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)

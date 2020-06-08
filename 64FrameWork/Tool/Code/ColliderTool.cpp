@@ -33,12 +33,13 @@ void CColliderTool::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_DyMeshTREE, m_ObjectTree);
 	DDX_Control(pDX, IDC_BoneTREE, m_BoneTree);
-	DDX_Control(pDX, IDC_TREE1, m_ColliderTree);
 	DDX_Control(pDX, IDC_EditPosX, m_EditPositionX);
 	DDX_Control(pDX, IDC_EditPosY, m_EditPositionY);
 	DDX_Control(pDX, IDC_EditPosZ, m_EditPositionZ);
 	DDX_Control(pDX, IDC_EditRadius, m_EditRadius);
 	DDX_Control(pDX, IDC_EDITAnim, m_EditAnim);
+	DDX_Control(pDX, IDC_ColliderTree, m_ColliderTree);
+	DDX_Control(pDX, IDC_CHECKBone, m_CheckBone);
 }
 
 
@@ -55,6 +56,8 @@ BEGIN_MESSAGE_MAP(CColliderTool, CDialogEx)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINRadius, &CColliderTool::OnDeltaposSpinRadius)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINAnim, &CColliderTool::OnDeltaposSpinAnim)
 	ON_EN_CHANGE(IDC_EditRadius, &CColliderTool::OnEnChangeEditRadius)
+	ON_EN_CHANGE(IDC_EDITBone, &CColliderTool::OnEnChangeEditBone)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_ColliderTree, &CColliderTool::OnTvnSelchangedColliderTree)
 END_MESSAGE_MAP()
 
 
@@ -71,8 +74,22 @@ void CColliderTool::OnBnClickedCollideleteButton()
 void CColliderTool::OnBnClickedClliderCreateButton()
 {
 	Engine::CGameObject* pGameObject=nullptr;
-	pGameObject=m_pSphereColl =CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
-	wstring wstrColl = m_wstrSelectBone + L"_SphereCollider";
+	if (m_CheckBone.GetCheck())
+	{
+		m_wstrSelectBone = m_csEditBone;
+		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
+	}
+	else
+		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
+	_uint uiIdx = 0;
+	wstring wstrColl = m_csSelectMesh;
+	wstrColl += L"_" + m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
+
+	while ((*m_ppGameObjectMap).find(wstrColl) != (*m_ppGameObjectMap).end())
+	{
+		uiIdx++;
+		wstrColl +=  L"_"+ m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
+	}
 
 	(*m_ppGameObjectMap).insert(make_pair(wstrColl, pGameObject));
 
@@ -87,12 +104,58 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
 
 
+
+
+	_bool bIsObject=false;
+	if (m_ColliderTree.GetCount()>0)
+	{ 
+		CString csObject= m_ColliderTree.GetItemText(m_hObject);
+		if (csObject.Find(m_wstrSelectObject.c_str()) != -1) //같은 그룹 잇음
+		{
+			bIsObject = true;
+			m_hBone = m_ColliderTree.InsertItem(wstrColl.c_str(), 0, 0, m_hObject, TVI_SORT);
+		}
+		if (!bIsObject)
+		{
+			while (m_hObject = m_ColliderTree.GetNextSiblingItem(m_hObject))//
+			{
+				csObject= m_ColliderTree.GetItemText(m_hObject);
+				if (csObject.Find(m_wstrSelectObject.c_str()) != -1) //같은 그룹 잇음
+				{
+					bIsObject= true;
+					m_hBone = m_ColliderTree.InsertItem(wstrColl.c_str(), 0, 0, m_hObject, TVI_SORT);
+				}
+			}
+		}
+		if (!bIsObject)
+		{
+			m_hObject = m_ColliderTree.InsertItem(m_wstrSelectObject.c_str(), 0, 0, TVI_ROOT, TVI_SORT);
+			m_hBone = m_ColliderTree.InsertItem(wstrColl.c_str(), 0, 0, m_hObject, TVI_SORT);
+		}
+	}
+	else 
+	{
+		m_hObject = m_ColliderTree.InsertItem(m_wstrSelectObject.c_str(), 0, 0, TVI_ROOT, TVI_SORT);
+		m_hBone = m_ColliderTree.InsertItem(wstrColl.c_str(), 0, 0, m_hObject, TVI_SORT);
+	}
+
+
+
+
+
+	
+	//m_BoneTree.InsertItem(wstrBone.c_str(), 0, 0, TVI_ROOT, TVI_SORT); //<-TODO: 고치는중 
+
+
+
 }
 
 
 void CColliderTool::OnBnClickedColliderSaveButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	//TODO: Save Text연동
 }
 
 
@@ -150,6 +213,7 @@ HRESULT CColliderTool::Update(const _float & fTimeDelta)
 					if (!bIsCompare)
 					{
 						m_hInstDynamic = m_ObjectTree.InsertItem(wstrObjName.c_str(), 0, 0, m_hDynamicRoot, TVI_LAST);
+
 						m_wstrSelectObject= pObject.first;
 					}
 				}
@@ -174,7 +238,7 @@ void CColliderTool::Get_BoneName()
 		return;
 	}
 	m_BoneTree.DeleteAllItems();
-
+	int a = 0;
 	list<Engine::D3DXMESHCONTAINER_DERIVED*>* list_Mesh = m_pDynamicMesh->Get_MeshContainerList();
 	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator iter = list_Mesh->begin();
 	list<Engine::D3DXMESHCONTAINER_DERIVED*>::iterator end_iter = list_Mesh->end();
@@ -200,6 +264,111 @@ void CColliderTool::Get_BoneName()
 		}
 	}
 
+
+}
+
+HRESULT CColliderTool::Save_Text(const TCHAR * pFilePath)
+{
+	ofstream fout;
+	fout.open(pFilePath, ios::trunc);
+	if (fout.fail())
+		return E_FAIL;
+	for (auto mapItem : (*m_ppGameObjectMap))
+	{
+		if (mapItem.first.find(L"_SphereCollider")==wstring::npos) //오브젝트배치 저장시 오브젝트툴에서 콜라이더 존재할시 예외처리 해놔야함 
+			continue;
+		Engine::CTransform* pTransform = dynamic_cast<Engine::CTransform*>(mapItem.second->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC));
+		fout << CW2A(mapItem.first.c_str()) << endl;
+		fout << pTransform->m_vInfo[Engine::INFO_POS].x << endl;
+		fout << pTransform->m_vInfo[Engine::INFO_POS].y << endl;
+		fout << pTransform->m_vInfo[Engine::INFO_POS].z << endl;
+		fout << dynamic_cast<CSphereCollider*>(mapItem.second)->Get_Radius() << endl;
+
+	}
+	fout.close();
+
+	return S_OK;
+
+}
+
+HRESULT CColliderTool::Load_Text(const TCHAR * pFilePath)
+{
+	ifstream fin;
+
+	fin.open(pFilePath);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	wstring wstrTemp;
+
+	CString csTemp;
+	char cTemp[MIN_STR];
+	_vec3 vPos = { INIT_VEC3 };
+	_float fRadius = 0.f;
+	while (!fin.eof())
+	{
+		D3DXVECTOR3 vPos;
+
+		fin.getline(cTemp, MIN_STR);
+		csTemp = cTemp;
+		wstrTemp = csTemp.GetString();
+
+		if (wstrTemp.compare(L"") == 0)
+			break;
+		//fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		vPos.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		vPos.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		vPos.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		fRadius = atof(cTemp);
+
+		COLL_DATA* pCollData = new COLL_DATA;
+		//pCollData->wstrObject= wstrTemp.find()
+		wstring wstObject, wstrBone;
+		_uint uiIdx = 0;
+		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
+		//_uint uiNameCnt = wstrTemp.find_last_of(L'_');
+		//wstring wstrObjectName = wstrTemp.substr(0, uiNameCnt);
+
+		//_uint uiObjIdx = 0;
+		//uiObjIdx = _wtoi(wstrTemp.substr(uiNameCnt + 1, wstring::npos).c_str());
+
+		//Engine::CGameObject*		pGameObject = nullptr;
+		//pGameObject = CStaticObject::Create(m_pDevice, wstrObjectName, uiObjIdx, tInfo);
+
+
+		//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
+
+
+		//m_hInstStatic = m_InstanceTree.InsertItem(wstrTemp.c_str(), 0, 0, m_hStaticRoot, TVI_LAST);
+
+
+
+
+	}
+	fin.close();
+}
+
+void CColliderTool::DividString(wstring wstrOrigin, wstring & wstrObject, wstring & wstrBone, _uint & uiIdx)
+{
+
+	_uint uiObjLine = 0;
+	uiObjLine = wstrOrigin.find(L"_");
+
+	_uint uiBoneLine = wstrOrigin.find(L"_", uiObjLine + 1);
+	wstrObject = wstrOrigin.substr(0, uiObjLine);
+
+	wstrBone = wstrOrigin.substr(uiObjLine + 1, uiBoneLine - uiObjLine - 1);
+
+	wcout << wstrObject << endl;
+	wcout << wstrBone << endl;
 
 }
 
@@ -242,15 +411,24 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 	m_csSelectMesh = m_ObjectTree.GetItemText(hCurITem);
 	
 	
+	m_pDynamicObject = nullptr;
+	m_pCurSelectObj = nullptr; 
+	m_pDynamicMesh = nullptr;
+	m_pSphereColl = nullptr;
 	wstring wstrSelectMesh = m_csSelectMesh;
 	wstrSelectMesh += L"_0";
 	if (wstrSelectMesh.find(L"Object") == wstring::npos)
 	{
 		if (m_ppGameObjectMap != nullptr)
 		{
+			
 			m_pCurSelectObj = dynamic_cast<CDynamicObject*>((*(*m_ppGameObjectMap).find(wstrSelectMesh)).second);
-			if (m_pDynamicObject != nullptr)
+			if (m_pCurSelectObj != nullptr)
+			{
+				m_wstrSelectObject = (*(*m_ppGameObjectMap).find(wstrSelectMesh)).first;
+
 				Get_BoneName();
+			}
 		}
 	}
 
@@ -264,23 +442,54 @@ void CColliderTool::OnTvnSelchangedBoneTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
+
 	m_hSelectBone =m_BoneTree.GetSelectedItem();
-	CString csBone= m_BoneTree.GetItemText(m_hSelectBone);
+	CString csBone = m_BoneTree.GetItemText(m_hSelectBone);
 
 	m_wstrSelectBone = csBone;
 
 	CStringA strA(csBone);
 	const char* pszBone = (char *)(LPWSTR)(LPCSTR)strA;
-	m_csPosition[0].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 1));
-	m_csPosition[1].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 2));
-	m_csPosition[2].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 3));
-	
-	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
-	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
-	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+	if (m_pDynamicMesh->Get_FrameByName(pszBone) != NULL)
+	{
+		m_csPosition[0].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 1));
+		m_csPosition[1].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 2));
+		m_csPosition[2].Format(_T("%f"), m_pDynamicMesh->Get_FrameByName(pszBone)->TransformationMatrix(4, 3));
 
+		SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+		SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
+		SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+	}
 
 	*pResult = 0;
+}
+
+void CColliderTool::OnTvnSelchangedColliderTree(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+
+	m_hCollider = m_ColliderTree.GetSelectedItem();
+	CString csCollider = m_BoneTree.GetItemText(m_hCollider);
+
+	m_wstrSelectCollider = csCollider;
+
+	m_pSphereColl=dynamic_cast<CSphereCollider*>((*m_ppGameObjectMap).find(m_wstrSelectCollider)->second);
+
+	if (m_pSphereColl!=nullptr)
+	{
+		_vec3 vPos =*m_pSphereColl->Get_Position();
+		m_vPosition = vPos;
+		m_csPosition[0].Format(_T("%f"),vPos.x);
+		m_csPosition[1].Format(_T("%f"),vPos.y);
+		m_csPosition[2].Format(_T("%f"),vPos.z);
+		m_csRadius.Format(_T("%f"),m_pSphereColl->Get_Radius());
+		SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
+		SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
+		SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+	}
+
+	*pResult = 0;
+
 }
 
 
@@ -397,3 +606,17 @@ void CColliderTool::OnEnChangeEditRadius()
 		m_pSphereColl->Set_Radius(_tstof(m_csRadius));
 
 }
+
+
+void CColliderTool::OnEnChangeEditBone()
+{
+	if (m_CheckBone.GetCheck())
+	{
+		GetDlgItemText(IDC_EDITBone, m_csEditBone);
+		
+
+
+	}
+
+}
+

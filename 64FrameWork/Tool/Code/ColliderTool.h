@@ -36,14 +36,18 @@ public:
 	afx_msg void						OnBnClickedColliderLoadButton();
 	afx_msg void						OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnTvnSelchangedBoneTree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void						OnTvnSelchangedColliderTree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnDeltaposSpinPosX(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnDeltaposSpinPosY(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnDeltaposSpinPosZ(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnDeltaposSpinRadius(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnDeltaposSpinAnim(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnEnChangeEditRadius();
+	afx_msg void						OnEnChangeEditBone();
 	virtual void						OnOK();
 	virtual void						OnCancel();
+
+
 public:
 	HRESULT								Update(const _float& fTimeDelta);
 private:
@@ -51,16 +55,20 @@ private:
 	CTreeCtrl							m_ObjectTree;
 	CTreeCtrl							m_BoneTree;
 	HTREEITEM							m_hDynamicMesh, m_hStaticMesh;
-	HTREEITEM							m_hStaticRoot, m_hDynamicRoot, m_hInstDynamic, m_hInstStatic, m_hSelectBone;
+	HTREEITEM							m_hObject, m_hBone, m_hCollider,m_hDynamicRoot, m_hInstDynamic, m_hInstStatic, m_hSelectBone;
 
 	CEdit								m_EditAnim;
 	CEdit								m_EditPositionX;
 	CEdit								m_EditPositionY;
 	CEdit								m_EditPositionZ;
 	CEdit								m_EditRadius;
+	CButton								m_CheckBone;
 
 public:
 	void								Get_BoneName();
+	HRESULT								Save_Text(const TCHAR * pFilePath);
+	HRESULT								Load_Text(const TCHAR * pFilePath);
+	void								DividString(wstring wstrOrigin, wstring& wstrObject, wstring& wstrBone,_uint& uiIdx);
 
 private:
 	Engine::CGraphicDev*				m_pDeviceClass = nullptr;
@@ -77,15 +85,15 @@ private:
 	CString								m_csSelectMesh;
 	wstring								m_wstrSelectObject;
 	wstring								m_wstrSelectBone;
+	wstring								m_wstrSelectCollider;
 
 	CString								m_csAnim;
 	_uint								m_uiAnim = 0;
-
+	CString								m_csEditBone;
 	CString								m_csRadius;
 	_float								m_fRadius = 10.f;
 	CString								m_csPosition[3];
 	_vec3								m_vPosition = { INIT_VEC3 };
-
 	
 	map<wstring, Engine::CGameObject*>*	m_ppGameObjectMap = nullptr;
 

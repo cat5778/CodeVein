@@ -77,6 +77,9 @@
 #define IDC_ColliderLoadButton          1051
 #define IDC_EDITAnim                    1052
 #define IDC_SPINAnim                    1053
+#define IDC_ColliderTree                1055
+#define IDC_EDITBone                    1056
+#define IDC_CHECKBone                   1057
 
 // Next default values for new objects
 // 
@@ -84,7 +87,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1054
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           311
 #endif
 #endif

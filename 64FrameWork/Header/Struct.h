@@ -40,4 +40,12 @@ typedef struct RAY
 	_vec3	vPos;
 }RAY;
 
+typedef struct Collider_data
+{
+	wstring wstrObject;
+	wstring wstrBone;
+	_vec3	vPos;
+	_float  fRadius;
+}COLL_DATA;
+
 #endif // Struch_h__
