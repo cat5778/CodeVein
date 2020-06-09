@@ -20,7 +20,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
 	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
-	m_pMeshCom->Set_AnimationSet(m_iAnim);
+	m_pMeshCom->Set_AnimationSet(45);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
@@ -29,7 +29,6 @@ HRESULT CPlayer::Ready_GameObject(void)
 
 _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
-	//SetUp_OnTerrain();
 	Key_Input(fTimeDelta);
 	_matrix mat = m_pTransformCom->m_matWorld;
 
@@ -44,8 +43,6 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 void CPlayer::Render_GameObject(void)
 {
-	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
-	//m_pMeshCom->Render_Meshes();
 	m_pNaviCom->Render_NaviMesh();
 
 	_matrix mat = m_pTransformCom->m_matWorld;
@@ -136,6 +133,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 	if (m_pKeyMgr->KeyPressing(KEY_S))
 	{
+
 		_vec3	vPos, vDir;
 		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
@@ -144,17 +142,41 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * 3.f * fTimeDelta), &vOutPos);
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
 
-		m_pMeshCom->Set_AnimationSet(43);
+		m_pMeshCom->Set_AnimationSet(42);
+
+		//m_pMeshCom->Set_AnimationSet(43);
 
 	}
 
 	if (m_pKeyMgr->KeyPressing(KEY_A))
-		m_pMeshCom->Set_AnimationSet(41);
-	if (m_pKeyMgr->KeyPressing(KEY_D))
-		m_pMeshCom->Set_AnimationSet(40);
+	{
+		_vec3 vCurLook=*m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+		D3DXVec3Normalize(&vCurLook, &vCurLook);
+		_vec3 vOriginLook = { 0.f,0.f,1.f };
 
+		_vec3 v = vCurLook - vOriginLook;
+		cout << 360+D3DXToDegree(atan2f(v.z, v.x)*2)<< endl; //각을토대로  회전및애니메이션 실행
+
+		
+		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
+
+		m_pMeshCom->Set_AnimationSet(42);
+
+		//m_pMeshCom->Set_AnimationSet(41);
+	}
+	if (m_pKeyMgr->KeyPressing(KEY_D))
+	{
+		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
+
+		m_pMeshCom->Set_AnimationSet(42);
+		//m_pMeshCom->Set_AnimationSet(40);
+	}
 	if( m_pKeyMgr->KeyDown(KEY_LBUTTON))
 		m_pMeshCom->Set_AnimationSet(31);
+
+
+
+
 
 	//if (GetAsyncKeyState(VK_UP) & 0x8000)
 	//{
@@ -203,8 +225,8 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (true == m_pMeshCom->Is_AnimationSetEnd())
 	{
-		m_iAnim = 38;
-		m_pMeshCom->Set_AnimationSet(m_iAnim);
+		//m_iAnim = 45;
+		m_pMeshCom->Set_AnimationSet(45);
 	}
 
 	_matrix mat = m_pTransformCom->m_matWorld;

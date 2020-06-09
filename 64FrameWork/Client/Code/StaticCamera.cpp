@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "StaticCamera.h"
-#include <iostream>
 #include "Export_Function.h"
 
 CStaticCamera::CStaticCamera(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -29,7 +28,7 @@ HRESULT CStaticCamera::Ready_GameObject(const _vec3* pEye,
 {
 	m_vEye = *pEye;
 	m_vAt = *pAt;
-	m_vUp = *pUp;
+	m_vUp = *pUp;	 
 
 	m_fFovY = fFovY;
 	m_fAspect = fAspect;
@@ -47,8 +46,8 @@ _int CStaticCamera::Update_GameObject(const _float& fTimeDelta)
 	if (m_pTargetInfo == nullptr)
 		m_pTargetInfo = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 
-	Mouse_Move(fTimeDelta);
 	Target_Renewal(fTimeDelta);
+	Mouse_Move(fTimeDelta);
 	Key_Input(fTimeDelta);
 	_int iExit = Engine::CCamera::Update_GameObject(fTimeDelta);
 
@@ -101,7 +100,29 @@ void CStaticCamera::Key_Input(const _float& fTimeDelta)
 
 void CStaticCamera::Target_Renewal(const _float& fTimeDelta)
 {
-	m_vEye = m_pTargetInfo->m_vInfo[Engine::INFO_LOOK] * -1.f;
+	if (nullptr == m_pParentBoneMatrix)
+	{
+		Engine::CDynamicMesh*	pPlayerMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
+		if (pPlayerMeshCom == nullptr)
+			return;
+
+		const Engine::D3DXFRAME_DERIVED* pBone = pPlayerMeshCom->Get_FrameByName("Head");
+		if (pBone == nullptr)
+			return;
+
+		m_pParentBoneMatrix = &pBone->CombinedTransformationMatrix;
+
+		Engine::CTransform*	pPlayerTransCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+
+		m_pParentWorldMatrix = m_pTargetInfo->Get_WorldMatrixPointer();
+		m_vOldEye= m_pTargetInfo->m_vInfo[Engine::INFO_LOOK] * -1.f;
+	}
+	
+	m_matWorld = (*m_pParentBoneMatrix * *m_pParentWorldMatrix);
+
+	_vec3 vHeadPos;
+	memcpy(&vHeadPos, &m_matWorld.m[3][0], sizeof(_vec3));
+	m_vEye = m_vOldEye;
 	D3DXVec3Normalize(&m_vEye, &m_vEye);
 
 	m_vEye *= m_fDistance;
@@ -110,19 +131,21 @@ void CStaticCamera::Target_Renewal(const _float& fTimeDelta)
 	memcpy(&vRight, &m_pTargetInfo->m_matWorld.m[0][0], sizeof(_vec3));
 
 	_matrix		matRotAxis;
-	D3DXMatrixRotationAxis(&matRotAxis, &vRight, m_fAngle);
+	D3DXMatrixRotationAxis(&matRotAxis, &vRight, m_fVerticalAngle);
 	D3DXVec3TransformNormal(&m_vEye, &m_vEye, &matRotAxis);
-	m_vEye += m_pTargetInfo->m_vInfo[Engine::INFO_POS];
-	m_vEye.y += m_fUp;
 
-	_vec3 vLook = m_pTargetInfo->m_vInfo[Engine::INFO_LOOK];
-	D3DXVec3Normalize(&vLook, &vLook);
-	m_vAt = m_pTargetInfo->m_vInfo[Engine::INFO_LOOK] +(vLook*m_fZ);
-	//_vec3 vLook= m_pTargetInfo->m_vInfo[Engine::INFO_LOOK];
-	//D3DXVec3Normalize(&vLook, &vLook);
-	//m_vAt += vLook;
-	//m_vAt *= m_fZ;
+	m_vEye += vHeadPos;
+	m_vAt = vHeadPos; 
 
+	_vec3	vUp = _vec3(0.f, 1.f, 0.f);
+	_vec3	vCamPos = m_vEye - m_vAt;
+	matRotAxis;
+
+	D3DXMatrixRotationAxis(&matRotAxis, &vUp, D3DXToRadian(m_fHorizonAngle));
+	D3DXVec3TransformNormal(&vCamPos, &vCamPos, &matRotAxis);
+
+	m_vEye = m_vAt + vCamPos;
+	
 
 
 }
@@ -132,34 +155,19 @@ void CStaticCamera::Mouse_Move(const _float & fTimeDelta)
 	_long	dwMouseMove = 0;
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_Y))
 	{
-		if (dwMouseMove < 0)
-		{
-			if (D3DXToDegree(m_fAngle) >= 10.f)
-				m_fAngle -= D3DXToRadian(180.f) * fTimeDelta;
-		}
-		else if (dwMouseMove > 0)
-		{
-			if (D3DXToDegree(m_fAngle)<= 60.f)
-				m_fAngle += D3DXToRadian(180.f) * fTimeDelta;
-		}
-		cout << "m_fAngle="<< D3DXToDegree(m_fAngle)<< endl;
+		m_fVerticalAngle += D3DXToRadian(dwMouseMove*10.f)*fTimeDelta;
+
+		if (D3DXToDegree(m_fVerticalAngle) <= 10.f)
+			m_fVerticalAngle = D3DXToRadian(10.f);
+		if (D3DXToDegree(m_fVerticalAngle) >= 80.f)
+			m_fVerticalAngle = D3DXToRadian(80.f);
 	}
+
 
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))
 	{
-		if (dwMouseMove < 0)
-			m_pTargetInfo->Rotation(Engine::ROT_Y, D3DXToRadian(180.f* fTimeDelta));
-		else if (dwMouseMove > 0)
-			m_pTargetInfo->Rotation(Engine::ROT_Y, D3DXToRadian(-180.f * fTimeDelta));
-
-
-		//	m_fAngle += D3DXToRadian(45.f) * fTimeDelta;
-		//else if (dwMouseMove > 0)
-		//	m_fAngle -= D3DXToRadian(45.f) * fTimeDelta;
-
+		m_fHorizonAngle += D3DXToRadian(dwMouseMove*300.f)*fTimeDelta;
 	}
-	//cout << "Angle" << D3DXToDegree(m_fAngle) << endl;
-	//cout << "Distance" << m_fDistance<< endl;
 
 
 }

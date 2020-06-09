@@ -208,7 +208,7 @@ HRESULT CStage::Ready_UI_Layer(const _tchar* pLayerTag)
 	//NULL_CHECK_RETURN(pPlayerTransform, E_FAIL);
 
 	// StaticCamera
-	pGameObject = CStaticCamera::Create(m_pGraphicDev,
+	pGameObject = CThirdPersonCamera::Create(m_pGraphicDev,
 										nullptr,
 										&_vec3(0.f, 10.f, -5.f),
 										&_vec3(0.f, 0.f, 0.f),
@@ -218,7 +218,7 @@ HRESULT CStage::Ready_UI_Layer(const _tchar* pLayerTag)
 										1.f,
 										1000.f);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"StaticCamera", pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"ThirdPersonCamera", pGameObject), E_FAIL);
 
 	m_pLayerMap.emplace(pLayerTag, pLayer);
 

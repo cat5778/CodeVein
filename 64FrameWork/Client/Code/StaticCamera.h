@@ -35,10 +35,16 @@ private:
 private:
 	Engine::CTransform*		m_pTargetInfo = nullptr;
 	_float					m_fDistance = 1.f;
-	_float					m_fAngle = 0.f;
+	_float					m_fVerticalAngle = 0.f;
+	_float					m_fHorizonAngle = 0.f;
+	_vec3					m_vOldEye;
 	_float					m_fUp = 1.f;
 	_float					m_fZ = 1.f;
 
+
+	const	_matrix*		m_pParentBoneMatrix = nullptr;
+	const	_matrix*		m_pParentWorldMatrix = nullptr;
+	_matrix					m_matWorld;
 
 public:
 	static CStaticCamera*		Create(LPDIRECT3DDEVICE9 pGraphicDev, 
