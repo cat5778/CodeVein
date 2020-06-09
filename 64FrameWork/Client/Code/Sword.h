@@ -11,25 +11,27 @@ class CTransform;
 class CRenderer;
 class CCalculator;
 class CCollider;
+class CShader;
 
 END
 
 class CSword : public Engine::CGameObject
 {
 private:
-	explicit CSword(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CSword(void);
+	explicit				CSword(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual					~CSword(void);
 
 public:
 
 public:
-	HRESULT Ready_GameObject(const _uint& iFlag);
-	virtual _int Update_GameObject(const _float& fTimeDelta) override;
-	virtual void Render_GameObject(void) override;
+	HRESULT					Ready_GameObject(const _uint& iFlag);
+	virtual _int			Update_GameObject(const _float& fTimeDelta) override;
+	virtual void			Render_GameObject(void) override;
+	HRESULT					SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 
 private:
-	HRESULT		Add_Component(void);
-	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
+	HRESULT					Add_Component(void);
+	_bool					Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
 private:
 	Engine::CTransform*		m_pTransformCom = nullptr;
@@ -37,6 +39,7 @@ private:
 	Engine::CCalculator*	m_pCalculatorCom = nullptr;
 	Engine::CStaticMesh*	m_pMeshCom = nullptr;
 	Engine::CCollider*		m_pColliderCom = nullptr;
+	Engine::CShader*		m_pShaderCom = nullptr;
 
 
 	_uint					m_iFlag = 0;

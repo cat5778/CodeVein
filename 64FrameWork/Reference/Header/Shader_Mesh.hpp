@@ -57,7 +57,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w,	// z나누기를 수행하여 0~1사이의 투영 z값을 만들고, 이를 텍스쳐 uv좌표로 판단
-		In.vProjPos.w * 0.001f,			// 뷰스페이스 상태의 z값을 텍스쳐의 uv로 변환
+		In.vProjPos.w * 0.01f,			// 뷰스페이스 상태의 z값을 텍스쳐의 uv로 변환
 		0.f,
 		0.f);
 

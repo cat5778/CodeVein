@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="00. MainApp">
-      <UniqueIdentifier>{f9d345e0-8d22-4f7d-9d05-d2309dc3c7ef}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Etc">
       <UniqueIdentifier>{b7c117b5-9441-415c-8eda-0df470ffd295}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,12 @@
     <Filter Include="02. GameObejct\01. Stage\07. Effect">
       <UniqueIdentifier>{ab92ecc8-6f4f-4843-bb0e-b0412f6e6f0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Scene\00. MainApp">
+      <UniqueIdentifier>{f9d345e0-8d22-4f7d-9d05-d2309dc3c7ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObejct\02. Public\03.ThirdPersonCamera">
+      <UniqueIdentifier>{f1ca5794-deff-49dd-83be-c0a2f1b1a2a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -103,7 +106,7 @@
       <Filter>99. Etc\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\MainApp.h">
-      <Filter>00. MainApp</Filter>
+      <Filter>01. Scene\00. MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Logo.h">
       <Filter>01. Scene\00. Logo</Filter>
@@ -153,6 +156,12 @@
     <ClInclude Include="..\Code\Effect.h">
       <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\KeyMgr.h">
+      <Filter>10.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\ThirdPersonCamera.h">
+      <Filter>02. GameObejct\02. Public\03.ThirdPersonCamera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -162,7 +171,7 @@
       <Filter>99. Etc\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\MainApp.cpp">
-      <Filter>00. MainApp</Filter>
+      <Filter>01. Scene\00. MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Logo.cpp">
       <Filter>01. Scene\00. Logo</Filter>
@@ -211,6 +220,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\Effect.cpp">
       <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\KeyMgr.cpp">
+      <Filter>10.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ThirdPersonCamera.cpp">
+      <Filter>02. GameObejct\02. Public\03.ThirdPersonCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

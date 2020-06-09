@@ -60,7 +60,7 @@ PS_OUT		PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vReflect = reflect(normalize(vector(g_vLightDir.xyz, 0.f)), vNormal);
 
 	vector		vDepth = tex2D(DepthSampler, In.vTexUV);
-	float		vViewZ = vDepth.y * 1000.f;	// 뷰 스페이스
+	float		vViewZ = vDepth.y * 1000.f;	// 뷰 스페이스 원래값 1000
 
 	vector		vPosition;
 

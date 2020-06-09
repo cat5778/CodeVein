@@ -31,6 +31,13 @@
 #include <ctime>
 #include <process.h>
 
+
+//Manager
+#include "KeyMgr.h"
+
+
+
+//Memort Leak Check
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC

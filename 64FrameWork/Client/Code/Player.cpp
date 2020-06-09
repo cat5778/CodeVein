@@ -103,6 +103,7 @@ HRESULT CPlayer::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
+	m_pKeyMgr = CKeyMgr::GetInstance();
 
 	//// collider
 	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev,
@@ -117,50 +118,83 @@ HRESULT CPlayer::Add_Component(void)
 
 void CPlayer::Key_Input(const _float& fTimeDelta)
 {
+	m_pKeyMgr->Update();
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	if (m_pKeyMgr->KeyPressing(KEY_W))
 	{
-		//m_iAnim++;
 		_vec3	vPos, vDir;
 		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
 		D3DXVec3Normalize(&vDir, &vDir);
-		//vPos += vDir*fTimeDelta;
-		//m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z);
-		_vec3 vOutPos;
+		_vec3 vOutPos;	
 		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
-		//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-		m_iAnim = 31;
-		m_pMeshCom->Set_AnimationSet(m_iAnim);
-		cout << m_iAnim << endl;
-		/*D3DXVec3Normalize(&m_vDir, &m_vDir);
-		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
 
-		//m_pMeshCom->Set_AnimationSet(54);
+		m_pMeshCom->Set_AnimationSet(42);
 
 	}
+	if (m_pKeyMgr->KeyPressing(KEY_S))
+	{
+		_vec3	vPos, vDir;
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+		D3DXVec3Normalize(&vDir, &vDir);
+		_vec3 vOutPos;
+		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * 3.f * fTimeDelta), &vOutPos);
+		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+
+		m_pMeshCom->Set_AnimationSet(43);
+
+	}
+
+	if (m_pKeyMgr->KeyPressing(KEY_A))
+		m_pMeshCom->Set_AnimationSet(41);
+	if (m_pKeyMgr->KeyPressing(KEY_D))
+		m_pMeshCom->Set_AnimationSet(40);
+
+	if( m_pKeyMgr->KeyDown(KEY_LBUTTON))
+		m_pMeshCom->Set_AnimationSet(31);
+
+	//if (GetAsyncKeyState(VK_UP) & 0x8000)
+	//{
+	//	_vec3	vPos, vDir;
+	//	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	//	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	//	D3DXVec3Normalize(&vDir, &vDir);
+	//	_vec3 vOutPos;
+	//	m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta), &vOutPos);
+	//	m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+	//	
+	//	m_pMeshCom->Set_AnimationSet(42);
+
+	//	//vPos += vDir*fTimeDelta;
+	//	//m_pTransformCom->Set_Pos(vPos.x, vPos.y, vPos.z);
+	//	//m_pTransformCom->Set_Pos(&m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 3.f * fTimeDelta)));
+	//	/*D3DXVec3Normalize(&m_vDir, &m_vDir);
+	//	m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));*/
+
+	//}
 	
 
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-	{
-		D3DXVec3Normalize(&m_vDir, &m_vDir);
-		m_pTransformCom->Move_Pos(&(m_vDir * -m_fSpeed * fTimeDelta));
-	}
+	//if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	//{
+	//	D3DXVec3Normalize(&m_vDir, &m_vDir);
+	//	m_pTransformCom->Move_Pos(&(m_vDir * -m_fSpeed * fTimeDelta));
+	//}
 
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
+	//if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	//	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
 
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
+	//if (GetAsyncKeyState(VK_RIGHT) & 0x8000)f
+	//	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
 
-	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
-	{
-		//_vec3		vPickPos = PickUp_OnTerrain();
+	//if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+	//{
+	//	//_vec3		vPickPos = PickUp_OnTerrain();
 
-		//m_pTransformCom->Move_TargetPos(&vPickPos, m_fSpeed, fTimeDelta);
-	}
+	//	//m_pTransformCom->Move_TargetPos(&vPickPos, m_fSpeed, fTimeDelta);
+	//}
 
 	if (Engine::Get_DIKeyState(DIK_RETURN) & 0x80)
 	{
@@ -295,7 +329,7 @@ CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 
 void CPlayer::Free(void)
 {
-
+	m_pKeyMgr->DestroyInstance();
 
 	Engine::CGameObject::Free();
 }

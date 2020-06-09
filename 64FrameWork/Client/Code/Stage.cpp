@@ -20,6 +20,7 @@ HRESULT CStage::Ready_Scene(void)
 	FAILED_CHECK_RETURN(Engine::CScene::Ready_Scene(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Layer(L"GameLogic"), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
 
 	//쉐이더적용후추가 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
@@ -28,7 +29,6 @@ HRESULT CStage::Ready_Scene(void)
 	m_pGraphicDev->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	//
 
-	//FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
 	//m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 
 	//m_pGraphicDev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -42,9 +42,9 @@ HRESULT CStage::LateReady_Scene(void)
 {
 	FAILED_CHECK_RETURN(Engine::CScene::LateReady_Scene(), E_FAIL);
 
-	Engine::CCamera* pCamera = dynamic_cast<Engine::CCamera*>(Engine::Get_GameObject(L"GameLogic", L"DynamicCamera"));
-	NULL_CHECK_RETURN(pCamera, E_FAIL);
-	Engine::Get_Renderer()->Set_Perspective(*pCamera->Get_Projection());
+	//Engine::CCamera* pCamera = dynamic_cast<Engine::CCamera*>(Engine::Get_GameObject(L"GameLogic", L"DynamicCamera"));
+	//NULL_CHECK_RETURN(pCamera, E_FAIL);
+	//Engine::Get_Renderer()->Set_Perspective(*pCamera->Get_Projection());
 
 	return S_OK;
 }
@@ -110,23 +110,39 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
 
-	// dynamicCamera
-	pGameObject = CDynamicCamera::Create(m_pGraphicDev,
-		&_vec3(0.f, 5.f, -5.f),
-		&_vec3(0.f, 0.f, 0.f),
-		&_vec3(0.f, 1.f, 0.f),
-		D3DXToRadian(60.f),
-		_float(WINCX) / WINCY,
-		0.1f,
-		1000.f);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+	//// dynamicCamera
+	//pGameObject = CDynamicCamera::Create(m_pGraphicDev,
+	//	&_vec3(0.f, 5.f, -5.f),
+	//	&_vec3(0.f, 0.f, 0.f),
+	//	&_vec3(0.f, 1.f, 0.f),
+	//	D3DXToRadian(60.f),
+	//	_float(WINCX) / WINCY,
+	//	0.1f,
+	//	1000.f);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+
+	//// dynamicCamera
+	//pGameObject = CDynamicCamera::Create(m_pGraphicDev,
+	//	&_vec3(0.f, 5.f, -5.f),
+	//	&_vec3(0.f, 0.f, 0.f),
+	//	&_vec3(0.f, 1.f, 0.f),
+	//	D3DXToRadian(60.f),
+	//	_float(WINCX) / WINCY,
+	//	0.1f,
+	//	1000.f);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+
 
 
 	// Player
 	pGameObject = CPlayer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
+
+
+
 
 	// Monster
 
@@ -153,12 +169,13 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 
 	//}
 
-	//// Sword
-	//pGameObject = CSword::Create(m_pGraphicDev, 0);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
-	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
+	// Sword
+	pGameObject = CSword::Create(m_pGraphicDev, 0);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
+
 	
+	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
 	Load_Text(L"../../Resource/Data/Base.txt");
 
 
@@ -186,16 +203,13 @@ HRESULT CStage::Ready_UI_Layer(const _tchar* pLayerTag)
 
 */
 
-	//Engine::CTransform*	pPlayerTransform = dynamic_cast<Engine::CTransform*>
-	//	(iter->second->Get_Component(L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
-	Engine::CTransform*	pPlayerTransform =
-		dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+//Engine::CTransform*	pPlayerTransform =	dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 
-	NULL_CHECK_RETURN(pPlayerTransform, E_FAIL);
+	//NULL_CHECK_RETURN(pPlayerTransform, E_FAIL);
 
 	// StaticCamera
 	pGameObject = CStaticCamera::Create(m_pGraphicDev,
-										pPlayerTransform,
+										nullptr,
 										&_vec3(0.f, 10.f, -5.f),
 										&_vec3(0.f, 0.f, 0.f),
 										&_vec3(0.f, 1.f, 0.f),
@@ -220,38 +234,32 @@ HRESULT CStage::Ready_LightInfo(void)
 
 	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f);
 	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0), E_FAIL);
 
 
-	tLightInfo.Type = D3DLIGHT_POINT;
+	//tLightInfo.Type = D3DLIGHT_POINT;
 
-	tLightInfo.Diffuse = D3DXCOLOR(0.f, 1.f, 0.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Position = _vec3(10.f, 2.f, 10.f);
-	tLightInfo.Range = 10.f;
-	tLightInfo.Attenuation0 = 1.f;
+	//tLightInfo.Diffuse = D3DXCOLOR(0.f, 1.f, 0.f, 1.f);
+	//tLightInfo.Specular = D3DXCOLOR(0.f, 1.f, 0.f, 1.f);
+	//tLightInfo.Ambient = D3DXCOLOR(0.f, 1.f, 0.f, 1.f);
+	//tLightInfo.Position = _vec3(10.f, 2.f, 10.f);
+	//tLightInfo.Range = 3.f;
 
-	FAILED_CHECK_RETURN(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1), E_FAIL);
-
-
-	tLightInfo.Type = D3DLIGHT_POINT;
-
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Position = _vec3(30.f, 2.f, 10.f);
-	tLightInfo.Range = 10.f;
-	tLightInfo.Attenuation0 = 1.f;
-
-	FAILED_CHECK_RETURN(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2), E_FAIL);
+	//FAILED_CHECK_RETURN(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1), E_FAIL);
 
 
+	//tLightInfo.Type = D3DLIGHT_POINT;
 
+	//tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	//tLightInfo.Specular = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	//tLightInfo.Ambient = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	//tLightInfo.Position = _vec3(30.f, 5.f, 10.f);
+	//tLightInfo.Range = 10.f;
 
+	//FAILED_CHECK_RETURN(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2), E_FAIL);
 
 	return S_OK;
 }

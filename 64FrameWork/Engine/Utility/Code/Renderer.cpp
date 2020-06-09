@@ -236,6 +236,9 @@ void CRenderer::Render_Blend(LPDIRECT3DDEVICE9 & pGraphicDev)
 	Engine::SetUp_OnShader(pEffect, L"Target_Light", "g_LightTexture");
 	Engine::SetUp_OnShader(pEffect, L"Target_Specular", "g_SpecularTexture");
 
+	//Engine::SetUp_OnShader(pEffect, L"Target_Normal", "g_NormalTexture");
+	//Engine::SetUp_OnShader(pEffect, L"Target_Depth", "g_DepthTexture");
+
 	pEffect->Begin(NULL, 0);
 	pEffect->BeginPass(0);
 

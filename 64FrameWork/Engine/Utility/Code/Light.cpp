@@ -133,7 +133,7 @@ void Engine::CLight::Render_Light(LPD3DXEFFECT& pEffect)
 
 	pEffect->SetVector("g_vCamPos", (_vec4*)&matView.m[3][0]);
 
-	pEffect->SetFloat("g_fPower", 10.f);
+	pEffect->SetFloat("g_fPower", 5.f); //¿ø·¡ 10.0
 
 	pEffect->CommitChanges();
 

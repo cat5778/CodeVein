@@ -1,22 +1,19 @@
-#ifndef StaticCamera_h__
-#define StaticCamera_h__
+#ifndef DynamicCamera_h__
+#define DynamicCamera_h__
 
 #include "Defines.h"
 #include "Camera.h"
 
 BEGIN(Engine)
 
-class CTransform;
-
 END
-class CStaticCamera : public Engine::CCamera
+
+class CThirdPersonCamera : public Engine::CCamera
 {
 private:
-	explicit CStaticCamera(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CStaticCamera(void);
+	explicit CThirdPersonCamera(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CThirdPersonCamera(void);
 
-public:
-	void	SetUp_Target(Engine::CTransform* pTargetInfo);
 
 public:
 	HRESULT Ready_GameObject(const _vec3* pEye,
@@ -26,23 +23,20 @@ public:
 							const _float& fAspect,
 							const _float& fNear,
 							const _float& fFar);
+
 	virtual _int Update_GameObject(const _float& fTimeDelta) override;
 
 private:
 	void	Key_Input(const _float& fTimeDelta);
-	void	Target_Renewal(const _float& fTimeDelta);
 	void	Mouse_Move(const _float& fTimeDelta);
-private:
-	Engine::CTransform*		m_pTargetInfo = nullptr;
-	_float					m_fDistance = 1.f;
-	_float					m_fAngle = 0.f;
-	_float					m_fUp = 1.f;
-	_float					m_fZ = 1.f;
+	void	Mouse_Fix(void);
 
+private :
+	_bool			m_bClick;
+	_bool			m_bMouseFix;
 
 public:
-	static CStaticCamera*		Create(LPDIRECT3DDEVICE9 pGraphicDev, 
-										Engine::CTransform* pTargetInfo,
+	static CThirdPersonCamera*		Create(LPDIRECT3DDEVICE9 pGraphicDev,
 										const _vec3* pEye,
 										const _vec3* pAt,
 										const _vec3* pUp,
@@ -56,5 +50,4 @@ private:
 
 };
 
-
-#endif // StaticCamera_h__
+#endif // DynamicCamera_h__
