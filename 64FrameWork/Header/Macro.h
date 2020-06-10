@@ -14,6 +14,15 @@
 #define DEFAULT_MESH_SCALE 0.01f,0.01f,0.01f
 #define INIT_VEC3 0.f,0.f,0.f
 
+#define FRONT		0x00000001
+#define RIGHT		0x00000002
+#define BACK		0x00000004
+#define LEFT		0x00000008
+
+
+
+
+
 #ifndef MSG_BOX
 #define	MSG_BOX(_message)			MessageBox(NULL, TEXT(_message), L"System Message", MB_OK)
 #endif

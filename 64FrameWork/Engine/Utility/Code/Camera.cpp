@@ -36,7 +36,7 @@ _int Engine::CCamera::Update_GameObject(const _float& fTimeDelta)
 	D3DXMatrixLookAtLH(&m_matView, &m_vEye, &m_vAt, &m_vUp);
 	//CPipeline::MakeViewSpaceMatrix(&m_matView, &m_vEye, &m_vAt, &m_vUp);
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
-
+	CGameObject::Update_GameObject(fTimeDelta);
 	return 0;
 }
 

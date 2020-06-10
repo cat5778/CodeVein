@@ -73,4 +73,5 @@ T Lerp(T Start, T End, T Time)
 	return (1 - Time)*Start + Time*End;
 }
 
+
 #endif // Function_h__

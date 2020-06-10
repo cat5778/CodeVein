@@ -57,16 +57,6 @@ _uint CLoading::Loading_ForStage(void)
 
 	int i = 0;
 
-	// buffer
-	FAILED_CHECK_RETURN(Engine::Ready_Buffer(m_pGraphicDev,
-												RESOURCE_STATIC,
-												L"Buffer_TerrainTex",
-												Engine::BUFFER_TERRAINTEX,
-												VTXCNTX,
-												VTXCNTZ,
-												VTXITV),
-												E_FAIL);
-
 	FAILED_CHECK_RETURN(Engine::Ready_Buffer(m_pGraphicDev,
 												RESOURCE_STATIC,
 												L"Buffer_CubeTex",
@@ -84,14 +74,6 @@ _uint CLoading::Loading_ForStage(void)
 	
 	// ÅØ½ºÃÄ
 
-	//FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
-	//											RESOURCE_STAGE,
-	//											L"Texture_Terrain",
-	//											Engine::TEX_NORMAL,
-	//											L"../Bin/Resource/Texture/Terrain/Grass_%d.tga", 2),
-	//											E_FAIL);
-
-
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
 												RESOURCE_STAGE,
 												L"Texture_Cube",
@@ -100,19 +82,7 @@ _uint CLoading::Loading_ForStage(void)
 												4),
 												E_FAIL);
 
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
-												RESOURCE_STAGE,
-												L"Texture_Player",
-												Engine::TEX_NORMAL,
-												L"../../Resource/Texture/Player%d.png"),
-												E_FAIL);
 
-	//FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
-	//											RESOURCE_STAGE,
-	//											L"Texture_Monster",
-	//											Engine::TEX_NORMAL,
-	//											L"../../Resource/Texture/Monster%d.png"),
-	//											E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 
@@ -128,27 +98,14 @@ _uint CLoading::Loading_ForStage(void)
 
 	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_STAGE,
-	//	L"RussianHat",
+	//	L"Mesh_RussianHat",
 	//	Engine::TYPE_DYNAMIC,
 	//	L"../../Resource/Mesh/DynamicMesh/RussianHat/",
 	//	L"RussianHat.X"),
 	//	E_FAIL);
 
-	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
-		RESOURCE_STAGE,
-		L"Mesh_RussianHat",
-		Engine::TYPE_DYNAMIC,
-		L"../../Resource/Mesh/DynamicMesh/RussianHat/",
-		L"RussianHat.X"),
-		E_FAIL);
-		Mesh_Loading();
-	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_STAGE,
-	//	L"Mesh_Sword",
-	//	Engine::TYPE_STATIC,
-	//	L"../../Resource/Mesh/StaticMesh/Sword/",
-	//	L"Sword.X"),
-	//	E_FAIL);
+
+	//Mesh_Loading();
 	
 	lstrcpy(m_szLoading, L"Loading Complete!!!");
 

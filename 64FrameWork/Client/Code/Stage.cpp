@@ -170,13 +170,13 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	//}
 
 	// Sword
-	pGameObject = CSword::Create(m_pGraphicDev, 0);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
+	//pGameObject = CSword::Create(m_pGraphicDev, 0);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
 
-	
 	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
-	Load_Text(L"../../Resource/Data/Base.txt");
+	//Load_Text(L"../../Resource/Data/Base.txt");
+	
 
 
 	m_pLayerMap.emplace(pLayerTag, pLayer);	
@@ -209,14 +209,13 @@ HRESULT CStage::Ready_UI_Layer(const _tchar* pLayerTag)
 
 	// StaticCamera
 	pGameObject = CThirdPersonCamera::Create(m_pGraphicDev,
-										nullptr,
-										&_vec3(0.f, 10.f, -5.f),
-										&_vec3(0.f, 0.f, 0.f),
-										&_vec3(0.f, 1.f, 0.f),
-										D3DXToRadian(45.f),
-										_float(WINCX) / WINCY,
-										1.f,
-										1000.f);
+		&_vec3(0.f, 10.f, -5.f),
+		&_vec3(0.f, 0.f, 0.f),
+		&_vec3(0.f, 1.f, 0.f),
+		D3DXToRadian(45.f),
+		_float(WINCX) / WINCY,
+		1.f,
+		1000.f);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"ThirdPersonCamera", pGameObject), E_FAIL);
 
