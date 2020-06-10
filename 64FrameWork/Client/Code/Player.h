@@ -34,13 +34,12 @@ private:
 	HRESULT		Load_Text(const TCHAR * pFilePath);
 	wchar_t*	CharToWChar(const char* pstrSrc);
 	float		Get_Angle(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-
 	void		Check_Direction(_float fTimeDelta);
-
+	void		StateMachine();
+	void		IdleOption();
 
 private:
 	Engine::CTransform*		m_pCameraTransformCom = nullptr;
-
 	Engine::CTransform*		m_pTransformCom = nullptr;
 	Engine::CRenderer*		m_pRendererCom = nullptr;
 	Engine::CCalculator*	m_pCalculatorCom = nullptr;
@@ -51,11 +50,17 @@ private:
 	CKeyMgr*				m_pKeyMgr = nullptr;
 	_int					m_iAnim = 0;
 	_vec3					m_vDir;
-	_float					m_fRotSpeed = 8.f;
-	_float					m_fSpeed = 20.f;
-	DWORD					m_dwFlag=0;
-
-
+	_float					m_fAnimSpeed = 1.0f;
+	_float					m_fRotSpeed = 6.f;
+	_float					m_fSpeed = 0.6f; //Walk 0.6f
+	DWORD					m_dwDirectionFlag = 0;
+	DWORD					m_dwDodge_DirectionFlag = 0;
+	_bool					m_bIsLockOn = false;
+	_bool					m_bIsShift = false;
+	OBJECTSTATE				m_eCurState;
+	OBJECTSTATE				m_ePreState;
+	_float					m_fChargeTime = 0.f;
+	_uint					m_uiCombo = 0;
 public:
 	static CPlayer*		Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

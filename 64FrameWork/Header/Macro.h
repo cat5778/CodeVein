@@ -19,7 +19,9 @@
 #define BACK		0x00000004
 #define LEFT		0x00000008
 
-
+#define RUN			0x00000001
+#define DODGE		0x00000002
+#define HURT		0x00000004
 
 
 

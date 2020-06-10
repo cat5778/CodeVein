@@ -34,11 +34,11 @@ private:
 	void					Target_Renewal(const _float& fTimeDelta);
 	void					Mouse_Move(const _float& fTimeDelta);
 	void					Lerp_Cam(_float fTimeDelta);
-
+	void					Mouse_Fix(void);
 private:
 	Engine::CTransform*		m_pTargetInfo = nullptr;
 	Engine::CTransform*		m_pTransformCom = nullptr;
-
+	_bool					m_bIsFix = false;	
 	_float					m_fDistance = 1.5f;
 	_float					m_fVerticalAngle = 240.f;
 	_float					m_fHorizonAngle = 0.f;

@@ -87,10 +87,17 @@ void Engine::CAniCtrl::Set_AnimationSet(const _uint& iIndex)
 
 void Engine::CAniCtrl::Play_Animation(const _float& fTimeDelta)
 {
-	m_pAniCtrl->AdvanceTime(fTimeDelta, NULL);	// 2인자 : 애니메이션 재생에 따라 사운드나, 이펙트를 구동 가능, 하지만 안씀.
+	m_pAniCtrl->AdvanceTime(fTimeDelta+ m_fAddTime, NULL);	// 2인자 : 애니메이션 재생에 따라 사운드나, 이펙트를 구동 가능, 하지만 안씀.
 												// AdvanceTime 호출 시 내부적으로 누적되는 시간 값이 있음
-
+	if (m_fAddTime)
+		m_fAddTime=0.f;
 	m_fAccTime += fTimeDelta;
+
+
+	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &m_tTrackInfo);
+	m_dPosition = m_tTrackInfo.Position;
+
+
 }
 
 Engine::CAniCtrl* Engine::CAniCtrl::Create(LPD3DXANIMATIONCONTROLLER pAniCtrl)
@@ -124,7 +131,6 @@ _bool Engine::CAniCtrl::Is_AnimationSetEnd(void)
 	ZeroMemory(&tTrackInfo, sizeof(D3DXTRACK_DESC));
 
 	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &tTrackInfo);
-
 	if (tTrackInfo.Position >= m_dPeriod - 0.1)
 		return true;
 

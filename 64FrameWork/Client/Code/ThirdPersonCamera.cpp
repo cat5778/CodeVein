@@ -31,6 +31,7 @@ HRESULT CThirdPersonCamera::Ready_GameObject(const _vec3 * pEye, const _vec3 * p
 	m_fFar = fFar;
 	FAILED_CHECK_RETURN(Ready_Component(), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::CCamera::Ready_GameObject(), E_FAIL);
+	
 	return S_OK;
 }
 
@@ -39,6 +40,10 @@ _int CThirdPersonCamera::Update_GameObject(const _float& fTimeDelta)
 	if (m_pTargetInfo == nullptr)
 		m_pTargetInfo = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 
+	if (CKeyMgr::GetInstance()->KeyDown(KEY_O))
+		m_bIsFix ? m_bIsFix = false: m_bIsFix=true;
+
+	Mouse_Fix();
 	Target_Renewal(fTimeDelta);
 	Mouse_Move(fTimeDelta);
 	Key_Input(fTimeDelta);
@@ -176,6 +181,17 @@ void CThirdPersonCamera::Lerp_Cam(_float fTimeDelta)
 	//	}
 	//}
 
+}
+
+void CThirdPersonCamera::Mouse_Fix(void)
+{
+	if (m_bIsFix)
+	{
+		POINT		ptMouse{ WINCX >> 1, WINCY >> 1 };
+
+		ClientToScreen(g_hWnd, &ptMouse);
+		SetCursorPos(ptMouse.x, ptMouse.y);
+	}
 }
 
 CThirdPersonCamera* CThirdPersonCamera::Create(LPDIRECT3DDEVICE9 pGraphicDev,

@@ -17,6 +17,9 @@ public:
 	LPD3DXANIMATIONCONTROLLER		Get_AnimationCtrl(void) { return m_pAniCtrl; }
 	_bool							Is_AnimationSetEnd(void);
 
+	_double							Get_Period() { return m_dPeriod; }
+	_double							Get_TrackPosition() { return m_dPosition; }
+	void							Set_AddTrackTime(float fTime) { m_fAddTime = fTime; }
 public:
 	HRESULT			Ready_AnimationCtrl(void);
 
@@ -34,6 +37,9 @@ private:
 	_uint								m_iOldAniIdx;
 
 	_double								m_dPeriod = 0.0;
+	_double								m_dPosition= 0.0;
+	_float								m_fAddTime = 0.f;
+	D3DXTRACK_DESC						m_tTrackInfo;
 
 public:
 	static CAniCtrl*			Create(LPD3DXANIMATIONCONTROLLER pAniCtrl);

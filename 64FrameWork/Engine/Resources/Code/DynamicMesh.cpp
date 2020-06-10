@@ -107,6 +107,23 @@ _bool Engine::CDynamicMesh::Is_AnimationSetEnd(void)
 	return m_pAniCtrl->Is_AnimationSetEnd();
 }
 
+_double CDynamicMesh::Get_Period()
+{
+	return m_pAniCtrl->Get_Period();
+}
+
+_double CDynamicMesh::Get_TrackPosition()
+{
+	return m_pAniCtrl->Get_TrackPosition();
+}
+
+void CDynamicMesh::Set_AddTrackTime(float fTime)
+{
+	m_pAniCtrl->Set_AddTrackTime(fTime);
+}
+
+
+
 void Engine::CDynamicMesh::Render_Meshes(LPD3DXEFFECT& pEffect)
 {
 	for (auto& iter : m_MeshContainerList)

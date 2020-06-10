@@ -27,7 +27,6 @@ HRESULT CMainApp::Ready_MainApp(void)
 
 _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
-
 	Engine::Set_InputDev();
 	if (nullptr != m_pManagement)
 		m_pManagement->Update_Scene(fTimeDelta);

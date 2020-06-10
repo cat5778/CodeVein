@@ -105,36 +105,6 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);
 
-	//// Terrain
-	//pGameObject = CTerrain::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
-
-	//// dynamicCamera
-	//pGameObject = CDynamicCamera::Create(m_pGraphicDev,
-	//	&_vec3(0.f, 5.f, -5.f),
-	//	&_vec3(0.f, 0.f, 0.f),
-	//	&_vec3(0.f, 1.f, 0.f),
-	//	D3DXToRadian(60.f),
-	//	_float(WINCX) / WINCY,
-	//	0.1f,
-	//	1000.f);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
-
-	//// dynamicCamera
-	//pGameObject = CDynamicCamera::Create(m_pGraphicDev,
-	//	&_vec3(0.f, 5.f, -5.f),
-	//	&_vec3(0.f, 0.f, 0.f),
-	//	&_vec3(0.f, 1.f, 0.f),
-	//	D3DXToRadian(60.f),
-	//	_float(WINCX) / WINCY,
-	//	0.1f,
-	//	1000.f);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
-
-
 
 	// Player
 	pGameObject = CPlayer::Create(m_pGraphicDev);
@@ -143,39 +113,15 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 
 
 
-
-	// Monster
-
-	/*for (_uint i = 0; i < 20; ++i)
-	{
-		pGameObject = CMonster::Create(m_pGraphicDev);
-		NULL_CHECK_RETURN(pGameObject, E_FAIL);		
-	
-		_float fX = rand() % 20;
-		_float fZ = rand() % 20;
-
-		dynamic_cast<CMonster*>(pGameObject)->Set_Pos(fX, 0.f, fZ);
-
-		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Monster", pGameObject), E_FAIL);
-	}*/
-
-	//// Stone
-
-	//for (_uint i = 0; i < 3; ++i)
-	//{
-	//	pGameObject = CStone::Create(m_pGraphicDev, i);
-	//	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Stone", pGameObject), E_FAIL);
-
-	//}
-
-	// Sword
-	//pGameObject = CSword::Create(m_pGraphicDev, 0);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
+	 //Sword
+	pGameObject = CSword::Create(m_pGraphicDev, 0);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
 
 	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
-	//Load_Text(L"../../Resource/Data/Base.txt");
+
+	//TODO: 아래함수 테스트용으로 없앳음
+	Load_Text(L"../../Resource/Data/Base.txt");
 	
 
 

@@ -20,6 +20,9 @@ public:
 	void							Render_Meshes(LPD3DXEFFECT& pEffect);
 	const  D3DXFRAME_DERIVED*		Get_FrameByName(const char* pFrameName);
 	_bool							Is_AnimationSetEnd(void);
+	_double							Get_Period();
+	_double							Get_TrackPosition();
+	void							Set_AddTrackTime(float fTime);
 
 public:
 	void								Set_AnimationSet(const _uint& iIndex);

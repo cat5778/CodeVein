@@ -96,6 +96,7 @@ _uint CLoading::Loading_ForStage(void)
 		E_FAIL);
 
 
+
 	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_STAGE,
 	//	L"Mesh_RussianHat",
@@ -105,7 +106,18 @@ _uint CLoading::Loading_ForStage(void)
 	//	E_FAIL);
 
 
-	//Mesh_Loading();
+	//Test용 무기 지우기 
+
+	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+	//	RESOURCE_STAGE,
+	//	L"SM_NormalGreatSwordA_ba01",
+	//	Engine::TYPE_STATIC,
+	//	L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
+	//	L"SM_NormalGreatSwordA_ba01.X"),
+	//	E_FAIL);
+
+	
+	Mesh_Loading();
 	
 	lstrcpy(m_szLoading, L"Loading Complete!!!");
 
