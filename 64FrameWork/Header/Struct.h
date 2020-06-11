@@ -48,4 +48,15 @@ typedef struct Collider_data
 	_float  fRadius;
 }COLL_DATA;
 
+typedef struct Time_Data
+{
+	_bool	bIsStart;
+	_bool	bIsEnd;
+	_float  fCurTime;
+	_float  fEndTime;
+	Time_Data() :bIsStart(false), bIsEnd(false), fCurTime(0.f), fEndTime(0.f) {};
+	Time_Data(_float fTime) :bIsStart(false), bIsEnd(false), fCurTime(0.f), fEndTime(fTime) {};
+
+}TIME_DATA;
+
 #endif // Struch_h__

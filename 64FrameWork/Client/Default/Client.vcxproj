@@ -183,6 +183,7 @@
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
+    <ClInclude Include="..\Code\SphereCollider.h" />
     <ClInclude Include="..\Code\Stage.h" />
     <ClInclude Include="..\Code\StaticCamera.h" />
     <ClInclude Include="..\Code\StaticObject.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\Code\TestMonster.h" />
     <ClInclude Include="..\Code\TestPlayer.h" />
     <ClInclude Include="..\Code\ThirdPersonCamera.h" />
+    <ClInclude Include="..\Code\TimerManager.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -207,6 +209,7 @@
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
+    <ClCompile Include="..\Code\SphereCollider.cpp" />
     <ClCompile Include="..\Code\Stage.cpp" />
     <ClCompile Include="..\Code\StaticCamera.cpp" />
     <ClCompile Include="..\Code\StaticObject.cpp" />
@@ -216,6 +219,7 @@
     <ClCompile Include="..\Code\TestMonster.cpp" />
     <ClCompile Include="..\Code\TestPlayer.cpp" />
     <ClCompile Include="..\Code\ThirdPersonCamera.cpp" />
+    <ClCompile Include="..\Code\TimerManager.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

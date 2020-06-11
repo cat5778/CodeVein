@@ -97,27 +97,39 @@ _uint CLoading::Loading_ForStage(void)
 
 
 
-	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_STAGE,
-	//	L"Mesh_RussianHat",
-	//	Engine::TYPE_DYNAMIC,
-	//	L"../../Resource/Mesh/DynamicMesh/RussianHat/",
-	//	L"RussianHat.X"),
-	//	E_FAIL);
 
 
 	//Test용 무기 지우기 
-
-	//FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_STAGE,
-	//	L"SM_NormalGreatSwordA_ba01",
-	//	Engine::TYPE_STATIC,
-	//	L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
-	//	L"SM_NormalGreatSwordA_ba01.X"),
-	//	E_FAIL);
+	switch ((LOADMODE)LOAD_MODE)
+	{
+	case LOAD_NOMAL:
+		Loading_Mesh();
+		break;
+	case LOAD_PLAYER:
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"SM_NormalGreatSwordA_ba01",
+			Engine::TYPE_STATIC,
+			L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
+			L"SM_NormalGreatSwordA_ba01.X"),
+			E_FAIL);
+		break;
+	case LOAD_MONSTER:
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"Mesh_RussianHat",
+			Engine::TYPE_DYNAMIC,
+			L"../../Resource/Mesh/DynamicMesh/RussianHat/",
+			L"RussianHat.X"),
+			E_FAIL);
+		break;
+	case LOAD_END:
+		break;
+	default:
+		break;
+	}
 
 	
-	Mesh_Loading();
 	
 	lstrcpy(m_szLoading, L"Loading Complete!!!");
 
@@ -135,7 +147,7 @@ _bool CLoading::Ready_Mesh(MESH_PATH * pPathInfo)
 	return 	true;
 }
 
-_bool CLoading::Mesh_Loading() //텍스트 읽고와서 메쉬 로딩
+_bool CLoading::Loading_Mesh() //텍스트 읽고와서 메쉬 로딩
 {
 	TCHAR szFileName[MAX_STR] = L"../../Resource/Data/PathInfo.txt";
 
@@ -218,12 +230,82 @@ _bool CLoading::Mesh_Loading() //텍스트 읽고와서 메쉬 로딩
 	return false;
 }
 
+_bool CLoading::Loading_Collider()
+{
+	TCHAR szFileName[MAX_STR] = L"../../Resource/Data/Collider.txt";
+
+	ifstream fin;
+
+	fin.open(szFileName);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	wstring wstrTemp;
+
+	char cTemp[MIN_STR];
+	_vec3 vPos = { INIT_VEC3 };
+	_float fRadius = 0.f;
+	while (!fin.eof())
+	{
+		D3DXVECTOR3 vPos;
+
+		fin.getline(cTemp, MIN_STR);
+		wchar_t* ppwchar = CharToWChar(cTemp);
+		wstrTemp = ppwchar;
+		delete ppwchar;
+
+		if (wstrTemp.compare(L"") == 0)
+			break;
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		vPos.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		vPos.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		vPos.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		fRadius = atof(cTemp);
+
+		COLL_DATA* pCollData = new COLL_DATA;
+
+		wstring wstObject, wstrBone;
+		_uint uiIdx = 0;
+
+		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
+		//wstObject += L"_0";
+
+
+		//Engine::CGameObject* pGameObject = nullptr;
+		//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
+		//m_pSphereColl->Set_Radius(fRadius);
+		//m_pSphereColl->Set_Position(vPos);
+
+		//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
+	}
+	fin.close();
+
+}
+
 wchar_t * CLoading::CharToWChar(const char * pstrSrc)
 {
 	int nLen = strlen(pstrSrc) + 1;
 	wchar_t* pwstr = (LPWSTR)malloc(sizeof(wchar_t)* nLen);
 	mbstowcs(pwstr, pstrSrc, nLen);
 	return pwstr;
+
+}
+
+void CLoading::DividString(wstring wstrOrigin, wstring & wstrObject, wstring & wstrBone, _uint & uiIdx)
+{
+	_uint uiObjLine = 0;
+	uiObjLine = wstrOrigin.find(L"_");
+
+	_uint uiBoneLine = wstrOrigin.find(L"_", uiObjLine + 1);
+	wstrObject = wstrOrigin.substr(0, uiObjLine);
+
+	wstrBone = wstrOrigin.substr(uiObjLine + 1, uiBoneLine - uiObjLine - 1);
 
 }
 

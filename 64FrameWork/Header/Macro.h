@@ -4,6 +4,9 @@
 #define  WINCX 1280
 #define  WINCY 800
 
+#define LOAD_MODE 1
+
+
 #define MAX_STR 256
 #define MIN_STR 128
 #define NO_EVENT		0

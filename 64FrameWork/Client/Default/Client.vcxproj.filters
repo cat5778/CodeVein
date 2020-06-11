@@ -94,6 +94,15 @@
     <Filter Include="02. GameObejct\02. Public\03.ThirdPersonCamera">
       <UniqueIdentifier>{f1ca5794-deff-49dd-83be-c0a2f1b1a2a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10.Manager\00. KeyMgr">
+      <UniqueIdentifier>{13f5eb41-2a40-4f0b-8a6d-af3fa1e9c24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.Manager\01. Timer">
+      <UniqueIdentifier>{79242ec8-59dc-44a2-bea7-ab56f6188fd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObejct\02. Public\04. SphereCollider">
+      <UniqueIdentifier>{2235b4e3-cdc0-4f1b-8acd-1b13ff4b2c7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -156,11 +165,17 @@
     <ClInclude Include="..\Code\Effect.h">
       <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\KeyMgr.h">
-      <Filter>10.Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Code\ThirdPersonCamera.h">
       <Filter>02. GameObejct\02. Public\03.ThirdPersonCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\KeyMgr.h">
+      <Filter>10.Manager\00. KeyMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\TimerManager.h">
+      <Filter>99. Etc\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\SphereCollider.h">
+      <Filter>02. GameObejct\02. Public\04. SphereCollider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,11 +236,17 @@
     <ClCompile Include="..\Code\Effect.cpp">
       <Filter>02. GameObejct\01. Stage\07. Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\Code\KeyMgr.cpp">
-      <Filter>10.Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Code\ThirdPersonCamera.cpp">
       <Filter>02. GameObejct\02. Public\03.ThirdPersonCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\KeyMgr.cpp">
+      <Filter>10.Manager\00. KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\TimerManager.cpp">
+      <Filter>99. Etc\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SphereCollider.cpp">
+      <Filter>02. GameObejct\02. Public\04. SphereCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

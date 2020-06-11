@@ -68,7 +68,7 @@ public:
 	void								Get_BoneName();
 	HRESULT								Save_Text(const TCHAR * pFilePath);
 	HRESULT								Load_Text(const TCHAR * pFilePath);
-	void								DividString(wstring wstrOrigin, wstring& wstrObject, wstring& wstrBone,_uint& uiIdx);
+	void								DividString(wstring wstrOrigin, wstring& wstrObject, wstring& wstrBone, _uint& uiIdx);
 
 private:
 	Engine::CGraphicDev*				m_pDeviceClass = nullptr;

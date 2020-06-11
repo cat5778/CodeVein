@@ -24,7 +24,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 	m_pMeshCom->Set_AnimationSet(46);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	
+
 	
 	return S_OK;
 }
@@ -117,26 +117,13 @@ HRESULT CPlayer::Add_Component(void)
 
 void CPlayer::Key_Input(const _float& fTimeDelta)
 {
-	m_pKeyMgr->Update();
 	m_dwDirectionFlag = 0;
 	m_bIsShift = false;
 
 	IdleOption();
 
-	if (m_pKeyMgr->KeyDown(KEY_NUM1))
-	{
-		m_fRotSpeed++;
-		cout <<"회전스피드=" <<m_fRotSpeed << endl;
-	}
-
-	if (m_pKeyMgr->KeyDown(KEY_NUM2))
-	{
-		m_fRotSpeed--;
-		cout << "회전스피드=" << m_fRotSpeed << endl;
-	}
 	if (m_pKeyMgr->KeyDown(KEY_Q))
 		m_bIsLockOn ? m_bIsLockOn = false : m_bIsLockOn = true;
-
 
 	
 	if (m_pKeyMgr->KeyPressing(KEY_W))
@@ -177,7 +164,7 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		if (m_eCurState == OBJ_ATTACK)
 		{
 			_double dRatio = m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
-			if (dRatio >= 0.25&&dRatio < 0.7)
+			if (dRatio >= 0.2&&dRatio < 0.7)
 			{
 				m_uiCombo++;
 				switch (m_uiCombo)
@@ -207,12 +194,10 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		}
 		else
 		{
-
 			if (m_eCurState == OBJ_DODGE)
 			{
 				_double dRatio = m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
-				cout << dRatio << endl;
-				if (dRatio >= 0.225&&dRatio < 0.9)
+				if (dRatio >= 0.2&&dRatio < 0.9)
 				{
 					m_eCurState = OBJ_ATTACK;
 					m_pMeshCom->Set_AnimationSet(18);
@@ -228,8 +213,14 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		}
 
 	}
+	if (m_pKeyMgr->KeyPressing(KEY_ALT))
+	{
+		m_eCurState = OBJ_GUARD;
+	}
 	if (m_pKeyMgr->KeyPressing(KEY_RBUTTON))
 	{
+		m_eCurState = OBJ_STRONG_ATTACK;
+
 		m_pMeshCom->Set_AnimationSet(26);
 		if(m_fChargeTime<1.0f)
 		m_fChargeTime += fTimeDelta;
@@ -255,11 +246,14 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 		}
 	}
 
-	
-
-	if (m_eCurState == OBJ_ATTACK || m_eCurState == OBJ_STRONG_ATTACK)
+	if (m_eCurState == OBJ_ATTACK || m_eCurState == OBJ_STRONG_ATTACK || m_eCurState == OBJ_CHARGE_ATTACK)
+	{
+		AttackMoveSet(fTimeDelta);
+		StorngAttackMoveSet(fTimeDelta);
+		ChargeAttackMoveSet(fTimeDelta);
 		m_dwDirectionFlag = 0;
 
+	}
 	if (Engine::Get_DIKeyState(DIK_RETURN) & 0x80)
 	{
 		m_pMeshCom->Set_AnimationSet(0);
@@ -380,7 +374,6 @@ wchar_t * CPlayer::CharToWChar(const char * pstrSrc)
 
 void CPlayer::Check_Direction(_float fTimeDelta)
 {
-
 	_vec3 vCamLook = *m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK);
 	_vec3 vPlayerLook = *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
 	_vec3 vPlayerRight = { 1.0f,0.f,0.f };
@@ -393,9 +386,6 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 	D3DXVec3Normalize(&vPlayerRight, &vPlayerRight);
 
 	float fDgree = Get_Angle(vCamLook, vPlayerLook) + 180.f;
-	
-	_vec3	vPos, vDir, vDiagonalDir,vOutPos;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 
 	DWORD dwDirectionFlag;
 
@@ -403,6 +393,8 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		dwDirectionFlag = m_dwDodge_DirectionFlag;
 	else		
 		dwDirectionFlag = m_dwDirectionFlag;
+
+
 
 	switch (dwDirectionFlag)
 	{
@@ -413,11 +405,7 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		else if (fDgree < 355.f && fDgree >= 180.f)
 			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * m_fSpeed* fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed);
 	}
 	break;
 	case DIR_R:
@@ -427,11 +415,7 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		else if ((fDgree >= 275.f && fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 90.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_RIGHT, true, m_fSpeed);  
 	}
 	break;
 	case DIR_FR:
@@ -441,16 +425,7 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		else if ((fDgree >= 320.f&&fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 135.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDiagonalDir);
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
-		vDir -= vDiagonalDir;
-		D3DXVec3Normalize(&vDir, &vDir);
-
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, false);
 	}
 	break;
 	case DIR_B:
@@ -459,11 +434,7 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		else if (fDgree <= 175.f&&fDgree >= 0.f)
 			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
-
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed);
 		break;
 	case DIR_BR:
 	{
@@ -472,29 +443,17 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		else if ((fDgree <= 360.f && fDgree >= 230.f) || (fDgree >= 0.f&& fDgree < 45.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDiagonalDir);
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
-		vDir += vDiagonalDir;
-		D3DXVec3Normalize(&vDir, &vDir);
-
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, false);
 	}
 	break;
 	case DIR_L:
 	{
-
 		if (fDgree >= 95.f&&fDgree <= 270.f)
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if ((fDgree > 270.f&& fDgree < 360.f) || (fDgree >= 0.f&& fDgree < 85.f))
+		else if ((fDgree <= 85.f&& fDgree >= 0.f)||(fDgree >= 270.f&& fDgree < 360.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_RIGHT, false, m_fSpeed);
 	}
 	break;
 	case DIR_FL:
@@ -503,34 +462,18 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 		else if ((fDgree <= 360.f && fDgree >= 225.f) || (fDgree >= 0.f&& fDgree < 40.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDiagonalDir);
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
-		vDir += vDiagonalDir;
-		D3DXVec3Normalize(&vDir, &vDir);
 
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, true);
 	}
-
 	break;
 	case DIR_BL:
 	{
-		if ((fDgree <= 315.f && fDgree >= 140.f))
+		if (fDgree >= 140.f&& fDgree <= 315.f)
 			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if ((fDgree >= 315.f&&fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 130.f))
+		else if ((fDgree <= 360.f&&fDgree >= 315.f) || (fDgree >= 0.f&& fDgree < 130.f))
 			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		m_pCameraTransformCom->Get_Info(Engine::INFO_LOOK, &vDiagonalDir);
-		m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT, &vDir);
-		D3DXVec3Normalize(&vDir, &vDir);
-		D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
-		vDir -= vDiagonalDir;
-		D3DXVec3Normalize(&vDir, &vDir);
-
-		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * m_fSpeed * fTimeDelta), &vOutPos);
-		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, true);
 	}
 	break;
 	default:
@@ -701,8 +644,6 @@ void CPlayer::StateMachine()
 			m_fAnimSpeed = 2.f;
 
 			m_pMeshCom->Set_AnimationSet(26);
-			//m_pMeshCom->Set_AddTrackTime(m_fChargeTime);
-
 			m_fChargeTime = 0.f;
 
 		}
@@ -711,10 +652,8 @@ void CPlayer::StateMachine()
 		{
 			m_fAnimSpeed = 2.f;
 			m_pMeshCom->Set_AnimationSet(25);
-			m_pMeshCom->Set_AddTrackTime(m_fChargeTime);
+			m_pMeshCom->Set_AddTrackTime(m_fChargeTime+0.3f); //0.3f <-다음 Animation  보정값 
 			m_fChargeTime = 0.f;
-
-			//m_pMeshCom->get
 		}
 			break;
 		case OBJ_GUARD:
@@ -739,10 +678,6 @@ void CPlayer::StateMachine()
 
 void CPlayer::IdleOption()
 {
-	//cout << "Period= " << m_pMeshCom->Get_Period() << endl;
-	//cout << "Position= " << m_pMeshCom->Get_TrackPosition() << endl;
-
-
 	if (m_eCurState == OBJ_DODGE)
 	{
 		if (m_pMeshCom->Get_TrackPosition() >= 1.0)
@@ -750,7 +685,7 @@ void CPlayer::IdleOption()
 		if (m_pMeshCom->Get_TrackPosition() >= 2.25)
 			m_eCurState = OBJ_IDLE;
 	}
-	if (m_eCurState != OBJ_IDLE )
+	else if (m_eCurState != OBJ_IDLE )
 	{
 		if (m_pMeshCom->Is_AnimationSetEnd())
 		{
@@ -761,8 +696,101 @@ void CPlayer::IdleOption()
 
 }
 
+void CPlayer::CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2, _bool bIsDir2Rvc)
+{
+	_vec3	vPos, vDir, vDiagonalDir, vOutPos;
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	pTransform->Get_Info(eDir, &vDir);
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+	if (eDir2 == Engine::INFO::INFO_END)
+	{
 
+		if (bIsDirRvc)
+			m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * fSpeed* fTimeDelta), &vOutPos);
+		else
+			m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * fSpeed* fTimeDelta), &vOutPos);
+		
+	}
+	else
+	{
+		pTransform->Get_Info(eDir2, &vDiagonalDir);
+		D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
+		if (!bIsDirRvc)
+			vDir *= -1.f;
+		if (bIsDir2Rvc)
+			vDiagonalDir *= -1.f;
 
+		vDir += vDiagonalDir;
+	
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * fSpeed* fTimeDelta), &vOutPos);
+
+	}
+
+	m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+
+}
+
+void CPlayer::AttackMoveSet(_float fTimeDelta)
+{
+	if (m_eCurState == OBJ_ATTACK)
+	{
+		switch (m_uiCombo)
+		{
+		case 1:
+			MoveAni(fTimeDelta, 0.1f, 0.15f, 4.f, _vec3{ 1.f,1.f,1.f });
+			break;
+		case 2:
+			MoveAni(fTimeDelta, 0.1f, 0.2f, 4.f, _vec3{ 1.f,1.f,1.f });
+			break;
+		case 3:
+			MoveAni(fTimeDelta, 0.18f, 0.3f, 3.f, _vec3{ 1.f,1.f,1.f });
+			break;
+		case 4:
+			MoveAni(fTimeDelta, 0.11f, 0.2f, 3.f, _vec3{ 1.f,1.f,1.f });
+
+			break;
+		case 5:
+			MoveAni(fTimeDelta, 0.01f, 0.14f, 5.0f, _vec3{ 1.f,1.f,1.f });
+			break;
+		default:
+			break;
+		}
+	}
+
+}
+
+void CPlayer::StorngAttackMoveSet(_float fTimeDelta)
+{
+	if (m_eCurState == OBJ_STRONG_ATTACK)
+	{
+		MoveAni(fTimeDelta, 0.0f, 0.025f, 5.0f, _vec3{ 1.f,1.f,1.f });
+		MoveAni(fTimeDelta, 0.25f, 0.285f, 5.0f, _vec3{ 1.f,1.f,1.f });
+
+	}
+}
+
+void CPlayer::ChargeAttackMoveSet(_float fTimeDelta)
+{
+	if (m_eCurState == OBJ_CHARGE_ATTACK)
+	{
+		MoveAni(fTimeDelta, 0.15f, 0.2f, 4.0f, _vec3{ 1.f,1.f,1.f });
+
+		MoveAni(fTimeDelta, 0.2f, 0.26f, 8.0f, _vec3{ 1.f,1.f,1.f });
+	}
+
+}
+
+void CPlayer::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir)
+{
+	_float fCurRatio = m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
+	if (fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
+	{
+		CheckMoveMesh(fTimeDelta, m_pTransformCom, Engine::INFO_LOOK, true, fSpeed);
+	}
+}
 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
@@ -776,39 +804,8 @@ CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 
 void CPlayer::Free(void)
 {
-	m_pKeyMgr->DestroyInstance();
-
 	Engine::CGameObject::Free();
 }
-//
-//void CPlayer::SetUp_OnTerrain(void)
-//{
-//	_vec3		vPos;
-//	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-//
-//	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>
-//		(Engine::Get_Component(L"GameLogic", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-//	NULL_CHECK(pTerrainBufferCom);
-//
-//	_float	fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPos,
-//		pTerrainBufferCom->Get_VtxPos(),
-//		pTerrainBufferCom->Get_VtxCntX(),
-//		pTerrainBufferCom->Get_VtxCntZ());
-//
-//	m_pTransformCom->Set_Pos(vPos.x, fHeight, vPos.z);
-//}
-//
-//_vec3 CPlayer::PickUp_OnTerrain(void)
-//{
-//	Engine::CTerrainTex*	pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"GameLogic", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-//	NULL_CHECK_RETURN(pTerrainBufferCom, _vec3(0.f, 0.f, 0.f));
-//
-//	Engine::CTransform*	pTerrainTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Terrain", L"Com_Transform", Engine::ID_DYNAMIC));
-//	NULL_CHECK_RETURN(pTerrainTransformCom, _vec3(0.f, 0.f, 0.f));
-//
-//	return m_pCalculatorCom->Picking_OnTerrain(g_hWnd, pTerrainBufferCom, pTerrainTransformCom);
-//}
-
 
 float CPlayer::Get_Angle(const D3DXVECTOR3& a, const D3DXVECTOR3& b)
 {

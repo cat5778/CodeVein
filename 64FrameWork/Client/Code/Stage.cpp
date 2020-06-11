@@ -111,8 +111,6 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 
-
-
 	 //Sword
 	pGameObject = CSword::Create(m_pGraphicDev, 0);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
@@ -120,8 +118,20 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 
 	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
 
-	//TODO: 아래함수 테스트용으로 없앳음
-	Load_Text(L"../../Resource/Data/Base.txt");
+	switch ((LOADMODE)LOAD_MODE)
+	{
+	case LOAD_NOMAL:
+		Load_Text(L"../../Resource/Data/Base.txt");
+		break;
+	case LOAD_PLAYER:
+		break;
+	case LOAD_MONSTER:
+		break;
+	case LOAD_END:
+		break;
+	default:
+		break;
+	}
 	
 
 
@@ -177,7 +187,7 @@ HRESULT CStage::Ready_LightInfo(void)
 
 	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
 
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.Diffuse = D3DXCOLOR(0.95f, 0.95f, 1.0f, 1.f);
 	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	tLightInfo.Ambient = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f);
 	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);

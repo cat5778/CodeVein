@@ -75,6 +75,9 @@ void CKeyMgr::Update()
 		m_dwCurKey |= KEY_O;
 	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
 		m_dwCurKey |= KEY_SHIFT;
+	if (GetAsyncKeyState(VK_LMENU) & 0x8000)
+		m_dwCurKey |= KEY_ALT;
+
 }
 
 bool CKeyMgr::KeyDown(DWORD dwKey)

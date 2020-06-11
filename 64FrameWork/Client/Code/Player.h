@@ -25,8 +25,10 @@ public:
 	virtual HRESULT Ready_GameObject(void) override;
 	virtual _int Update_GameObject(const _float& fTimeDelta) override;
 	virtual void Render_GameObject(void) override;
+
 public:
 	void		Set_CamTransform(Engine::CTransform** pTransform) { m_pCameraTransformCom=*pTransform; }
+
 private:
 	HRESULT		Add_Component(void);
 	void		Key_Input(const _float& fTimeDelta);
@@ -37,7 +39,11 @@ private:
 	void		Check_Direction(_float fTimeDelta);
 	void		StateMachine();
 	void		IdleOption();
-
+	void		CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2= Engine::INFO::INFO_END, _bool bIsDir2Rvc=false);
+	void		AttackMoveSet(_float fTimeDelta);
+	void		StorngAttackMoveSet(_float fTimeDelta);
+	void		ChargeAttackMoveSet(_float fTimeDelta);
+	void		MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
 private:
 	Engine::CTransform*		m_pCameraTransformCom = nullptr;
 	Engine::CTransform*		m_pTransformCom = nullptr;
@@ -48,6 +54,7 @@ private:
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
 	CKeyMgr*				m_pKeyMgr = nullptr;
+
 	_int					m_iAnim = 0;
 	_vec3					m_vDir;
 	_float					m_fAnimSpeed = 1.0f;
@@ -57,10 +64,14 @@ private:
 	DWORD					m_dwDodge_DirectionFlag = 0;
 	_bool					m_bIsLockOn = false;
 	_bool					m_bIsShift = false;
+	
 	OBJECTSTATE				m_eCurState;
 	OBJECTSTATE				m_ePreState;
+
 	_float					m_fChargeTime = 0.f;
 	_uint					m_uiCombo = 0;
+
+
 public:
 	static CPlayer*		Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

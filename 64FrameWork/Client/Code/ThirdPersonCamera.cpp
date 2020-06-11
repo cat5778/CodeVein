@@ -92,36 +92,27 @@ void CThirdPersonCamera::Target_Renewal(const _float& fTimeDelta)
 		m_vAt = m_vHeadPos;
 
 
-		m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+		m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_POS] = -(m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK]) * m_fDistance;
 	
 	}
 
 	m_matWorld = (*m_pParentBoneMatrix * *m_pParentWorldMatrix);
 	memcpy(&m_vHeadPos, &m_matWorld.m[3][0], sizeof(_vec3));
 	m_vAt = m_vHeadPos;
-	//m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_POS] = 
-	//	m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
-	m_pTransformCom->m_vInfo[Engine::INFO_LOOK] = m_pTransformCom->m_vInfo[Engine::INFO_POS] =
-		m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+
+	//m_pTransformCom->m_vInfo[Engine::INFO_LOOK] = m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+	
+	m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
 
 	_vec3		vRight;
 	memcpy(&vRight, &m_pTransformCom->m_matWorld.m[0][0], sizeof(_vec3));
 
-	//_matrix		matRotAxis;
-	//D3DXMatrixRotationAxis(&matRotAxis, &vRight, D3DXToRadian(m_fVerticalAngle));
-	////D3DXVec3TransformNormal(&m_vEye, &m_vEye, &matRotAxis);
-	//D3DXVec3TransformNormal(&m_pTransformCom->m_vInfo[Engine::INFO_LOOK], &m_pTransformCom->m_vInfo[Engine::INFO_LOOK], &matRotAxis);
-
-	//D3DXMatrixRotationAxis(&matRotAxis, &_vec3{ 0.f,1.0f,0.f }, D3DXToRadian(m_fHorizonAngle));
-	//D3DXVec3TransformNormal(&m_pTransformCom->m_vInfo[Engine::INFO_LOOK], &m_pTransformCom->m_vInfo[Engine::INFO_LOOK], &matRotAxis);
-
-	
 	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(m_fVerticalAngle));
 	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_fHorizonAngle));
 
 
 
-	m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
+	m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_POS];
 
 }
 

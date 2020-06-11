@@ -77,6 +77,9 @@ HRESULT Engine::CCell::Ready_Cell(const _ulong& dwIndex, const _vec3* pPointA, c
 	m_pLine[LINE_CA] = CLine::Create(&_vec3(m_vPoint[POINT_C].x,m_vPoint[POINT_C].y, m_vPoint[POINT_C].z),
 									 &_vec3(m_vPoint[POINT_A].x,m_vPoint[POINT_A].y, m_vPoint[POINT_A].z));
 	
+
+#ifdef _DEBUG
+
 	LPD3DXMESH	pSphereMesh = nullptr;
 	VTXCOL* pVertices = nullptr;
 
@@ -104,10 +107,9 @@ HRESULT Engine::CCell::Ready_Cell(const _ulong& dwIndex, const _vec3* pPointA, c
 	pSphereMesh->Release();
 
 
-#ifdef _DEBUG
 	FAILED_CHECK_RETURN(D3DXCreateLine(m_pGraphicDev, &m_pD3DXLine), E_FAIL);
-
 #endif
+
 	return S_OK;
 }
 
@@ -190,7 +192,7 @@ void Engine::CCell::Render_Cell(void)
 	}
 
 
-
+#ifdef _DEBUG
 	m_pD3DXLine->SetWidth(3.f);	// 라인의 굵기를 결정하는 함수
 	m_pGraphicDev->EndScene();
 	m_pGraphicDev->BeginScene();
@@ -203,6 +205,8 @@ void Engine::CCell::Render_Cell(void)
 	m_pD3DXLine->DrawTransform(vPoint, 4, D3DXMatrixIdentity(&matTemp), D3DXCOLOR(1.f, 0.f, 0.f, 1.f));
 
 	m_pD3DXLine->End();
+
+
 
 	m_pGraphicDev->BeginScene();
 	_matrix MatoldWorld;
@@ -228,6 +232,7 @@ void Engine::CCell::Render_Cell(void)
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &MatoldWorld);
 
 	m_pGraphicDev->EndScene();
+#endif
 
 
 }
@@ -246,10 +251,12 @@ void Engine::CCell::Free(void)
 {
 	for (_uint i = 0; i < LINE_END; ++i)
 		Safe_Release(m_pLine[i]);
+#ifdef _DEBUG
 	for (_uint i = 0; i < POINT_END; i++)
 		Safe_Release(m_pSphereMesh[i]);
-
 	Safe_Release(m_pD3DXLine);
+#endif
+
 	Safe_Release(m_pGraphicDev);
 }
 

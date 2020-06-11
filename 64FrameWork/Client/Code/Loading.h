@@ -23,8 +23,11 @@ public:
 	HRESULT					Ready_Loading(LOADINGID eLoading);
 	_uint					Loading_ForStage(void);
 	_bool					Ready_Mesh(MESH_PATH * pPathInfo);
-	_bool					Mesh_Loading();
+	_bool					Loading_Mesh();
+	_bool					Loading_Collider();
 	wchar_t*				CharToWChar(const char* pstrSrc);
+	void					DividString(wstring wstrOrigin, wstring& wstrObject, wstring& wstrBone, _uint& uiIdx);
+
 
 private:
 	HANDLE					m_hThread;
@@ -35,7 +38,7 @@ private:
 	_bool					m_bFinish;
 	_tchar					m_szLoading[256];
 	list<MESH_PATH*>		m_pPathList;
-
+	LOADMODE				m_eLoadmode=LOAD_PLAYER;
 public:
 	static CLoading*		Create(LPDIRECT3DDEVICE9 pGraphicDev, LOADINGID eLoading);
 private:

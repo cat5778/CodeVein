@@ -221,7 +221,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		break;
+	case WM_SYSKEYDOWN:
+	{	
+		switch (wParam)
+		{
+			case VK_MENU:
+				break;
 
+		}
+
+	}
+	break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

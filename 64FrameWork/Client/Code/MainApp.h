@@ -24,8 +24,8 @@ public:
 	HRESULT		Ready_MainApp(void);
 	_int		Update_MainApp(const _float& fTimeDelta);
 	_int		LateUpdate_MainApp(const _float& fTimeDelta);
-
 	void		Render_MainApp(void);
+	void		Ready_Managers(void);
 
 	// protected 함수, 변수
 	// private 함수, 변수
@@ -42,6 +42,10 @@ private:
 	Engine::CGraphicDev*			m_pDeviceClass = nullptr;
 	Engine::CManagement*			m_pManagement = nullptr;
 	LPDIRECT3DDEVICE9				m_pGraphicDev = nullptr;
+	CKeyMgr*						m_pKeyMgr = nullptr;
+	CTimerManager*					m_pTimerMgr = nullptr;
+
+
 	_int							m_iEvent;
 	list<MESH_PATH*>				m_ppPathList;
 	

@@ -1,18 +1,24 @@
 #ifndef Enum_h__
 #define Enum_h__
+enum LOADMODE
+{
+	LOAD_NOMAL,
+	LOAD_PLAYER,
+	LOAD_MONSTER,
+	LOAD_END
+};
+enum RESOURCEID		{ 
+					RESOURCE_STATIC,
+					RESOURCE_LOGO, 
+					RESOURCE_STAGE, 
+					RESOURCE_END 
+					};
 
-enum RESOURCEID { 
-				RESOURCE_STATIC,
-				RESOURCE_LOGO, 
-				RESOURCE_STAGE, 
-				RESOURCE_END 
-				};
-
-enum LOADINGID {
-				LOADING_STAGE,
-				LOADING_BOSS, 
-				LOADING_END 
-				};
+enum LOADINGID		{	
+					LOADING_STAGE,
+					LOADING_BOSS, 
+					LOADING_END 
+					};
 
 enum DIRECTIONFLAG{
 					DIR_F = 1,
@@ -25,22 +31,28 @@ enum DIRECTIONFLAG{
 					DIR_BL=12,
 					};
 
-enum OBJECTSTATE
-{
-	OBJ_IDLE,
-	OBJ_WALK,
-	OBJ_RUN,
-	OBJ_DODGE,
-	OBJ_JUMP,
-	OBJ_FALL,
-	OBJ_ATTACK,
-	OBJ_STRONG_ATTACK,
-	OBJ_CHARGE_ATTACK,
-	OBJ_GUARD,
-	OBJ_HURT,
-	OBJ_DEAD,
-	OBJ_START,
-	OBJ_END
+enum OBJECTSTATE{
+					OBJ_IDLE,
+					OBJ_WALK,
+					OBJ_RUN,
+					OBJ_DODGE,
+					OBJ_JUMP,
+					OBJ_FALL,
+					OBJ_ATTACK,
+					OBJ_STRONG_ATTACK,
+					OBJ_CHARGE_ATTACK,
+					OBJ_GUARD,
+					OBJ_HURT,
+					OBJ_DEAD,
+					OBJ_START,
+					OBJ_END
+				};
+enum COLLIDER_OPTION {//TODO: 콜라이더 옵션넣어서 툴에서 옵션넣은 콜라이더 저장및 불러오기 
+	NOTICE_RANGE,
+	
+
+
 };
+
 
 #endif // Enum_h__

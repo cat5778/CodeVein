@@ -21,13 +21,15 @@ HRESULT CMainApp::Ready_MainApp(void)
 	FAILED_CHECK_RETURN(Ready_Scene(m_pGraphicDev, &m_pManagement), E_FAIL);
 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-
+	Ready_Managers();
 	return S_OK;
 }
 
 _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 {
 	Engine::Set_InputDev();
+	m_pKeyMgr->Update();
+
 	if (nullptr != m_pManagement)
 		m_pManagement->Update_Scene(fTimeDelta);
 	if (!m_ppPathList.empty())
@@ -62,6 +64,13 @@ void CMainApp::Render_MainApp(void)
 		//m_pManagement->Render_Scene();
 
 	Engine::Render_End();
+}
+
+void CMainApp::Ready_Managers(void)
+{
+	m_pKeyMgr = CKeyMgr::GetInstance();
+	m_pTimerMgr = CTimerManager::GetInstance();
+
 }
 
 HRESULT CMainApp::SetUp_DefaultSetting(LPDIRECT3DDEVICE9 * ppGraphicDev)
@@ -123,8 +132,7 @@ CMainApp* CMainApp::Create(void)
 
 void CMainApp::Free(void)
 {
-
-
+	m_pKeyMgr->DestroyInstance();
 
 	Engine::Safe_Release(m_pGraphicDev);
 	Engine::Safe_Release(m_pDeviceClass);
