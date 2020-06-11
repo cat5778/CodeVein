@@ -230,63 +230,63 @@ _bool CLoading::Loading_Mesh() //텍스트 읽고와서 메쉬 로딩
 	return false;
 }
 
-_bool CLoading::Loading_Collider()
-{
-	TCHAR szFileName[MAX_STR] = L"../../Resource/Data/Collider.txt";
+//_bool CLoading::Loading_Collider()
+//{
+	//TCHAR szFileName[MAX_STR] = L"../../Resource/Data/Collider.txt";
 
-	ifstream fin;
+	//ifstream fin;
 
-	fin.open(szFileName);
+	//fin.open(szFileName);
 
-	if (fin.fail())
-		return E_FAIL;
+	//if (fin.fail())
+	//	return E_FAIL;
 
-	wstring wstrTemp;
+	//wstring wstrTemp;
 
-	char cTemp[MIN_STR];
-	_vec3 vPos = { INIT_VEC3 };
-	_float fRadius = 0.f;
-	while (!fin.eof())
-	{
-		D3DXVECTOR3 vPos;
+	//char cTemp[MIN_STR];
+	//_vec3 vPos = { INIT_VEC3 };
+	//_float fRadius = 0.f;
+	//while (!fin.eof())
+	//{
+	//	D3DXVECTOR3 vPos;
 
-		fin.getline(cTemp, MIN_STR);
-		wchar_t* ppwchar = CharToWChar(cTemp);
-		wstrTemp = ppwchar;
-		delete ppwchar;
+	//	fin.getline(cTemp, MIN_STR);
+	//	wchar_t* ppwchar = CharToWChar(cTemp);
+	//	wstrTemp = ppwchar;
+	//	delete ppwchar;
 
-		if (wstrTemp.compare(L"") == 0)
-			break;
+	//	if (wstrTemp.compare(L"") == 0)
+	//		break;
 
-		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		vPos.x = atof(cTemp);
-		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		vPos.y = atof(cTemp);
-		fin.getline(cTemp, MIN_STR);
-		vPos.z = atof(cTemp);
+	//	fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+	//	vPos.x = atof(cTemp);
+	//	fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+	//	vPos.y = atof(cTemp);
+	//	fin.getline(cTemp, MIN_STR);
+	//	vPos.z = atof(cTemp);
 
-		fin.getline(cTemp, MIN_STR);
-		fRadius = atof(cTemp);
+	//	fin.getline(cTemp, MIN_STR);
+	//	fRadius = atof(cTemp);
 
-		COLL_DATA* pCollData = new COLL_DATA;
+	//	COLL_DATA* pCollData = new COLL_DATA;
 
-		wstring wstObject, wstrBone;
-		_uint uiIdx = 0;
+	//	wstring wstObject, wstrBone;
+	//	_uint uiIdx = 0;
 
-		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
-		//wstObject += L"_0";
+	//	DividString(wstrTemp, wstObject, wstrBone, uiIdx);
+	//	//wstObject += L"_0";
 
 
-		//Engine::CGameObject* pGameObject = nullptr;
-		//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
-		//m_pSphereColl->Set_Radius(fRadius);
-		//m_pSphereColl->Set_Position(vPos);
+	//	//Engine::CGameObject* pGameObject = nullptr;
+	//	//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
+	//	//m_pSphereColl->Set_Radius(fRadius);
+	//	//m_pSphereColl->Set_Position(vPos);
 
-		//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
-	}
-	fin.close();
+	//	//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
+	//}
+	//fin.close();
 
-}
+//}
 
 wchar_t * CLoading::CharToWChar(const char * pstrSrc)
 {

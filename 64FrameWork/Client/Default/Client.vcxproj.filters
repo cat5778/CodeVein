@@ -174,9 +174,6 @@
     <ClInclude Include="..\Code\TimerManager.h">
       <Filter>99. Etc\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\SphereCollider.h">
-      <Filter>02. GameObejct\02. Public\04. SphereCollider</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -244,9 +241,6 @@
     </ClCompile>
     <ClCompile Include="..\Code\TimerManager.cpp">
       <Filter>99. Etc\소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Code\SphereCollider.cpp">
-      <Filter>02. GameObejct\02. Public\04. SphereCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

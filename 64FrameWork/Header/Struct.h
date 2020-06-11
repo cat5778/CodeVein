@@ -42,10 +42,11 @@ typedef struct RAY
 
 typedef struct Collider_data
 {
-	wstring wstrObject;
-	wstring wstrBone;
-	_vec3	vPos;
-	_float  fRadius;
+	wstring			wstrObject;
+	wstring			wstrBone;
+	_vec3			vPos;
+	_float			fRadius;
+	COLLIDEROPTION	eCollOpt;
 }COLL_DATA;
 
 typedef struct Time_Data

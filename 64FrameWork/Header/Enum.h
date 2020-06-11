@@ -46,13 +46,15 @@ enum OBJECTSTATE{
 					OBJ_DEAD,
 					OBJ_START,
 					OBJ_END
-				};
-enum COLLIDER_OPTION {//TODO: 콜라이더 옵션넣어서 툴에서 옵션넣은 콜라이더 저장및 불러오기 
-	NOTICE_RANGE,
-	
-
-
 };
+enum COLLIDEROPTION
+{
+	COLL_OPT_OBJECT,
+	COLL_OPT_ATTACK,
+	COLL_OPT_HURT,
+	COLL_OPT_END
+};
+
 
 
 #endif // Enum_h__
