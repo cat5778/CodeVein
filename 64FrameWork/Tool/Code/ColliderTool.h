@@ -44,6 +44,8 @@ public:
 	afx_msg void						OnDeltaposSpinAnim(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void						OnEnChangeEditRadius();
 	afx_msg void						OnEnChangeEditBone();
+	afx_msg void						OnEnChangeEditOption();
+	afx_msg void						OnDeltaposSpinOption(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual void						OnOK();
 	virtual void						OnCancel();
 
@@ -63,13 +65,13 @@ private:
 	CEdit								m_EditPositionZ;
 	CEdit								m_EditRadius;
 	CButton								m_CheckBone;
+	CEdit								m_EditOption;
 
 public:
 	void								Get_BoneName();
 	HRESULT								Save_Text(const TCHAR * pFilePath);
 	HRESULT								Load_Text(const TCHAR * pFilePath);
 	void								DividString(wstring wstrOrigin, wstring& wstrObject, wstring& wstrBone, _uint& uiIdx);
-
 private:
 	Engine::CGraphicDev*				m_pDeviceClass = nullptr;
 	LPDIRECT3DDEVICE9					m_pDevice = nullptr;
@@ -87,13 +89,19 @@ private:
 	wstring								m_wstrSelectBone;
 	wstring								m_wstrSelectCollider;
 
-	CString								m_csAnim;
+
+
+	_uint								m_uiOption = 0;
 	_uint								m_uiAnim = 0;
-	CString								m_csEditBone;
-	CString								m_csRadius;
 	_float								m_fRadius = 10.f;
-	CString								m_csPosition[3];
 	_vec3								m_vPosition = { INIT_VEC3 };
+
+	CString								m_csOption = L"0";
+	CString								m_csAnim;
+	CString								m_csRadius;
+	CString								m_csPosition[3];
+	CString								m_csEditBone;
+	CString								m_csOpStion;
 	
 	map<wstring, Engine::CGameObject*>*	m_ppGameObjectMap = nullptr;
 

@@ -95,6 +95,11 @@ namespace Engine
 		_uint uiIdx;
 	}NAVI_DATA;
 
+	typedef struct Coll_data
+	{
+		_float	fRadius;
+		_vec3	vPosition;
+	}COLL_DATA;
 }
 
 

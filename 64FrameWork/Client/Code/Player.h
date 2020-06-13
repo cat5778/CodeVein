@@ -12,7 +12,7 @@ class CRenderer;
 class CCalculator;
 class CCollider;
 class CShader;
-
+class CColliderGroup;
 END
 
 class CPlayer : public Engine::CGameObject
@@ -53,6 +53,8 @@ private:
 	Engine::CNaviMesh*		m_pNaviCom = nullptr;
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
+	Engine::CColliderGroup*	m_pColliderGroupCom=nullptr;
+
 	CKeyMgr*				m_pKeyMgr = nullptr;
 
 	_int					m_iAnim = 0;
