@@ -46,6 +46,7 @@ _int CSphereCollider::Update_GameObject(const _float & fTimeDelta)
 
 void CSphereCollider::Render_GameObject(void)
 {
+#ifdef _DEBUG
 	if (m_pSphereMesh!= nullptr)
 	{
 		m_pGraphicDev->BeginScene();
@@ -54,17 +55,25 @@ void CSphereCollider::Render_GameObject(void)
 		//m_pTransformCom->Get_WorldMatrix(&matOldWorld);
 
 		m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
+
 		m_pGraphicDev->GetTransform(D3DTS_WORLD, &m_matSphereWorld);
 
-		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		if (m_tCollData.eCollOpt == COLL_OPT_OBJECT)
+			m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		else if (m_tCollData.eCollOpt == COLL_OPT_OBJECT)
+			m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_POINT);
+		else if (m_tCollData.eCollOpt == COLL_OPT_OBJECT)
+			m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
 		m_pSphereMesh->DrawSubset(0);
+
 		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
 		//m_pGraphicDev->SetTransform(D3DTS_WORLD, &matOldWorld);
 
 		m_pGraphicDev->EndScene();
 	}
-
+#endif
 }
 
 HRESULT CSphereCollider::Add_Component(void)
@@ -143,8 +152,10 @@ HRESULT CSphereCollider::Set_DMParentMatrix(_float fTimeDelta)
 	{
 		Engine::CGameObject::Update_GameObject(fTimeDelta);
 		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
-		m_pTransformCom->Set_Scale(m_fRadius, m_fRadius, m_fRadius);
-		m_pTransformCom->Move_Pos(&m_vPos);
+
+		m_pTransformCom->Set_Scale(m_tCollData.fRadius, m_tCollData.fRadius, m_tCollData.fRadius);
+		//m_pTransformCom->Move_Pos(&m_tCollData.vPos);
+
 
 #ifdef _DEBUG
 		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

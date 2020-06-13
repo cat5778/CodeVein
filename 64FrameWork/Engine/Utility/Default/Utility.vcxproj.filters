@@ -61,6 +61,12 @@
     <Filter Include="09. Shader\Defferdhpp">
       <UniqueIdentifier>{4a4209fe-c890-4d92-a83b-fd40a69df434}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Component\02. Colllider\00. SphereColliderGroup">
+      <UniqueIdentifier>{e5114694-e4aa-48d2-b284-e45e85616d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Component\02. Colllider\00. SphereColliderGroup\SphereCollider">
+      <UniqueIdentifier>{7168d90a-439c-4ebb-8210-6e662a1caed6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Header\Export_Utility.h">
@@ -138,6 +144,12 @@
     <ClInclude Include="..\Code\Shader_Blend.hpp">
       <Filter>09. Shader\Defferdhpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\SphereColliderCom.h">
+      <Filter>04. Component\02. Colllider\00. SphereColliderGroup\SphereCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\ColliderGroup.h">
+      <Filter>04. Component\02. Colllider\00. SphereColliderGroup\SphereCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Header\Export_Utility.inl">
@@ -195,6 +207,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\RenderTargetMgr.cpp">
       <Filter>10. RenderTarget\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SphereColliderCom.cpp">
+      <Filter>04. Component\02. Colllider\00. SphereColliderGroup\SphereCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ColliderGroup.cpp">
+      <Filter>04. Component\02. Colllider\00. SphereColliderGroup\SphereCollider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@ private:
 	_matrix		m_matWorld;
 
 	LPDIRECT3DDEVICE9			m_pGraphicDev;
+
 #ifdef _DEBUG
 	LPDIRECT3DVERTEXBUFFER9		m_pVB;
 	LPDIRECT3DINDEXBUFFER9		m_pIB;

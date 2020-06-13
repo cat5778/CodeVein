@@ -95,11 +95,6 @@ _uint CLoading::Loading_ForStage(void)
 		L"Player2.X"),
 		E_FAIL);
 
-
-
-
-
-	//Test용 무기 지우기 
 	switch ((LOADMODE)LOAD_MODE)
 	{
 	case LOAD_NOMAL:

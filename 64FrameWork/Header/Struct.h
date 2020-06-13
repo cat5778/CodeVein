@@ -44,9 +44,12 @@ typedef struct Collider_data
 {
 	wstring			wstrObject;
 	wstring			wstrBone;
-	_vec3			vPos;
 	_float			fRadius;
 	COLLIDEROPTION	eCollOpt;
+	Collider_data() :wstrObject(L""), wstrBone(L""),fRadius(0.f) 
+	{
+		eCollOpt = COLL_OPT_HURT;
+	};
 }COLL_DATA;
 
 typedef struct Time_Data

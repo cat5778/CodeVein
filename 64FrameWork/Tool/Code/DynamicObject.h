@@ -25,7 +25,7 @@ public:
 	HRESULT					Ready_GameObject();
 	virtual _int			Update_GameObject(const _float& fTimeDelta) override;
 	virtual void			Render_GameObject(void) override;
-
+	
 public:
 	_uint					Get_AnimationIdx() { return m_uiAni; }
 	void					Set_AnimationIdx(_uint uiAnim) { m_uiAni= uiAnim; }

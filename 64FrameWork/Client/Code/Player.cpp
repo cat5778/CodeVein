@@ -45,6 +45,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 void CPlayer::Render_GameObject(void)
 {
+	//m_pSpherColliderCom->Render_Collider(Engine::COLLTYPE::COL_TRUE);
 	m_pNaviCom->Render_NaviMesh();
 
 	_matrix mat = m_pTransformCom->m_matWorld;
@@ -69,7 +70,7 @@ void CPlayer::Render_GameObject(void)
 
 	Safe_Release(pEffect);
 
-
+	m_pColliderGroupCom->Render_Collider();
 }
 
 HRESULT CPlayer::Add_Component(void)
@@ -102,6 +103,25 @@ HRESULT CPlayer::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
+	
+	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev,m_pTransformCom,m_pMeshCom);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_pColliderGroupCom->Add_Collider(Engine::COLOPT_STEP, L"Player2", L"RightHandAttach");
+
+	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"ColliderGroup", pComponent);
+
+
+	//m_pSpherColliderCom->Set_Radius(14.0f);
+	//m_pSpherColliderCom->Set_Pos(_vec3(0.f,250.f,0.f));
+
+	//pComponent=m_pSpherColliderCom = Engine::CSphereColliderCom::Create(m_pGraphicDev,L"Mesh_Player",m_pTransformCom);
+	//const Engine::D3DXFRAME_DERIVED* pBone = m_pMeshCom->Get_FrameByName("RightHandAttach");
+
+	//m_pSpherColliderCom->Set_DMParentMatrix(pBone);
+
+	//m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_SphereColl", pComponent);
+
+
 	m_pKeyMgr = CKeyMgr::GetInstance();
 
 	//// collider
@@ -119,13 +139,15 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 {
 	m_dwDirectionFlag = 0;
 	m_bIsShift = false;
+	_bool Test = false;
 
 	IdleOption();
 
 	if (m_pKeyMgr->KeyDown(KEY_Q))
 		m_bIsLockOn ? m_bIsLockOn = false : m_bIsLockOn = true;
 
-	
+
+
 	if (m_pKeyMgr->KeyPressing(KEY_W))
 	{
 		m_dwDirectionFlag |= FRONT;

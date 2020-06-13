@@ -56,6 +56,7 @@ void CDynamicObject::Render_GameObject(void)
 	//m_pColliderCom->Render_Collider(Engine::COLLTYPE(m_bColl), &matWorld);
 }
 
+
 HRESULT CDynamicObject::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;

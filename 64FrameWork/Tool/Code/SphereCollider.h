@@ -27,12 +27,21 @@ public:
 
 
 public:
-	void					Set_Radius(_float fRadius) { m_fRadius = fRadius; }
-	void					Set_Position(_vec3 vPos) { m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos; }
-	_float 					Get_Radius() { return m_fRadius; }
+	//void					Set_Position(_vec3 vPos) { m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos; }
+	//const Engine::_vec3*	Get_Position() { return m_pTransformCom->Get_Info(Engine::INFO_POS); }
+	//const Engine::_vec3*	Get_AddPosition() { return &m_tCollData.vPos; }
 
-	const Engine::_vec3*	Get_Position() { return m_pTransformCom->Get_Info(Engine::INFO_POS); }
-	const Engine::_vec3*	Get_AddPosition() { return &m_vPos; }
+
+	const Engine::_vec3*	Get_Position() { return &m_pTransformCom->m_vInfo[Engine::INFO_POS];}
+	void					Set_Position(_vec3 vPos) { m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos; }
+	// ¼öÁ¤
+	void					Set_Radius(_float fRadius) { m_tCollData.fRadius = fRadius; }
+	_float 					Get_Radius() { return m_tCollData.fRadius; }
+
+	void					Set_Option(COLLIDEROPTION eOption) { m_tCollData.eCollOpt= eOption; }
+	COLLIDEROPTION 			Get_Option() { return m_tCollData.eCollOpt; }
+
+
 private:
 	HRESULT					Add_Component(void);
 	void					Ready_SphereMesh();
@@ -40,19 +49,19 @@ private:
 	HRESULT					Set_SMParentMatrix(_float fTimeDelta);
 private:
 	_bool					m_bIsStatic = false;
-	LPD3DXMESH				m_pSphereMesh=nullptr;
+	LPD3DXMESH				m_pSphereMesh = nullptr;
 	wstring					m_wstrBone = L"";
 
 	Engine::CTransform*		m_pTransformCom = nullptr;
-	_vec3					m_vPos = { INIT_VEC3 };
-	_vec3*					m_vOldPos=nullptr;
+	//_vec3					m_vPos = { INIT_VEC3 }; //
+	//_float				m_fRadius = 1.0f;		//
 	_bool					m_bColl = false;
-	_float					m_fRadius = 1.0f;
-	_matrix					m_matSphereWorld;
 	const	_matrix*		m_pParentBoneMatrix = nullptr;
 	const	_matrix*		m_pParentWorldMatrix = nullptr;
 
+	Collider_data			m_tCollData;
 #ifdef _DEBUG
+	_matrix					m_matSphereWorld;		//
 	Engine::CRenderer*		m_pRendererCom = nullptr;
 #endif // _DEBUG
 
