@@ -44,6 +44,8 @@ private:
 	void		StorngAttackMoveSet(_float fTimeDelta);
 	void		ChargeAttackMoveSet(_float fTimeDelta);
 	void		MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
+
+
 private:
 	Engine::CTransform*		m_pCameraTransformCom = nullptr;
 	Engine::CTransform*		m_pTransformCom = nullptr;

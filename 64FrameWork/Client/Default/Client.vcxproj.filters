@@ -103,6 +103,12 @@
     <Filter Include="02. GameObejct\02. Public\04. SphereCollider">
       <UniqueIdentifier>{2235b4e3-cdc0-4f1b-8acd-1b13ff4b2c7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObejct\01. Stage\10. Monster">
+      <UniqueIdentifier>{1af4b300-e64b-43ca-9f2f-d5d2a2667914}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObejct\01. Stage\10. Monster\RussianHat">
+      <UniqueIdentifier>{1e4866c7-257c-4a9a-924a-1ecdc1358d84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -177,6 +183,15 @@
     <ClInclude Include="..\Code\ColliderManager.h">
       <Filter>10.Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\DynamicObject.h">
+      <Filter>02. GameObejct\01. Stage\10. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\RussianHat.h">
+      <Filter>02. GameObejct\01. Stage\10. Monster\RussianHat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shield.h">
+      <Filter>02. GameObejct\01. Stage\06. Shield</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -247,6 +262,15 @@
     </ClCompile>
     <ClCompile Include="..\Code\ColliderManager.cpp">
       <Filter>10.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\DynamicObject.cpp">
+      <Filter>02. GameObejct\01. Stage\10. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\RussianHat.cpp">
+      <Filter>02. GameObejct\01. Stage\10. Monster\RussianHat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Shield.cpp">
+      <Filter>02. GameObejct\01. Stage\06. Shield</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

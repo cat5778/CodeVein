@@ -970,9 +970,15 @@ void CObjectTool::OnBnClickedObjectLoadButton()
 
 void CObjectTool::OnBnClickedStDeleteBT()
 {
-	wstring wstrInstName = m_pCamera->Get_PickName();
-	if (wstrInstName.compare(L"No Pick")==0)
-		return;
+
+	//TODO: 맵 피킹 오류때문에 막아놓음 사용시 다시켜야함
+	//wstring wstrInstName = m_pCamera->Get_PickName();
+
+	//if (wstrInstName.compare(L"No Pick")==0)
+	//	return;
+
+	wstring wstrInstName = m_csSelectMesh; //맵치킹 떄문에 해놓음 다시 주석처리해야함
+
 	if (dynamic_cast<CStaticObject*>((*m_ppGameObjectMap).find(wstrInstName)->second) != nullptr)
 	{
 		if (m_InstanceTree.ItemHasChildren(m_hStaticRoot))

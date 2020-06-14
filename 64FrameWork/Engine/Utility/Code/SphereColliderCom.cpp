@@ -27,6 +27,7 @@ void CSphereColliderCom::Render_Collider()
 
 	if (m_pSphereMesh != nullptr)
 	{
+
 		m_pGraphicDev->BeginScene();
 
 		_matrix matOldWorld;
@@ -37,8 +38,11 @@ void CSphereColliderCom::Render_Collider()
 
 
 		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME); //Test
-		D3DMATERIAL9 mtrl;
+		D3DMATERIAL9 mtrl,Oldmtrl;
+		m_pGraphicDev->GetMaterial(&Oldmtrl);
+
 		ZeroMemory(&mtrl, sizeof(D3DMATERIAL9));
+
 		if (m_bIsColl)
 		{
 			mtrl.Diffuse.r = mtrl.Ambient.r = 1.0f;
@@ -63,6 +67,8 @@ void CSphereColliderCom::Render_Collider()
 		m_pGraphicDev->SetTransform(D3DTS_WORLD, &matOldWorld);
 
 		m_pGraphicDev->EndScene();
+		m_pGraphicDev->SetMaterial(&Oldmtrl);
+
 	}
 #endif
 }

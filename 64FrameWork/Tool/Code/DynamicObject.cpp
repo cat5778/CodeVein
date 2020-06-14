@@ -110,6 +110,8 @@ void CDynamicObject::Set_TransformData()
 
 }
 
+
+
 CDynamicObject * CDynamicObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
 {
 	CDynamicObject*	pInstance = new CDynamicObject(pGraphicDev, wstrName, uiIdx);

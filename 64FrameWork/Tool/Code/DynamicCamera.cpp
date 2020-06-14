@@ -44,8 +44,8 @@ _int CDynamicCamera::Update_GameObject(const _float& fTimeDelta)
 	m_bIsNavPick = false;
 	if (m_pKeyMgr->KeyUp(KEY_LBUTTON))
 	{
-		if (m_iPickMode == 0)
-			Picking_Mesh();
+	if (m_iPickMode == 0)
+		Picking_Mesh();
 		else if (m_iPickMode == 1)
 		{
 			Pickint_Nav();
@@ -58,7 +58,6 @@ _int CDynamicCamera::Update_GameObject(const _float& fTimeDelta)
 	{
 		m_bIsPick = false;
 	}
-
 
 
 
@@ -430,6 +429,8 @@ void CDynamicCamera::Pickint_Nav()
 
 				if (D3DXIntersectTri(&v0, &v1, &v2, &tConvertRay.vPos, &tConvertRay.vDir, &fU, &fV, &fDist))
 				{
+					cout << "ÇÇÅ·" << endl;
+
 					if (fDist < fMinDist)
 					{
 						m_wstrPickName = L"NavPoint " + to_wstring(iCellIdx) + L"_" + to_wstring(iPoint);
