@@ -39,6 +39,7 @@ private:
 	Engine::CRenderer*		m_pRendererCom = nullptr;
 	Engine::CCalculator*	m_pCalculatorCom = nullptr;
 	Engine::CDynamicMesh*	m_pMeshCom = nullptr;
+	Engine::CColliderGroup* m_pColliderGroupCom = nullptr;
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	TRANSFORM_INFO			m_tTransformInfo;
 	_bool					m_bIsRespawn = false;

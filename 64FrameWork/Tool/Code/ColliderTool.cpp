@@ -13,6 +13,7 @@
 #include "TestStage.h"
 #include "DynamicCamera.h"
 #include "SphereCollider.h"
+#include "ColliderManager.h"
 
 // CColliderTool 대화 상자입니다.
 
@@ -79,29 +80,32 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 	if (m_CheckBone.GetCheck())
 	{
 		m_wstrSelectBone = m_csEditBone;
-		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
+		//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
 		
+		m_pSphereCol=m_pColliderGroup->Add_Collider((Engine::COLLOPTION)m_uiOption, m_wstrSelectBone, 15.f);
 
 	}
 	else
-		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
-	_uint uiIdx = 0;
-	wstring wstrColl = m_csSelectMesh;
-	
-	wstrColl += L"_" + m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
-
-	while ((*m_ppGameObjectMap).find(wstrColl) != (*m_ppGameObjectMap).end())
 	{
-		wstrColl = m_csSelectMesh;
-		uiIdx++;
-		wstrColl +=  L"_"+ m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
+		m_pSphereCol=m_pColliderGroup->Add_Collider((Engine::COLLOPTION)m_uiOption, m_wstrSelectBone, 15.f);
+
+		//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, m_wstrSelectObject, m_wstrSelectBone);
 	}
+	//_uint uiIdx = 0;
+	wstring wstrColl = m_pSphereCol->Get_CollTag();
+	//
+	//wstrColl += L"_" + m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
+
+	//while ((*m_ppGameObjectMap).find(wstrColl) != (*m_ppGameObjectMap).end())
+	//{
+	//	wstrColl = m_csSelectMesh;
+	//	uiIdx++;
+	//	wstrColl +=  L"_"+ m_wstrSelectBone + L"_SphereCollider" + L"_" + to_wstring(uiIdx);
+	//}
 
 
-	(*m_ppGameObjectMap).insert(make_pair(wstrColl, pGameObject));
-
-	m_vPosition =dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS];
-
+	//(*m_ppGameObjectMap).insert(make_pair(wstrColl, pGameObject));
+	m_vPosition = *m_pSphereCol->Get_Pos();
 	m_csPosition[0].Format(_T("%f"),m_vPosition.x);
 	m_csPosition[1].Format(_T("%f"),m_vPosition.y);
 	m_csPosition[2].Format(_T("%f"),m_vPosition.z);
@@ -109,9 +113,6 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
 	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
 	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
-
-
-
 
 	_bool bIsObject=false;
 	if (m_ColliderTree.GetCount()>0)
@@ -146,15 +147,7 @@ void CColliderTool::OnBnClickedClliderCreateButton()
 		m_hBone = m_ColliderTree.InsertItem(wstrColl.c_str(), 0, 0, m_hObject, TVI_SORT);
 	}
 
-
-
-
-
-	
 	//m_BoneTree.InsertItem(wstrBone.c_str(), 0, 0, TVI_ROOT, TVI_SORT); //<-TODO: 고치는중 
-
-
-
 }
 
 
@@ -178,7 +171,6 @@ void CColliderTool::OnBnClickedColliderSaveButton()
 		Save_Text(dlgFile.GetPathName());
 
 	}
-	//TODO: Save Text연동
 }
 
 
@@ -320,15 +312,43 @@ HRESULT CColliderTool::Save_Text(const TCHAR * pFilePath)
 		return E_FAIL;
 	for (auto mapItem : (*m_ppGameObjectMap))
 	{
-		if (mapItem.first.find(L"_SphereCollider")==wstring::npos) //오브젝트배치 저장시 오브젝트툴에서 콜라이더 존재할시 예외처리 해놔야함 
+
+		Engine::CColliderGroup*	pCollGroup= dynamic_cast<Engine::CColliderGroup*>
+								(mapItem.second->Get_Component(L"Com_ColliderGroup", Engine::ID_DYNAMIC));
+		if (pCollGroup == nullptr)
 			continue;
-		Engine::CTransform* pTransform = dynamic_cast<Engine::CTransform*>(mapItem.second->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC));
-		fout << CW2A(mapItem.first.c_str()) << endl;
-		fout << pTransform->m_vInfo[Engine::INFO_POS].x << endl;
-		fout << pTransform->m_vInfo[Engine::INFO_POS].y << endl;
-		fout << pTransform->m_vInfo[Engine::INFO_POS].z << endl;
-		fout << dynamic_cast<CSphereCollider*>(mapItem.second)->Get_Radius() << endl;
-		fout << dynamic_cast<CSphereCollider*>(mapItem.second)->Get_Option() << endl;
+
+		Engine::CSphereColliderCom*	pSphereCol = nullptr;
+
+
+		for (int i = 0; i < Engine::COLOPT_END; i++)
+		{
+			vector<Engine::CSphereColliderCom*>  pCollVec = *pCollGroup->Get_CollVec((Engine::COLLOPTION)i);
+			
+			for (auto pColl : pCollVec)
+			{
+				wstring wstrObjTag = pColl->Get_ObjTag();
+				wstring wstrBoneTag = pColl->Get_BoneTag();
+				wstring wstrCollTag = pColl->Get_CollTag();
+				_vec3	vPos = *pColl->Get_Pos();
+				_float fRadius = *pColl->Get_Radius();
+
+				
+
+				fout << CW2A(wstrObjTag.c_str()) << endl;
+				fout << i << endl;
+				fout << CW2A(wstrBoneTag.c_str()) << endl;
+				fout << CW2A(wstrCollTag.c_str()) << endl;
+				fout << vPos.x << endl;
+				fout << vPos.y << endl;
+				fout << vPos.z  << endl;
+				fout << fRadius << endl;
+
+
+			}
+		}
+		//fout << dynamic_cast<CSphereCollider*>(mapItem.second)->Get_Radius() << endl;
+		//fout << dynamic_cast<CSphereCollider*>(mapItem.second)->Get_Option() << endl;
 
 	}
 	fout.close();
@@ -355,43 +375,81 @@ HRESULT CColliderTool::Load_Text(const TCHAR * pFilePath)
 	_uint uiOpt= 0;
 	while (!fin.eof())
 	{
-		D3DXVECTOR3 vPos;
+		
+		SPHERE_COL_DATA* pColData = new SPHERE_COL_DATA;
 
 		fin.getline(cTemp, MIN_STR);
 		csTemp = cTemp;
 		wstrTemp = csTemp.GetString();
 
-		if (wstrTemp.compare(L"") == 0)
-			break;
-		//fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		if (wstrTemp.compare(L"") == 0) break;
+
+		pColData->wstrObjTag = wstrTemp;
 
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		vPos.x = (float)atof(cTemp);
+		pColData->uiOption = atoi(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		csTemp = cTemp;
+		wstrTemp = csTemp.GetString();
+		pColData->wstrBoneTag = wstrTemp;
+
+		fin.getline(cTemp, MIN_STR);
+		csTemp = cTemp;
+		wstrTemp = csTemp.GetString();
+		pColData->wstrCollTag= wstrTemp;
+
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		vPos.y = (float)atof(cTemp);
+		pColData->vPos.x = (float)atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pColData->vPos.y = (float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR);
-		vPos.z = (float)atof(cTemp);
+		pColData->vPos.z = (float)atof(cTemp);
 
 		fin.getline(cTemp, MIN_STR);
-		fRadius = (float)atof(cTemp);
-		fin.getline(cTemp, MIN_STR);
-		uiOpt= atoi(cTemp);
+		pColData->fRadius= (float)atof(cTemp);
 
-		//COLL_DATA* pCollData = new COLL_DATA;
 		
-		wstring wstObject, wstrBone;
-		_uint uiIdx = 0;
-		DividString(wstrTemp, wstObject, wstrBone, uiIdx);
+		m_pCollManager->Add_Colldata(pColData);
+		
+		/////////요기까지
+		//D3DXVECTOR3 vPos;
+
+		//fin.getline(cTemp, MIN_STR);
+		//csTemp = cTemp;
+		//wstrTemp = csTemp.GetString();
+
+		//if (wstrTemp.compare(L"") == 0)
+		//	break;
+		////fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+
+		//fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		//vPos.x = (float)atof(cTemp);
+		//fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		//vPos.y = (float)atof(cTemp);
+		//fin.getline(cTemp, MIN_STR);
+		//vPos.z = (float)atof(cTemp);
+
+		//fin.getline(cTemp, MIN_STR);
+		//fRadius = (float)atof(cTemp);
+		//fin.getline(cTemp, MIN_STR);
+		//uiOpt= atoi(cTemp);
+
+		////COLL_DATA* pCollData = new COLL_DATA;
+		//
+		//wstring wstObject, wstrBone;
+		//_uint uiIdx = 0;
+		//DividString(wstrTemp, wstObject, wstrBone, uiIdx);
 
 
-		wstObject += L"_0";
-		Engine::CGameObject* pGameObject = nullptr;
-		pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
-		m_pSphereColl->Set_Radius(fRadius);
-		m_pSphereColl->Set_Position(vPos);
-		m_pSphereColl->Set_Option((COLLIDEROPTION)uiOpt);
+		//wstObject += L"_0";
+		//Engine::CGameObject* pGameObject = nullptr;
+		//pGameObject = m_pSphereColl = CSphereCollider::Create(m_pDevice, wstObject, wstrBone);
+		//m_pSphereColl->Set_Radius(fRadius);
+		//m_pSphereColl->Set_Position(vPos);
+		//m_pSphereColl->Set_Option((COLLIDEROPTION)uiOpt);
 
-		(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
+		//(*m_ppGameObjectMap).insert(make_pair(wstrTemp, pGameObject));
 
 	}
 	fin.close();
@@ -433,6 +491,7 @@ BOOL CColliderTool::OnInitDialog()
 		m_pDevice = m_pMyform->Get_Device();
 		m_pScene = m_pMyform->Get_Scene();
 		m_pKeyManager = CKeyMgr::GetInstance();
+		m_pCollManager = CColliderManager::GetInstance();
 	}
 
 	//m_hStaticRoot	=	m_ObjectTree.InsertItem(TEXT("StaticObject"), 0, 0, TVI_ROOT, TVI_LAST);
@@ -456,7 +515,7 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 	m_pDynamicObject = nullptr;
 	m_pCurSelectObj = nullptr; 
 	m_pDynamicMesh = nullptr;
-	m_pSphereColl = nullptr;
+	//m_pSphereColl = nullptr;
 	wstring wstrSelectMesh = m_csSelectMesh;
 	wstrSelectMesh += L"_0";
 	if (wstrSelectMesh.find(L"Object") == wstring::npos)
@@ -468,6 +527,7 @@ void CColliderTool::OnTvnSelchangedDymeshTree(NMHDR *pNMHDR, LRESULT *pResult)
 			if (m_pCurSelectObj != nullptr)
 			{
 				m_wstrSelectObject = (*(*m_ppGameObjectMap).find(wstrSelectMesh)).first;
+				m_pColliderGroup = dynamic_cast<Engine::CColliderGroup*>(m_pCurSelectObj->Get_Component(L"Com_ColliderGroup", Engine::ID_DYNAMIC));
 
 				Get_BoneName();
 			}
@@ -512,22 +572,29 @@ void CColliderTool::OnTvnSelchangedColliderTree(NMHDR *pNMHDR, LRESULT *pResult)
 
 	m_hCollider = m_ColliderTree.GetSelectedItem();
 	CString csCollider = m_BoneTree.GetItemText(m_hCollider);
-
 	m_wstrSelectCollider = csCollider;
+	//wstring wstrBone, wstrObj;
+	//_uint uiIdx = 0;
+	//DividString(m_wstrSelectCollider, wstrObj, wstrBone, uiIdx);
 
-	m_pSphereColl=dynamic_cast<CSphereCollider*>((*m_ppGameObjectMap).find(m_wstrSelectCollider)->second);
 
-	if (m_pSphereColl!=nullptr)
+	m_pSphereCol=m_pColliderGroup->Get_SphereColl(m_wstrSelectCollider);
+	//m_pSphereColl=dynamic_cast<CSphereCollider*>((*m_ppGameObjectMap).find(m_wstrSelectCollider)->second);
+
+	if (m_pSphereCol !=nullptr)
 	{
-		_vec3 vPos =*m_pSphereColl->Get_Position();
+		_vec3 vPos =*m_pSphereCol->Get_Pos();
 		m_vPosition = vPos;
 		m_csPosition[0].Format(_T("%f"),vPos.x);
 		m_csPosition[1].Format(_T("%f"),vPos.y);
 		m_csPosition[2].Format(_T("%f"),vPos.z);
-		m_csRadius.Format(_T("%f"),m_pSphereColl->Get_Radius());
+		m_csRadius.Format(_T("%f"),*m_pSphereCol->Get_Radius());
+		//m_csOption.Format(_T("%d"), m_pSphereCol->Get_Option());
 		SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
 		SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
 		SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
+		//SetDlgItemTextW(IDC_EDITOption, m_csOption);
+
 	}
 
 	*pResult = 0;
@@ -547,8 +614,15 @@ void CColliderTool::OnDeltaposSpinPosX(NMHDR *pNMHDR, LRESULT *pResult)
 
 	m_csPosition[0].Format(_T("%f"), m_vPosition.x);
 	SetDlgItemTextW(IDC_EditPosX, m_csPosition[0]);
-	if (m_pSphereColl!=nullptr)
-		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].x = m_vPosition.x;
+
+	if (m_pSphereCol != nullptr)
+	{
+		_vec3 vPos=*m_pSphereCol->Get_Pos();
+		vPos.x = m_vPosition.x;
+		m_pSphereCol->Set_Pos(vPos);
+	}
+	//if (m_pSphereColl!=nullptr)
+	//	dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].x = m_vPosition.x;
 
 	*pResult = 0;
 }
@@ -567,8 +641,16 @@ void CColliderTool::OnDeltaposSpinPosY(NMHDR *pNMHDR, LRESULT *pResult)
 	m_csPosition[1].Format(_T("%f"), m_vPosition.y);
 	SetDlgItemTextW(IDC_EditPosY, m_csPosition[1]);
 
-	if (m_pSphereColl != nullptr)
-		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].y = m_vPosition.y;
+	if (m_pSphereCol != nullptr)
+	{
+		_vec3 vPos = *m_pSphereCol->Get_Pos();
+		vPos.y = m_vPosition.y;
+		m_pSphereCol->Set_Pos(vPos);
+	}
+
+
+	//if (m_pSphereColl != nullptr)
+	//	dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].y = m_vPosition.y;
 
 
 
@@ -588,8 +670,16 @@ void CColliderTool::OnDeltaposSpinPosZ(NMHDR *pNMHDR, LRESULT *pResult)
 
 	m_csPosition[2].Format(_T("%f"), m_vPosition.z);
 	SetDlgItemTextW(IDC_EditPosZ, m_csPosition[2]);
-	if (m_pSphereColl != nullptr)
-		dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].z = m_vPosition.z;
+
+	if (m_pSphereCol != nullptr)
+	{
+		_vec3 vPos = *m_pSphereCol->Get_Pos();
+		vPos.z = m_vPosition.z;
+		m_pSphereCol->Set_Pos(vPos);
+	}
+
+	//if (m_pSphereColl != nullptr)
+	//	dynamic_cast<Engine::CTransform*>(m_pSphereColl->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->m_vInfo[Engine::INFO_POS].z = m_vPosition.z;
 
 	*pResult = 0;
 }
@@ -609,8 +699,13 @@ void CColliderTool::OnDeltaposSpinRadius(NMHDR *pNMHDR, LRESULT *pResult)
 	m_csRadius.Format(_T("%f"), m_fRadius);
 	SetDlgItemTextW(IDC_EditRadius, m_csRadius);
 
-	if (m_pSphereColl != nullptr)
-		m_pSphereColl->Set_Radius(m_fRadius);
+
+	if (m_pSphereCol != nullptr)
+		m_pSphereCol->Set_Radius(m_fRadius);
+
+
+	//if (m_pSphereColl != nullptr)
+	//	m_pSphereColl->Set_Radius(m_fRadius);
 
 
 	*pResult = 0;
@@ -633,7 +728,7 @@ void CColliderTool::OnDeltaposSpinAnim(NMHDR *pNMHDR, LRESULT *pResult)
 	m_csAnim.Format(_T("%d"), m_uiAnim);
 	SetDlgItemTextW(IDC_EDITAnim, m_csAnim);
 
-	if (m_pSphereColl != nullptr)
+	if (m_pSphereCol != nullptr)
 		m_pCurSelectObj->Set_AnimationIdx(m_uiAnim);
 	
 	
@@ -644,8 +739,11 @@ void CColliderTool::OnDeltaposSpinAnim(NMHDR *pNMHDR, LRESULT *pResult)
 void CColliderTool::OnEnChangeEditRadius()
 {
 	GetDlgItemText(IDC_EditRadius, m_csRadius);
-	if (m_pSphereColl != nullptr)
-		m_pSphereColl->Set_Radius((_float)_tstof(m_csRadius));
+	//if (m_pSphereColl != nullptr)
+	//	m_pSphereColl->Set_Radius((_float)_tstof(m_csRadius));
+
+	if (m_pSphereCol != nullptr)
+		m_pSphereCol->Set_Radius((_float)_tstof(m_csRadius));
 
 }
 
@@ -664,6 +762,7 @@ void CColliderTool::OnEnChangeEditBone()
 void CColliderTool::OnEnChangeEditOption()
 {
 	GetDlgItemText(IDC_EDITOption, m_csOption);
+
 
 	if (m_pSphereColl != nullptr)
 		m_pSphereColl->Set_Option((COLLIDEROPTION)_tstoi(m_csOption));
@@ -689,5 +788,8 @@ void CColliderTool::OnDeltaposSpinOption(NMHDR *pNMHDR, LRESULT *pResult)
 
 	m_csOption.Format(_T("%d"), m_uiOption);
 	SetDlgItemTextW(IDC_EDITOption, m_csOption);
+
+
+
 	*pResult = 0;
 }

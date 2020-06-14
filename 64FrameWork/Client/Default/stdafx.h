@@ -35,8 +35,7 @@
 //Manager
 #include "KeyMgr.h"
 #include "TimerManager.h"
-
-
+#include "ColliderManager.h"
 
 //Memort Leak Check
 #ifdef _DEBUG

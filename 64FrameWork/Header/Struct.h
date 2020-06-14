@@ -63,4 +63,17 @@ typedef struct Time_Data
 
 }TIME_DATA;
 
+typedef struct Sphere_Coll
+{
+	wstring wstrObjTag;
+	wstring wstrBoneTag;
+	wstring wstrCollTag;
+	_vec3  vPos;
+	_float fRadius;
+	_uint  uiOption;
+
+}SPHERE_COL_DATA;
+
+
+
 #endif // Struch_h__

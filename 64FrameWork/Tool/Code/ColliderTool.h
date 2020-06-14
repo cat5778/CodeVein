@@ -9,6 +9,7 @@ class CMyForm;
 class CKeyMgr;
 class CDynamicObject;
 class CSphereCollider;
+class CColliderManager;
 class CColliderTool : public CDialogEx
 {
 	DECLARE_DYNAMIC(CColliderTool)
@@ -82,6 +83,11 @@ private:
 	CDynamicObject*						m_pDynamicObject = nullptr;
 	CDynamicObject*						m_pCurSelectObj= nullptr;
 	Engine::CDynamicMesh*				m_pDynamicMesh = nullptr;
+	
+	Engine::CColliderGroup*				m_pColliderGroup= nullptr;
+	Engine::CSphereColliderCom*			m_pSphereCol = nullptr;
+	CColliderManager*					m_pCollManager = nullptr;
+	
 	CSphereCollider*					m_pSphereColl = nullptr;
 	_uint								m_uiMapSize=0;
 	CString								m_csSelectMesh;

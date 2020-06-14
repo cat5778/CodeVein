@@ -11,6 +11,7 @@
 #include "LightMgr.h"
 #include "Collider.h"
 #include "ColliderGroup.h"
+#include "SphereColliderCom.h"
 #include "PrototypeMgr.h"
 #include "Shader.h"
 #include "RenderTargetMgr.h"

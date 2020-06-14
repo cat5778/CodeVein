@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "StaticObject.h"
 #include "DynamicCamera.h"
+#include "Sword.h"
 #include "Cell.h"
 CTestStage::CTestStage(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CScene(pGraphicDev)
@@ -138,6 +139,10 @@ HRESULT CTestStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	pGameObject = CPlayer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(m_pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
+
+
+
+	////Sword
 	//pGameObject = CSword::Create(m_pGraphicDev, 0);
 	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
@@ -251,7 +256,9 @@ HRESULT CTestStage::Add_StaticObject(wstring wstrObjName, TRANSFORM_INFO tInfo)
 	pGameObject = CStaticObject::Create(m_pGraphicDev, wstrObjEraseIdx, uiObjIdx);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(m_pLayer->Add_GameObject(wstrObjName.c_str(), pGameObject), E_FAIL);
-	
+
+
+
 	return S_OK;
 }
 void CTestStage::Set_MeshVec(vector<NavMesh*>& pMeshVec)

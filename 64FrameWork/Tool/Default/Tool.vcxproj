@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\CameraTool.h" />
+    <ClInclude Include="..\Code\ColliderManager.h" />
     <ClInclude Include="..\Code\ColliderTool.h" />
     <ClInclude Include="..\Code\DirectoryMgr.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\SphereCollider.h" />
     <ClInclude Include="..\Code\StaticObject.h" />
+    <ClInclude Include="..\Code\Sword.h" />
     <ClInclude Include="..\Code\Terrain.h" />
     <ClInclude Include="..\Code\TestStage.h" />
     <ClInclude Include="MainFrm.h" />
@@ -238,6 +240,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\CameraTool.cpp" />
+    <ClCompile Include="..\Code\ColliderManager.cpp" />
     <ClCompile Include="..\Code\ColliderTool.cpp" />
     <ClCompile Include="..\Code\DirectoryMgr.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
@@ -250,6 +253,7 @@
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\SphereCollider.cpp" />
     <ClCompile Include="..\Code\StaticObject.cpp" />
+    <ClCompile Include="..\Code\Sword.cpp" />
     <ClCompile Include="..\Code\Terrain.cpp" />
     <ClCompile Include="..\Code\TestStage.cpp" />
     <ClCompile Include="MainFrm.cpp" />

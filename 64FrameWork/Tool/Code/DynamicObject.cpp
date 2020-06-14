@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "DynamicObject.h"
-
 #include "Export_Function.h"
-
+#include "ColliderManager.h"
 
 
 CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
@@ -52,7 +51,7 @@ void CDynamicObject::Render_GameObject(void)
 	m_pMeshCom->Render_Meshes();
 	_matrix		matWorld;
 	m_pTransformCom->Get_WorldMatrix(&matWorld);
-
+	m_pColliderGroupCom->Render_Collider();
 	//m_pColliderCom->Render_Collider(Engine::COLLTYPE(m_bColl), &matWorld);
 }
 
@@ -77,6 +76,13 @@ HRESULT CDynamicObject::Add_Component(void)
 	pComponent = m_pCalculatorCom = Engine::CCalculator::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
+
+	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev,m_ObjName,m_pTransformCom,m_pMeshCom);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_ColliderGroup", pComponent);
+	
+	CColliderManager::GetInstance()->Get_ObjCollider(m_pColliderGroupCom, m_ObjName);
+
 	// collider
 	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev,
 	//	m_pMeshCom->Get_VtxPos(),

@@ -79,6 +79,9 @@
     <Filter Include="11. SphereCollider">
       <UniqueIdentifier>{ac17df6e-c537-4b4c-b16b-efd764deec75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10. GameObject\01.Weapon">
+      <UniqueIdentifier>{8d8e1f1e-04e3-4330-8686-0aa8fd25ac39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -147,6 +150,12 @@
     <ClInclude Include="..\Code\SphereCollider.h">
       <Filter>11. SphereCollider</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\ColliderManager.h">
+      <Filter>90. Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Sword.h">
+      <Filter>10. GameObject\01.Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -208,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\SphereCollider.cpp">
       <Filter>11. SphereCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ColliderManager.cpp">
+      <Filter>90. Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Sword.cpp">
+      <Filter>10. GameObject\01.Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

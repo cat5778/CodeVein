@@ -4,6 +4,7 @@
 #include "Export_Function.h"
 #include "DirectoryMgr.h"
 #include <iostream>
+#include "ColliderManager.h"
 CLoading::CLoading(LPDIRECT3DDEVICE9 pGraphicDev)
 	: m_pGraphicDev(pGraphicDev)
 	, m_bFinish(false)
@@ -124,7 +125,7 @@ _uint CLoading::Loading_ForStage(void)
 		break;
 	}
 
-	
+	Loading_Collider();
 	
 	lstrcpy(m_szLoading, L"Loading Complete!!!");
 
@@ -223,6 +224,66 @@ _bool CLoading::Loading_Mesh() //텍스트 읽고와서 메쉬 로딩
 
 
 	return false;
+}
+
+_bool CLoading::Loading_Collider()
+{
+	TCHAR szFileName[MAX_STR] = L"../../Resource/Data/Collider/Test.txt";
+
+	ifstream fin;
+
+	fin.open(szFileName, ios::in);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	char cTemp[MIN_STR];
+	while (!fin.eof())
+	{
+		SPHERE_COL_DATA* pColData = new SPHERE_COL_DATA;
+
+
+		fin.getline(cTemp, MIN_STR);
+		wchar_t* ppwchar = CharToWChar(cTemp);
+		pColData->wstrObjTag = ppwchar;
+		delete ppwchar;
+
+		fin.getline(cTemp, MIN_STR);
+		pColData->uiOption = (_uint)atoi(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		ppwchar = CharToWChar(cTemp);
+		pColData->wstrBoneTag = ppwchar;
+		delete ppwchar;
+
+		fin.getline(cTemp, MIN_STR);
+		ppwchar = CharToWChar(cTemp);
+		pColData->wstrCollTag = ppwchar;
+		delete ppwchar;
+
+		fin.getline(cTemp, MIN_STR);
+		pColData->vPos.x = (float)atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		pColData->vPos.y = (float)atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		pColData->vPos.z = (float)atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR);
+		pColData->fRadius = (float)atof(cTemp);
+
+		if (pColData->wstrObjTag.empty())
+		{
+			delete pColData;
+			pColData = nullptr;
+			continue;
+		}
+		else
+			CColliderManager::GetInstance()->Add_Colldata(pColData);
+	}
+
+
 }
 
 //_bool CLoading::Loading_Collider()

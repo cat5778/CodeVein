@@ -2,16 +2,17 @@
 #include "Transform.h"
 USING(Engine)
 
-CSphereColliderCom::CSphereColliderCom(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag, wstring wstrBoneTag,Engine::CTransform * pObjTransform, const Engine::D3DXFRAME_DERIVED * pBone)
+CSphereColliderCom::CSphereColliderCom(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag, wstring wstrBoneTag,Engine::CTransform * pObjTransform, const Engine::D3DXFRAME_DERIVED * pBone, _uint uiIdx)
 	: m_pGraphicDev(pGraphicDev)
 {
 	m_pGraphicDev->AddRef();
 	m_wstrObjTag = wstrObjTag;
 	m_wstrBoneTag = wstrBoneTag;
 	m_pParentWorldMatrix = pObjTransform->Get_WorldMatrixPointer();
-
+	//m_wstrCollTag = wstrObjTag+L"_" + wstrBoneTag;
 	m_pParentBoneMatrix = &pBone->CombinedTransformationMatrix;
-
+	m_uiIdx = uiIdx;
+	m_wstrCollTag = m_wstrObjTag + L"_" + m_wstrBoneTag + L"_" + to_wstring(m_uiIdx);
 }
 
 CSphereColliderCom::~CSphereColliderCom(void)
@@ -167,9 +168,9 @@ HRESULT CSphereColliderCom::Set_DMParentMatrix(const Engine::D3DXFRAME_DERIVED *
 	return E_NOTIMPL;
 }
 
-CSphereColliderCom * CSphereColliderCom::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag, wstring wstrBoneTag, Engine::CTransform* pObjTransform, const Engine::D3DXFRAME_DERIVED * pBone)
+CSphereColliderCom * CSphereColliderCom::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag, wstring wstrBoneTag, Engine::CTransform* pObjTransform, const Engine::D3DXFRAME_DERIVED * pBone, _uint uiIdx)
 {
-	CSphereColliderCom*	pInstance = new CSphereColliderCom(pGraphicDev, wstrObjTag, wstrBoneTag, pObjTransform, pBone);
+	CSphereColliderCom*	pInstance = new CSphereColliderCom(pGraphicDev, wstrObjTag, wstrBoneTag, pObjTransform, pBone, uiIdx);
 
 	if (FAILED(pInstance->Ready_Component()))
 		Engine::Safe_Release(pInstance);

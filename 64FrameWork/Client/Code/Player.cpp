@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "Player.h"
 #include <fstream>
-
 #include "Export_Function.h"
+
+#include "ColliderManager.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
 {
-
+	m_ObjName = L"Player2";
 }
 
 CPlayer::~CPlayer(void)
@@ -103,13 +104,12 @@ HRESULT CPlayer::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
-	
-	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev,m_pTransformCom,m_pMeshCom);
+
+	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_ObjName, m_pTransformCom, m_pMeshCom);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_pColliderGroupCom->Add_Collider(Engine::COLOPT_STEP, L"Player2", L"RightHandAttach");
+	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_ColliderGroup", pComponent);
 
-	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"ColliderGroup", pComponent);
-
+	CColliderManager::GetInstance()->Get_ObjCollider(m_pColliderGroupCom, m_ObjName);
 
 	//m_pSpherColliderCom->Set_Radius(14.0f);
 	//m_pSpherColliderCom->Set_Pos(_vec3(0.f,250.f,0.f));
