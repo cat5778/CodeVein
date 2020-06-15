@@ -2,7 +2,9 @@
 #include "Defines.h"
 #include "GameObject.h"
 #include "DynamicObject.h"
-
+BEGIN(Engine)
+class CNaviMesh;
+END
 class CRussianHat : public CDynamicObject
 {
 public:
@@ -12,6 +14,7 @@ public:
 
 public:
 	HRESULT					Ready_GameObject();
+	virtual	HRESULT			LateReady_GameObject()override;
 	virtual _int			Update_GameObject(const _float& fTimeDelta) override;
 	virtual void			Render_GameObject(void) override;
 	
@@ -26,6 +29,9 @@ private:
 public:
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo);
+
+private:
+	Engine::CNaviMesh*		m_pNaviCom = nullptr;
 
 private:
 	virtual void			Free(void) override;

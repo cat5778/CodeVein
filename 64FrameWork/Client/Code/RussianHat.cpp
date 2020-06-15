@@ -23,19 +23,44 @@ HRESULT CRussianHat::Ready_GameObject()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Set_TransformData();
-
+	
 	m_pMeshCom->Set_AnimationSet(38);//Idle38 
+
+	return S_OK;
+}
+
+HRESULT CRussianHat::LateReady_GameObject()
+{
+	m_pNaviCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Navi", Engine::ID_STATIC));
+	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
 
 	return S_OK;
 }
 
 _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 {
+	if (m_pNaviCom != nullptr)
+	{
+		_vec3	vPos, vDir, vDiagonalDir, vOutPos;
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+		vDir.y = 0.f;
+		D3DXVec3Normalize(&vDir, &vDir);
+		m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * 1.0f* fTimeDelta), &vOutPos);
+		
+	}
+	
+	
+	
 	m_pMeshCom->Set_AnimationSet(38);
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+
+
+
+
 
 	return S_OK;
 }
@@ -97,6 +122,8 @@ HRESULT CRussianHat::Add_Component(void)
 	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_ObjName, m_pTransformCom, m_pMeshCom);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_ColliderGroup", pComponent);
+
+
 
 	CColliderManager::GetInstance()->Get_ObjCollider(m_pColliderGroupCom, m_ObjName);
 

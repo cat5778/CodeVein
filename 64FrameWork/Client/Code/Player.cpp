@@ -78,6 +78,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	_bool bIsColl=m_pCalculatorCom->Collsion_Sphere(m_pColliderGroupCom->Get_CollVec(Engine::COLOPT_ATTACK),
 													pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+
 	
 	return 0;
 }
