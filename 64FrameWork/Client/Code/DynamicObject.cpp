@@ -2,7 +2,7 @@
 #include "DynamicObject.h"
 #include "Export_Function.h"
 #include "ColliderManager.h"
-
+#include <fstream>
 
 CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
 	: Engine::CGameObject(pGraphicDev)
@@ -167,6 +167,121 @@ HRESULT CDynamicObject::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 	pEffect->SetFloat("g_fPower", tMtrlInfo.Power);
 
 	return S_OK;
+}
+
+void CDynamicObject::StateMachine()
+{
+}
+
+_vec3 CDynamicObject::Get_TargetPos()
+{
+	return *m_pTargetTransformCom->Get_Info(Engine::INFO_POS);
+}
+
+_vec3 CDynamicObject::Get_Pos()
+{
+	return	*m_pTransformCom->Get_Info(Engine::INFO_POS);
+}
+
+_vec3 CDynamicObject::Get_Look()
+{
+	return *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+}
+
+_vec3 CDynamicObject::Get_Right()
+{
+	return *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+}
+
+
+float CDynamicObject::Get_Angle(const D3DXVECTOR3 & a, const D3DXVECTOR3 & b)
+{
+	float fRadian = acosf(D3DXVec3Dot(&a, &b) / (D3DXVec3Length(&a) * D3DXVec3Length(&b)));
+
+	fRadian = D3DXToDegree(fRadian);
+	float fDgree = (a.x * b.z - a.z * b.x > 0.0f) ? fRadian : -fRadian;
+
+	return fDgree;
+}
+
+void CDynamicObject::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir)
+{
+	_vec3	vPos, vOutPos,vTempDir;
+	vTempDir = vDir;
+	vTempDir.y = 0.f;
+	D3DXVec3Normalize(&vTempDir, &vTempDir);
+	_float fCurRatio = (float)(m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period());
+	if (fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
+	{
+		vPos = Get_Pos();
+		m_pNaviCom->Move_OnNaviMesh(&Get_Pos(), &(vTempDir * fSpeed* fTimeDelta), &vOutPos);
+		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+	}
+}
+
+_float CDynamicObject::Get_AniRatio()
+{
+	return m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
+}
+
+HRESULT CDynamicObject::Load_Text(const TCHAR * pFilePath)
+{
+	ifstream fin;
+	fin.open(pFilePath);
+	if (fin.fail())
+		return E_FAIL;
+	wstring wstrTemp;
+	char cTemp[MIN_STR];
+	_uint uidx = 0;
+	while (!fin.eof())
+	{
+		fin.getline(cTemp, MIN_STR);
+		wchar_t* ppwchar = CharToWChar(cTemp);
+		wstrTemp = ppwchar;
+		delete ppwchar;
+
+		if (wstrTemp.compare(L"") == 0)
+			break;
+
+		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
+
+		pNaviData->vPosition1.x = _wtof(wstrTemp.c_str());
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition1.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition1.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition2.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition2.z = atof(cTemp);
+
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.x = atof(cTemp);
+		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		pNaviData->vPosition3.y = atof(cTemp);
+		fin.getline(cTemp, MIN_STR);
+		pNaviData->vPosition3.z = atof(cTemp);
+
+		pNaviData->uiIdx = uidx;
+
+		m_pNaviCom->Add_Cell(pNaviData);
+
+		delete pNaviData;
+		uidx++;
+	}
+	fin.close();
+	return S_OK;
+}
+
+wchar_t * CDynamicObject::CharToWChar(const char * pstrSrc)
+{
+	int nLen = strlen(pstrSrc) + 1;
+	wchar_t* pwstr = (LPWSTR)malloc(sizeof(wchar_t)* nLen);
+	mbstowcs(pwstr, pstrSrc, nLen);
+	return pwstr;
 }
 
 void CDynamicObject::Set_TransformData()

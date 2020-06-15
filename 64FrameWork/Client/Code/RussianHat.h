@@ -23,19 +23,27 @@ public:
 private:
 	virtual HRESULT			Add_Component(void);
 	void					Set_TransformData();
+	void					StateMachine()override;
 
-
-
+private://Pattern
+	void					Pattern(_float fTimeDelta);
+	_float					Get_TargetDist();
+	void					Chaing_Target(_float fTimeDelta);
+	void					Phase1(_float fTimeDelta);
+	void					TshieldAttack_Ready(_float fTimeDelta);
+	void					TshieldAttack(_float fTimeDelta);
+	void					Idle(_float fTimeDelta);
 public:
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo);
 
 private:
-	Engine::CNaviMesh*		m_pNaviCom = nullptr;
-
+	RUSSIANTSTATE				m_eCurState;
+	RUSSIANTSTATE				m_ePreState;
 private:
 	virtual void			Free(void) override;
 };
+
 /* Russian Hat Ani Index */
 // 0. TFist_KetsugiAllRange_E
 // 1. TFist_KetsugiAllRange_L
@@ -70,7 +78,7 @@ private:
 //30. Walk_L_L
 //31. Walk_F_L
 //32. Walk_B_L
-//33. Run_F_L
+//33. Run_F_L     
 //34. IdleTurn_R180
 //35. IdleTurn_R90
 //36. IdleTurn_L180

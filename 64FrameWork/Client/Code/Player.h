@@ -39,7 +39,7 @@ private:
 	void		Check_Direction(_float fTimeDelta);
 	void		StateMachine();
 	void		IdleOption();
-	void		CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2= Engine::INFO::INFO_END, _bool bIsDir2Rvc=false);
+	void		CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2 = Engine::INFO::INFO_END, _bool bIsDir2Rvc = false);
 	void		AttackMoveSet(_float fTimeDelta);
 	void		StorngAttackMoveSet(_float fTimeDelta);
 	void		ChargeAttackMoveSet(_float fTimeDelta);

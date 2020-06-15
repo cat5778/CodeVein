@@ -70,6 +70,8 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
+	
+	//몬스터들 전부다 들고오기
 	Engine::CColliderGroup* pCollCom = dynamic_cast<Engine::CColliderGroup*>
 		(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_ColliderGroup", Engine::ID_DYNAMIC));
 	
