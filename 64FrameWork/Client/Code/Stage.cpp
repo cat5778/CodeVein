@@ -135,6 +135,13 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	case LOAD_NOMAL:
 		Load_Text(L"../../Resource/Data/Base.txt");
 		break;
+	case LOAD_NOMAL2:
+		Load_Text(L"../../Resource/Data/SnowMap.txt");
+		break;
+	case LOAD_NOMAL3:
+		Load_Text(L"../../Resource/Data/Base.txt");
+		break;
+
 	case LOAD_PLAYER:
 		break;
 	case LOAD_MONSTER:

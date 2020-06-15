@@ -19,13 +19,35 @@ CPlayer::~CPlayer(void)
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
-	m_pNaviCom->Set_Index(38);// Base Init Idx 38 
+	switch ((LOADMODE)LOAD_MODE)
+	{
+	case LOAD_NOMAL:
+		Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
+		break;
+	case LOAD_NOMAL2:
+		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
+		break;
+	case LOAD_NOMAL3:
+		break;
+
+	case LOAD_PLAYER:
+		break;
+	case LOAD_MONSTER:
+		break;
+	case LOAD_END:
+		break;
+	default:
+		break;
+	}
+
+
+	m_pNaviCom->Set_Index(0);// Base Init Idx 38 
 	m_eCurState = OBJ_START;
 	m_pMeshCom->Set_AnimationSet(46);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
+	m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);
 	
 	return S_OK;
 }

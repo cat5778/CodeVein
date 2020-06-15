@@ -1,6 +1,6 @@
 #include "Cell.h"
 #include "Line.h"
-#define NAV_RADIUS 0.25f
+#define NAV_RADIUS 0.1f
 USING(Engine)
 
 Engine::CCell::CCell(LPDIRECT3DDEVICE9 pGraphicDev)

@@ -131,7 +131,7 @@ HRESULT CNavMeshTool::Update(const _float & fTimeDelta)
 			m_bIsColl = true;
 	
 		}
-		else if (m_pCamera->IsNavPick())
+		if (m_pCamera->IsNavPick())
 		{
 			m_vPos = m_pCamera->Get_PickPos();
 			m_bIsColl = true;

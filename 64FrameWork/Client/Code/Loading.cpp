@@ -28,7 +28,7 @@ _uint	CALLBACK CLoading::Thread_Main(void* pArg)
 	switch (pLoading->Get_LoadingID())
 	{
 	case LOADING_STAGE:
-		iFlag = pLoading->Loading_ForStage();		
+		iFlag = pLoading->Loading_ForStage();
 		break;
 
 	case LOADING_BOSS:
@@ -101,6 +101,39 @@ _uint CLoading::Loading_ForStage(void)
 	case LOAD_NOMAL:
 		Loading_Mesh();
 		break;
+	case LOAD_NOMAL2:
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"Map3",
+			Engine::TYPE_STATIC,
+			L"../../Resource/Mesh/StaticMesh/Snow/Map3/Map3/",
+			L"Map3.X"),
+			E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"SM_NormalGreatSwordA_ba01",
+			Engine::TYPE_STATIC,
+			L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
+			L"SM_NormalGreatSwordA_ba01.X"),
+			E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"RussianHat",
+			Engine::TYPE_DYNAMIC,
+			L"../../Resource/Mesh/DynamicMesh/RussianHat/",
+			L"RussianHat.X"),
+			E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"RussianHatShield",
+			Engine::TYPE_STATIC,
+			L"../../Resource/Mesh/StaticMesh/Public/Weapon/RussianHatShield/",
+			L"RussianHatShield.X"),
+			E_FAIL);
+		break;
+	case LOAD_NOMAL3:
+		Loading_Mesh();
+		break;
 	case LOAD_PLAYER:
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 			RESOURCE_STAGE,
@@ -109,8 +142,7 @@ _uint CLoading::Loading_ForStage(void)
 			L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
 			L"SM_NormalGreatSwordA_ba01.X"),
 			E_FAIL);
-		break;
-	case LOAD_MONSTER:
+
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 			RESOURCE_STAGE,
 			L"Mesh_RussianHat",
@@ -119,6 +151,8 @@ _uint CLoading::Loading_ForStage(void)
 			L"RussianHat.X"),
 			E_FAIL);
 		break;
+
+
 	case LOAD_BATTLE:
 	{
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

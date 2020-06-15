@@ -259,6 +259,8 @@ void CDynamicCamera::Picking_Mesh()
 
 	for (auto pGameObject : Engine::Get_Layer(L"GameLogic")->Get_ObjectMap())
 	{
+		if (pGameObject.first.find(L"Map") != wstring::npos)
+			return;
 		CStaticObject* pStaticObject = dynamic_cast<CStaticObject*>(pGameObject.second);
 		if (pStaticObject == nullptr)
 			continue;
