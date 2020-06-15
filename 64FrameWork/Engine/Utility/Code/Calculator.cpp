@@ -1,7 +1,7 @@
 #include "Calculator.h"
 #include "TerrainTex.h"
 #include "Transform.h"
-
+#include "SphereColliderCom.h"
 USING(Engine)
 
 Engine::CCalculator::CCalculator(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -204,6 +204,40 @@ _vec3 Engine::CCalculator::Picking_OnTerrain(HWND hWnd,
 	}
 
 	return _vec3(0.f, 0.f, 0.f);
+}
+
+_bool CCalculator::Collsion_Sphere(const vector<Engine::CSphereColliderCom*>* pSourceVec, 
+									const vector<Engine::CSphereColliderCom*>* pDestVec)
+{
+	_vec3 vSourcePos, vDestPos ;
+	_float fSourceRadian, fDestRadian, fDistance, fRadian;
+
+	for (auto pSource : *pSourceVec)
+	{
+		pSource->Set_bIsColl(false);
+
+		vSourcePos = pSource->Get_WorldPos();
+		fSourceRadian = *pSource->Get_Radius();
+		 for (auto pDest : *pDestVec)
+		 {
+			pDest->Set_bIsColl(false);
+			 vDestPos = pDest->Get_WorldPos();
+
+			 fDestRadian = *pDest->Get_Radius();
+			 fDistance = D3DXVec3Length(&(vSourcePos - vDestPos));
+			 fRadian = (fSourceRadian + fDestRadian);
+			 fRadian *= 0.01f;
+			 if (fDistance <= fRadian)
+			 {
+				 pDest->Set_bIsColl(true);
+				 pSource->Set_bIsColl(true);
+				 return true;
+			 }
+
+		 }
+	}
+
+	return false;
 }
 
 _bool Engine::CCalculator::Collision_AABB(const _vec3* pDestMin, const _vec3* pDestMax, const _matrix* pDestWorld, const _vec3* pSourMin, const _vec3* pSourMax, const _matrix* pSourWorld)

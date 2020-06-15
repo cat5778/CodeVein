@@ -8,7 +8,7 @@ BEGIN(Engine)
 
 class CTerrainTex;
 class CTransform;
-
+class CSphereColliderCom;
 class ENGINE_DLL CCalculator : public CComponent
 {
 private:
@@ -41,6 +41,10 @@ public:
 	_vec3		Picking_OnTerrain(HWND hWnd,
 									const CTerrainTex* pTerrainBufferCom,
 									const CTransform*	pTerrainTransformCom);
+
+	_bool		Collsion_Sphere(const vector<Engine::CSphereColliderCom*>* pSourceVec,	const vector<Engine::CSphereColliderCom*>* pDestVec);
+		
+
 
 	_bool		Collision_AABB(const _vec3* pDestMin, const _vec3* pDestMax, const _matrix* pDestWorld,
 								const _vec3* pSourMin, const _vec3* pSourMax, const _matrix* pSourWorld);

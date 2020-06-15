@@ -32,7 +32,7 @@ public:
 	void						Set_CollTag(_uint uiIDx) { m_wstrCollTag+= L"_"+to_wstring(uiIDx); }
 	_uint						Get_CollIdx() { return m_uiIdx; }
 	void						Set_CollIdx(_uint uiIDx) { m_uiIdx = uiIDx; }
-
+	_vec3						Get_WorldPos();
 private:
 	void						Ready_SphereMesh();
 	void						Debug_IsColl();
@@ -42,6 +42,7 @@ private:
 private:
 	_float						m_fRadius			= 1.0f;
 	_vec3						m_vPos				= { 0.f,0.f,0.f };
+	_vec3						m_vWorldPos;
 	_matrix						m_matWorld;
 	LPDIRECT3DDEVICE9			m_pGraphicDev;
 	wstring						m_wstrObjTag = L"";

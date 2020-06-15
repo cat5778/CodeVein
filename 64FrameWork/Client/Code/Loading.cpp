@@ -100,6 +100,14 @@ _uint CLoading::Loading_ForStage(void)
 	{
 	case LOAD_NOMAL:
 		Loading_Mesh();
+
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"RussianHat",
+			Engine::TYPE_DYNAMIC,
+			L"../../Resource/Mesh/DynamicMesh/RussianHat/",
+			L"RussianHat.X"),
+			E_FAIL);
 		break;
 	case LOAD_NOMAL2:
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

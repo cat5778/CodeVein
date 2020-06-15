@@ -121,8 +121,8 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	pGameObject = CSword::Create(m_pGraphicDev, 0);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
-
-	//Shield
+	
+	//Shield 
 	pGameObject = CShield::Create(m_pGraphicDev, 0);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Shield", pGameObject), E_FAIL);

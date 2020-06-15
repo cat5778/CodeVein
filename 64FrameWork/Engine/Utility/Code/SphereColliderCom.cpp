@@ -92,6 +92,7 @@ _int CSphereColliderCom::Update_Component(const _float & fTimeDelta)
 
 		m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 		matView = m_matWorld* *m_pParentWorldMatrix;
+		memcpy(&m_vWorldPos, &m_matWorld._41, sizeof(_vec3));
 
 		Debug_IsColl();
 		return 0;
@@ -101,6 +102,11 @@ _int CSphereColliderCom::Update_Component(const _float & fTimeDelta)
 
 	return 0;
 
+}
+
+_vec3 CSphereColliderCom::Get_WorldPos()
+{
+	return m_vWorldPos;
 }
 
 void CSphereColliderCom::Ready_SphereMesh()

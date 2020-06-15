@@ -24,14 +24,14 @@ HRESULT CRussianHat::Ready_GameObject()
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	Set_TransformData();
 
-	m_pMeshCom->Set_AnimationSet(0);
+	m_pMeshCom->Set_AnimationSet(38);//Idle38 
 
 	return S_OK;
 }
 
 _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 {
-	m_pMeshCom->Set_AnimationSet(m_uiAni);
+	m_pMeshCom->Set_AnimationSet(38);
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta);
 
@@ -42,12 +42,6 @@ _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 
 void CRussianHat::Render_GameObject(void)
 {
-	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
-	////m_pMeshCom->Render_Meshes();
-	//_matrix		matWorld;
-	//m_pTransformCom->Get_WorldMatrix(&matWorld);
-
-	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransformCom->m_matWorld);
 
 	LPD3DXEFFECT	pEffect = m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);

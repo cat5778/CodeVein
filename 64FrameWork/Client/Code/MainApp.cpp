@@ -133,10 +133,13 @@ CMainApp* CMainApp::Create(void)
 void CMainApp::Free(void)
 {
 	m_pKeyMgr->DestroyInstance();
+	m_pTimerMgr->DestroyInstance();
+	CColliderManager::GetInstance()->DestroyInstance();
 
 	Engine::Safe_Release(m_pGraphicDev);
 	Engine::Safe_Release(m_pDeviceClass);
 	Engine::Safe_Release(m_pManagement);
+
 
 	for (auto itr = m_ppPathList.begin(); itr != m_ppPathList.end();)
 	{

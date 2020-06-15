@@ -22,9 +22,14 @@ HRESULT CPlayer::Ready_GameObject(void)
 	switch ((LOADMODE)LOAD_MODE)
 	{
 	case LOAD_NOMAL:
-		Load_Text(L"../../Resource/Data/NavMash/BaseNav10.txt");
+		m_pNaviCom->Set_Index(38);// Base Init Idx 38 
+
+		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 		break;
 	case LOAD_NOMAL2:
+		m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);
+		m_pNaviCom->Set_Index(0);// Base Init Idx 38 
+
 		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
 		break;
 	case LOAD_NOMAL3:
@@ -34,6 +39,10 @@ HRESULT CPlayer::Ready_GameObject(void)
 		break;
 	case LOAD_MONSTER:
 		break;
+	case LOAD_BATTLE:
+		m_pNaviCom->Set_Index(38);// Base Init Idx 38 
+		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
+		break;
 	case LOAD_END:
 		break;
 	default:
@@ -41,13 +50,11 @@ HRESULT CPlayer::Ready_GameObject(void)
 	}
 
 
-	m_pNaviCom->Set_Index(0);// Base Init Idx 38 
 	m_eCurState = OBJ_START;
 	m_pMeshCom->Set_AnimationSet(46);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
-	m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);
 	
 	return S_OK;
 }
@@ -63,6 +70,15 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
+	Engine::CColliderGroup* pCollCom = dynamic_cast<Engine::CColliderGroup*>
+		(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_ColliderGroup", Engine::ID_DYNAMIC));
+	
+	Engine::CTransform* pTransCom = dynamic_cast<Engine::CTransform*>
+		(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_Transform", Engine::ID_DYNAMIC));
+
+	_bool bIsColl=m_pCalculatorCom->Collsion_Sphere(m_pColliderGroupCom->Get_CollVec(Engine::COLOPT_ATTACK),
+													pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+	
 	return 0;
 }
 

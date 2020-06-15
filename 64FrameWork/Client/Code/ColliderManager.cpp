@@ -28,4 +28,14 @@ void CColliderManager::Get_ObjCollider(Engine::CColliderGroup* pCollGroupCom,wst
 
 void CColliderManager::Release()
 {
+	for (auto pCollData : m_pCollDataVec)
+	{
+		if (pCollData != nullptr)
+		{
+			delete pCollData;
+			pCollData = nullptr;
+		}
+	}	
+
+
 }
