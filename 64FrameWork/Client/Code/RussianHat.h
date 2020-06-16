@@ -27,25 +27,36 @@ private:
 
 private://Pattern
 	void					Pattern(_float fTimeDelta);
-	_float					Get_TargetDist();
+
 	void					Chaing_Target(_float fTimeDelta);
 	void					Phase1(_float fTimeDelta);
 	void					TshieldAttack_Ready(_float fTimeDelta);
 	void					TshieldAttack(_float fTimeDelta);
-	void					TshieldAttack3(_float fTimeDelta);
+
+	void					Tshield_Whirlwind(_float fTimeDelta);
+	void					TshieldFist(_float fTimeDelta);
+
 	void					TshieldSlide_S(_float fTimeDelta);
 	void					TshieldSlide_L(_float fTimeDelta);
 	void					TshieldSlide_E(_float fTimeDelta);
 
-	//void					HoneAttack1(_float fTimeDelta);
-	//void					HoneAttack1(_float fTimeDelta);
+	void					Dodge(_float fTimeDelta);
+	void					Tshield_JumpAttack(_float fTimeDelta);
 
+	void					HoneAttack1(_float fTimeDelta);
 	void					Idle(_float fTimeDelta);
+
+	void					Deformation(_float fTimeDelta);
+
+	void					Phase2(_float fTimeDelta);
+
+
 public:
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo);
 
 private:
+	_float						m_fJump=0.f;
 	RUSSIANTSTATE				m_eCurState;
 	RUSSIANTSTATE				m_ePreState;
 private:

@@ -33,6 +33,11 @@ private:
 	HRESULT					Add_Component(void);
 	_bool					Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
+public:
+
+	_bool					Get_Equip() { return m_bIsEquip; }
+	void					Set_Equip(_bool bIsEquip);
+	void					Set_Throw(_vec3 vThrowDir);
 private:
 	Engine::CTransform*		m_pTransformCom = nullptr;
 	Engine::CRenderer*		m_pRendererCom = nullptr;
@@ -41,10 +46,13 @@ private:
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
 
-
+	_vec3					m_vThrow;
 	_uint					m_iFlag = 0;
 	_bool					m_bColl = false;
-
+	_bool					m_bIsEquip = false;
+	_vec3					m_vOldPos;
+	_vec3					m_vOldRotation;
+	_matrix					m_MatOldWorld;
 	const	_matrix*		m_pParentBoneMatrix = nullptr;
 	const	_matrix*		m_pParentWorldMatrix = nullptr;
 

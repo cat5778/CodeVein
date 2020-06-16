@@ -204,18 +204,24 @@ float CDynamicObject::Get_Angle(const D3DXVECTOR3 & a, const D3DXVECTOR3 & b)
 	return fDgree;
 }
 
-void CDynamicObject::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir)
+void CDynamicObject::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir,_bool bIsJump)
 {
 	_vec3	vPos, vOutPos,vTempDir;
 	vTempDir = vDir;
-	vTempDir.y = 0.f;
+	//vTempDir.y = 0.f;
 	D3DXVec3Normalize(&vTempDir, &vTempDir);
 	_float fCurRatio = Get_AniRatio();
 	if (fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
 	{
 		vPos = Get_Pos();
-		m_pNaviCom->Move_OnNaviMesh(&Get_Pos(), &(vTempDir * fSpeed* fTimeDelta), &vOutPos);
+		if(!bIsJump)
+			m_pNaviCom->Move_OnNaviMesh(&Get_Pos(), &(vTempDir * fSpeed* fTimeDelta), &vOutPos);
+		else
+			m_pNaviCom->Jump_OnNaviMesh(&Get_Pos(), &(vTempDir * fSpeed* fTimeDelta), &vOutPos);
+
+		
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+
 	}
 }
 
@@ -274,7 +280,7 @@ void CDynamicObject::RotateToTarget(_float fTimeDelta, _float fMinRatio, _float 
 
 _float CDynamicObject::Get_AniRatio()
 {
-	return (_float)m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
+	return (_float)(m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period());
 }
 
 _float CDynamicObject::Get_AngleOnTheTarget()
@@ -288,6 +294,11 @@ _float CDynamicObject::Get_AngleOnTheTarget()
 	fDgree = Get_Angle(vDir, vLook);
 
 	return fDgree;
+}
+
+_float CDynamicObject::Get_TargetDist()
+{
+	return D3DXVec3Length(&(Get_TargetPos() - Get_Pos()));
 }
 
 HRESULT CDynamicObject::Load_Text(const TCHAR * pFilePath)

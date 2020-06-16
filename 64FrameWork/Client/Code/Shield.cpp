@@ -41,15 +41,34 @@ _int CShield::Update_GameObject(const _float& fTimeDelta)
 		NULL_CHECK_RETURN(pPlayerTransCom, 0);
 
 		m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrixPointer();
+		m_bIsEquip = true;
 	}
 
 
 
-	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
+	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
-	m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+	if (m_bIsEquip)
+	{	
+		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+		m_pTransformCom->Get_WorldMatrix(&m_MatOldWorld);
+		memcpy(m_vOldPos, &m_MatOldWorld._41, sizeof(_vec3));
+	
+	}
+	else
+	{
+
+		m_pTransformCom->Set_Pos(&m_vOldPos);
+
+		_matrix matRotY, matTemp;
+		D3DXMatrixRotationY(&matRotY,D3DXToRadian(60.f));
+		matTemp= matRotY*m_MatOldWorld ;
+		
+		m_pTransformCom->Set_ParentMatrix(&matTemp);
+
+	}
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
@@ -190,6 +209,17 @@ _bool CShield::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag
 											m_pColliderCom->Get_Min(), 
 											m_pColliderCom->Get_Max(), 
 											m_pColliderCom->Get_ColliderMatrix());
+}
+
+void CShield::Set_Equip(_bool bIsEquip)
+{
+	  m_bIsEquip = bIsEquip; 
+	  
+}
+
+void CShield::Set_Throw(_vec3 vThrowDir)
+{
+	m_vThrow = vThrowDir;
 }
 
 CShield* CShield::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)

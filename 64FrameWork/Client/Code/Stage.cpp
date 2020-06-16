@@ -112,15 +112,15 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 
-
-	pGameObject = CRussianHat::Create(m_pGraphicDev,L"RussianHat",0);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"RussianHat", pGameObject), E_FAIL);
-
 	 //Sword
 	pGameObject = CSword::Create(m_pGraphicDev, 0);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
+
+
+	pGameObject = CRussianHat::Create(m_pGraphicDev,L"RussianHat",0);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"RussianHat", pGameObject), E_FAIL);
 	
 	//Shield 
 	pGameObject = CShield::Create(m_pGraphicDev, 0);

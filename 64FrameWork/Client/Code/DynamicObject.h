@@ -42,7 +42,9 @@ public:
 	float					Get_Angle(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
 	_float					Get_AniRatio();
 	_float					Get_AngleOnTheTarget();
-	void					MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
+	_float					Get_TargetDist();
+
+	void					MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir, _bool bIsJump=false);
 	void					RotateAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fRotSpeed);
 	void					RotateToTarget(_float fTimeDelta, _float fMinRatio, _float fMaxRatio=1.f);
 

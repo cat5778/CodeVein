@@ -23,6 +23,7 @@ public:
 	void				Render_NaviMesh(void);
 	_vec3				Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	bool				Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir, _vec3* _out);
+	bool				Jump_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir, _vec3* _out);
 
 	HRESULT				Link_Cell(void);
 //private:

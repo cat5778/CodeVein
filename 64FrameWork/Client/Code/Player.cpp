@@ -44,7 +44,9 @@ HRESULT CPlayer::Ready_GameObject(void)
 	case LOAD_MONSTER:
 		break;
 	case LOAD_BATTLE:
-		m_pNaviCom->Set_Index(38);// Base Init Idx 38 
+		m_pTransformCom->Set_Pos(-8.f, 0.8f, -2.6f);
+		m_pNaviCom->Set_Index(18);// Base Init Idx 38 
+
 		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 		break;
 	case LOAD_END:

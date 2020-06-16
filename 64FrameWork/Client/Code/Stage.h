@@ -48,7 +48,6 @@ private:
 	_tchar								m_szFPS[256];
 	_float								m_fTime = 0.f;
 
-
 	map<wstring, Engine::CGameObject*>*	m_ppGameObjectMap = nullptr;
 
 public:
