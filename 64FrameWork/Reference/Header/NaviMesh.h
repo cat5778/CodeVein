@@ -17,7 +17,7 @@ public:
 	void				Set_Index(const _ulong& dwIndex) { m_dwIndex = dwIndex; }
 	HRESULT				Add_Cell(NAVI_DATA* naviData);
 	vector<CCell*>&		Get_CellVec();
-
+	_ulong				Get_CurIndex() { return m_dwIndex; }
 public:
 	HRESULT				Ready_NaviMesh(void);
 	void				Render_NaviMesh(void);

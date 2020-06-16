@@ -80,6 +80,8 @@ void Engine::CAniCtrl::Set_AnimationSet(const _uint& iIndex)
 
 	// 기존의 재생 중이던 트랙에서 새로운 트랙으로 변경을 했기 때문에 재생 시점을 0초(0의 위치로 초기화)로 시작하도록 지시하는 함수
 	m_pAniCtrl->SetTrackPosition(m_iNewTrack, 0.0);
+	ZeroMemory(&m_tTrackInfo, sizeof(D3DXTRACK_DESC));
+	m_dPosition = 0;
 
 	m_iOldAniIdx = iIndex;
 	m_iCurrentTrack = m_iNewTrack;
@@ -92,7 +94,6 @@ void Engine::CAniCtrl::Play_Animation(const _float& fTimeDelta)
 	if (m_fAddTime)
 		m_fAddTime=0.f;
 	m_fAccTime += fTimeDelta;
-
 
 	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &m_tTrackInfo);
 	m_dPosition = m_tTrackInfo.Position;

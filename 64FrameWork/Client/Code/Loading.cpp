@@ -158,6 +158,14 @@ _uint CLoading::Loading_ForStage(void)
 			L"../../Resource/Mesh/DynamicMesh/RussianHat/",
 			L"RussianHat.X"),
 			E_FAIL);
+				FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+			RESOURCE_STAGE,
+			L"RussianHatShield",
+			Engine::TYPE_STATIC,
+			L"../../Resource/Mesh/StaticMesh/Public/Weapon/RussianHatShield/",
+			L"RussianHatShield.X"),
+			E_FAIL);
+		break;
 		break;
 
 

@@ -16,6 +16,10 @@ CPlayer::~CPlayer(void)
 
 }
 
+
+
+
+
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
@@ -63,7 +67,10 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 	Key_Input(fTimeDelta);
 	_matrix mat = m_pTransformCom->m_matWorld;
-
+	
+	//_vec3 vPos = *m_pTransformCom->Get_Info(Engine::INFO_POS);
+	//cout <<"X=" <<vPos.x << "y="<< vPos.y <<"Z="<< vPos.z << endl;
+	//cout << "Cur Cell " << m_pNaviCom->Get_CurIndex() << endl;
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
 	m_pMeshCom->Play_Animation(fTimeDelta*m_fAnimSpeed);

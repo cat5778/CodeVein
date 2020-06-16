@@ -40,8 +40,11 @@ public:
 	_vec3					Get_Look();
 	_vec3					Get_Right();
 	float					Get_Angle(const D3DXVECTOR3& a, const D3DXVECTOR3& b);
-	void					MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
 	_float					Get_AniRatio();
+	_float					Get_AngleOnTheTarget();
+	void					MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
+	void					RotateAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fRotSpeed);
+	void					RotateToTarget(_float fTimeDelta, _float fMinRatio, _float fMaxRatio=1.f);
 
 protected:
 	HRESULT					Load_Text(const TCHAR * pFilePath);

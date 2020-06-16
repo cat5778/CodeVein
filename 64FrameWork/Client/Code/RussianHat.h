@@ -32,6 +32,14 @@ private://Pattern
 	void					Phase1(_float fTimeDelta);
 	void					TshieldAttack_Ready(_float fTimeDelta);
 	void					TshieldAttack(_float fTimeDelta);
+	void					TshieldAttack3(_float fTimeDelta);
+	void					TshieldSlide_S(_float fTimeDelta);
+	void					TshieldSlide_L(_float fTimeDelta);
+	void					TshieldSlide_E(_float fTimeDelta);
+
+	//void					HoneAttack1(_float fTimeDelta);
+	//void					HoneAttack1(_float fTimeDelta);
+
 	void					Idle(_float fTimeDelta);
 public:
 	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);

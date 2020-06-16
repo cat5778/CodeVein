@@ -25,6 +25,7 @@ HRESULT CRussianHat::Ready_GameObject()
 	
 	m_fCurHp = m_fMaxHp = 100.f;
 	m_fAttackRange = 4.f;
+	Set_TransformData();
 
 	switch ((LOADMODE)LOAD_MODE)
 	{
@@ -34,8 +35,8 @@ HRESULT CRussianHat::Ready_GameObject()
 		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 		break;
 	case LOAD_NOMAL2:
-		m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);
-		m_pNaviCom->Set_Index(0);// Base Init Idx 38 
+		m_pTransformCom->Set_Pos(-20.2f, 1.9f, -49.f);
+		m_pNaviCom->Set_Index(111);// Base Init Idx 38 
 
 		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
 		break;
@@ -58,9 +59,7 @@ HRESULT CRussianHat::Ready_GameObject()
 	m_eCurState = RUSSIAN_START_IDLE;
 	
 	
-	Set_TransformData();
 	
-	m_pMeshCom->Set_AnimationSet(38);//Idle38 
 
 
 
@@ -90,7 +89,7 @@ _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 
 
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
-	m_pMeshCom->Play_Animation(fTimeDelta);
+	m_pMeshCom->Play_Animation(m_fAnimSpeed*fTimeDelta);
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	return S_OK;
 }
@@ -187,16 +186,24 @@ void CRussianHat::StateMachine()
 		switch (m_eCurState)
 		{
 		case RUSSIAN_START_IDLE:
+		{
+			m_fAttackRange = 4.0f;
+			m_fAnimSpeed = 1.0f;
 			m_pMeshCom->Set_AnimationSet(39);
 			if (m_pMeshCom->Get_TrackPosition() >= m_pMeshCom->Get_Period()*0.9f)
 				m_eCurState = RUSSIAN_BATTLE_IDLE;
 			break;
+		}
 		case RUSSIAN_BATTLE_START:
+		{
+			m_fAnimSpeed = 1.0f;
 			m_pMeshCom->Set_AnimationSet(40);
+		}
 			break;
 		case RUSSIAN_BATTLE_IDLE:
 		{
-
+			m_fAnimSpeed = 1.0f;
+			m_fRotSpeed = 3.0f;
 			m_fAttackRange = 4.f;
 			m_pMeshCom->Set_AnimationSet(38);
 		}
@@ -207,10 +214,20 @@ void CRussianHat::StateMachine()
 		}
 			break;
 		case RUSSIAN_WALK://29~32
+		{
+			m_fSpeed = 1.f;
+			m_fAnimSpeed = 1.0f;
+			m_fRotSpeed = 3.0f;
 			m_pMeshCom->Set_AnimationSet(31);
-			break;
+		}
+		break;
 		case RUSSIAN_RUN: //
+		{
+			m_fSpeed = 3.f;
+			m_fRotSpeed = 6.0f;
+			m_fAnimSpeed = 1.5f;
 			m_pMeshCom->Set_AnimationSet(33);
+		}
 			break;
 		case RUSSIAN_HURT://26~27
 			break;
@@ -225,13 +242,18 @@ void CRussianHat::StateMachine()
 			break;
 		case RUSSIAN_ATTACK_READY:
 		{
+			m_fAnimSpeed = 2.0f;
+			m_fRotSpeed = 5.0f;
+
 			m_fAttackRange = 4.f;
 			m_pMeshCom->Set_AnimationSet(24);
 		}
 			break;
 		case RUSSIAN_ATTACK1:
 		{
-			m_fAttackRange = 10.f;
+			m_fAnimSpeed = 2.0f;
+			m_fRotSpeed = 5.0f;
+			m_fAttackRange = 20.f;
 			m_pMeshCom->Set_AnimationSet(23);
 		}
 			break;
@@ -242,12 +264,15 @@ void CRussianHat::StateMachine()
 			m_pMeshCom->Set_AnimationSet(21);
 			break;
 		case RUSSIAN_ATTACK_SLIDE_S:
+			m_fAttackRange = 30.f;
 			m_pMeshCom->Set_AnimationSet(20);
 			break;
 		case RUSSIAN_ATTACK_SLIDE_L:
+			m_fAttackRange = 30.f;
 			m_pMeshCom->Set_AnimationSet(19);
 			break;
 		case RUSSIAN_ATTACK_SLIDE_E:
+			m_fAttackRange = 30.f;
 			m_pMeshCom->Set_AnimationSet(18);
 			break;
 		case RUSSIAN_ATTACK_HORN1:
@@ -331,35 +356,39 @@ void CRussianHat::Chaing_Target(_float fTimeDelta)
 {
 	if (m_pNaviCom != nullptr)
 	{
-		_vec3	vPos, vDir, vDiagonalDir, vOutPos, vLook;
-		_float	fDgree;
-		vLook = Get_Look();
+		_vec3	vPos, vDir, vDiagonalDir, vOutPos;
+		_float	fDgree= Get_AngleOnTheTarget();
 		vDir = Get_TargetPos() - Get_Pos();
 		m_fDistance = D3DXVec3Length(&vDir);
 		vDir.y = 0.f;
-
 		D3DXVec3Normalize(&vDir, &vDir);
+		RotateToTarget(fTimeDelta, 0.0f);
 
-		fDgree = Get_Angle(vDir, vLook);
-		if ((fDgree <= 180.0f &&fDgree >= 5.0f) || (fDgree <= -5.0f&&fDgree >= -180.f))
-		{
-			if (fDgree >= 5.0f)
-				m_pTransformCom->Rotation(Engine::ROT_Y, m_fSpeed* fTimeDelta);
-			if (fDgree <= -5.0f)
-				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fSpeed* fTimeDelta);
-		}
+		//if ((fDgree <= 180.0f &&fDgree >= 5.0f) || (fDgree <= -5.0f&&fDgree >= -180.f))
+		//{
+		//	if (fDgree >= 5.0f)
+		//		m_pTransformCom->Rotation(Engine::ROT_Y, m_fSpeed* fTimeDelta);
+		//	if (fDgree <= -5.0f)
+		//		m_pTransformCom->Rotation(Engine::ROT_Y, -m_fSpeed* fTimeDelta);
+		//}
 
 		m_pNaviCom->Move_OnNaviMesh(&Get_Pos(), &(vDir * m_fSpeed* fTimeDelta), &vOutPos);
 		m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+	
 	}
 
 }
 
 void CRussianHat::Phase1(_float fTimeDelta)
 {
+
 	if (m_fDistance >= m_fAttackRange)
 	{
-		m_eCurState = RUSSIAN_WALK;
+		if (m_fDistance >= 4.5f)
+			m_eCurState = RUSSIAN_RUN;
+		else
+			m_eCurState = RUSSIAN_WALK;
+
 		Chaing_Target(fTimeDelta);
 
 	}
@@ -367,10 +396,15 @@ void CRussianHat::Phase1(_float fTimeDelta)
 	{
 		if (m_fDistance <= m_fAttackRange)
 		{
+			//Idle(fTimeDelta);
+			//TshieldAttack_Ready(fTimeDelta);
+			//TshieldAttack(fTimeDelta);
+			//TshieldAttack3(fTimeDelta);
+			//TshieldSlide_S(fTimeDelta);
 			switch (m_eCurState)
 			{
 			case RUSSIAN_BATTLE_IDLE:
-				TshieldAttack_Ready(fTimeDelta);
+				Idle(fTimeDelta);
 				break;
 			case RUSSIAN_DODGE:
 				break;
@@ -381,14 +415,19 @@ void CRussianHat::Phase1(_float fTimeDelta)
 				TshieldAttack(fTimeDelta);
 				break;
 			case RUSSIAN_ATTACK2:
+
 				break;
 			case RUSSIAN_ATTACK3:
+				TshieldAttack3(fTimeDelta);
 				break;
 			case RUSSIAN_ATTACK_SLIDE_S:
+				TshieldSlide_S(fTimeDelta);
 				break;
 			case RUSSIAN_ATTACK_SLIDE_L:
+				TshieldSlide_L(fTimeDelta);
 				break;
 			case RUSSIAN_ATTACK_SLIDE_E:
+				TshieldSlide_E(fTimeDelta);
 				break;
 			case RUSSIAN_ATTACK_HORN1:
 				break;
@@ -400,10 +439,9 @@ void CRussianHat::Phase1(_float fTimeDelta)
 				break;
 			default:
 				Idle(fTimeDelta);
-
 				break;
 			}
-			//m_uiPattern++;
+			m_uiPattern++;
 
 		}
 	}
@@ -412,16 +450,18 @@ void CRussianHat::Phase1(_float fTimeDelta)
 
 void CRussianHat::TshieldAttack_Ready(_float fTimeDelta)
 {
-	if (m_eCurState == RUSSIAN_BATTLE_IDLE)
+	if (m_eCurState == RUSSIAN_ATTACK_READY)
 	{
-		if (Get_AniRatio() >= 0.4f)
-			m_eCurState = RUSSIAN_ATTACK_READY;
-	}
-	else if (m_eCurState == RUSSIAN_ATTACK_READY)
-	{
+		if (m_fAttackRange == 4.0f)
+			m_fAttackRange = 8.0f;
+		
+		m_fRotSpeed = 3.0f;
+		RotateToTarget(fTimeDelta, 0.0f, 0.4f);
+		m_fRotSpeed = 9.0f;
+		RotateToTarget(fTimeDelta, 0.5f, 0.58f);
+
 		if (Get_AniRatio() >= 0.58f)
 			m_eCurState = RUSSIAN_ATTACK1;
-
 	}
 }
 
@@ -433,18 +473,103 @@ void CRussianHat::TshieldAttack(_float fTimeDelta)
 			m_eCurState = RUSSIAN_BATTLE_IDLE;
 		else
 		{
-			MoveAni(fTimeDelta, 0.0f, 0.10f, 30.0f, Get_Look());
+			MoveAni(fTimeDelta, 0.0f, 0.1f, 30.0f, Get_Look());
+			MoveAni(fTimeDelta, 0.1f, 0.2f, 10.0f, Get_Look());
+			MoveAni(fTimeDelta, 0.2f, 0.3f, 30.0f, Get_Look());
+		}
+	}
+}
+
+void CRussianHat::TshieldAttack3(_float fTimeDelta)
+{
+	if(m_eCurState == RUSSIAN_ATTACK3)
+	{
+		if (m_fAttackRange == 4.0f)
+			m_fAttackRange = 8.0f;
+
+		if (Get_AniRatio() >= 0.8f)
+		{
+			//if(m_uiPattern&1)
+			//	m_eCurState = RUSSIAN_ATTACK_READY;
+			//else
+				m_eCurState = RUSSIAN_ATTACK_SLIDE_S;
+
+		}
+		else
+		{
+			RotateToTarget(fTimeDelta, 0.f, 0.4f);
+			MoveAni(fTimeDelta, 0.3f, 0.4f, 6.f, Get_Look());
+		}
+
+	}
+}
+
+void CRussianHat::TshieldSlide_S(_float fTimeDelta)
+{
+	if (m_eCurState == RUSSIAN_ATTACK_SLIDE_S)
+	{
+		if (Get_AniRatio() >= 0.8f)
+		{
+			m_eCurState = RUSSIAN_ATTACK_SLIDE_L;
+		}
+		else
+		{
+			RotateToTarget(fTimeDelta, 0.f, 0.6f);
+			MoveAni(fTimeDelta, 0.6f, 0.8f, 4.0f, Get_Look());
+
+		}
+	}
+
+
+}
+
+void CRussianHat::TshieldSlide_L(_float fTimeDelta)
+{
+	if (m_eCurState == RUSSIAN_ATTACK_SLIDE_L)
+	{
+		if (Get_AniRatio() >= 0.8f)
+		{
+			m_eCurState = RUSSIAN_ATTACK_SLIDE_E;
+		}
+		else
+		{
+			MoveAni(fTimeDelta, 0.0f, 0.6f, 20.0f, Get_Look());
+		}
+	}
+
+}
+
+void CRussianHat::TshieldSlide_E(_float fTimeDelta)
+{
+	if (m_eCurState == RUSSIAN_ATTACK_SLIDE_E)
+	{
+		if (Get_AniRatio() >= 0.8f)
+		{
+			m_eCurState = RUSSIAN_BATTLE_IDLE;
+		}
+		else
+		{
+
 		}
 	}
 }
 
 void CRussianHat::Idle(_float fTimeDelta)
 {
-	if(m_eCurState==RUSSIAN_WALK)
+	if (m_eCurState == RUSSIAN_WALK)
+	{
 		m_eCurState = RUSSIAN_BATTLE_IDLE;
-	else if(m_pMeshCom->Is_AnimationSetEnd())
+	
+	}
+	else if (m_eCurState == RUSSIAN_BATTLE_IDLE)
+	{
+		if (Get_AniRatio() >= 0.1f)
+			m_eCurState = RUSSIAN_ATTACK3;
+	}
+	else if (m_pMeshCom->Is_AnimationSetEnd())
+	{
 		m_eCurState = RUSSIAN_BATTLE_IDLE;
-
+	}
 }
 
 

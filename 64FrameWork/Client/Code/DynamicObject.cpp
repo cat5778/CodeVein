@@ -210,7 +210,7 @@ void CDynamicObject::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRat
 	vTempDir = vDir;
 	vTempDir.y = 0.f;
 	D3DXVec3Normalize(&vTempDir, &vTempDir);
-	_float fCurRatio = (float)(m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period());
+	_float fCurRatio = Get_AniRatio();
 	if (fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
 	{
 		vPos = Get_Pos();
@@ -219,9 +219,75 @@ void CDynamicObject::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRat
 	}
 }
 
+void CDynamicObject::RotateAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fRotSpeed)
+{
+	_float fCurRatio = Get_AniRatio();
+	if (fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
+	{
+
+		m_pTransformCom->Rotation(Engine::ROT_Y, fRotSpeed* fTimeDelta);
+	}
+}
+
+void CDynamicObject::RotateToTarget(_float fTimeDelta, _float fMinRatio, _float fMaxRatio)
+{
+	_vec3 vDir, vRight;
+	_float fCurRatio, fDgree, fRotateDir;
+	fCurRatio= Get_AniRatio();
+	vDir = Get_TargetPos() - Get_Pos();
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+	vRight = *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+	vRight.y = 0.f;
+	D3DXVec3Normalize(&vRight, &vRight);
+
+	fDgree = Get_AngleOnTheTarget();
+	fRotateDir = Get_Angle(vDir, vRight);
+	if (fMaxRatio == 0.0f)
+	{
+		if (cosf(D3DXToRadian(fDgree)) >= 0.97f)
+			return;
+		else
+		{
+			if (cosf(D3DXToRadian(fRotateDir)) >= 0.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, m_fRotSpeed* fTimeDelta);
+			else
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+		}
+	}
+	else if(fCurRatio >= fMinRatio && fCurRatio <= fMaxRatio)
+	{
+		if (cosf(D3DXToRadian(fDgree)) >= 0.97f)
+			return;
+		else
+		{
+			if(cosf(D3DXToRadian(fRotateDir))>=0.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, m_fRotSpeed* fTimeDelta);
+			else
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+
+		}
+	}
+
+	
+}
+
 _float CDynamicObject::Get_AniRatio()
 {
-	return m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
+	return (_float)m_pMeshCom->Get_TrackPosition() / m_pMeshCom->Get_Period();
+}
+
+_float CDynamicObject::Get_AngleOnTheTarget()
+{
+	_vec3	vPos, vDir, vDiagonalDir, vOutPos, vLook;
+	_float	fDgree;
+	vLook = Get_Look();
+	vDir = Get_TargetPos() - Get_Pos();
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+	fDgree = Get_Angle(vDir, vLook);
+
+	return fDgree;
 }
 
 HRESULT CDynamicObject::Load_Text(const TCHAR * pFilePath)
@@ -245,25 +311,25 @@ HRESULT CDynamicObject::Load_Text(const TCHAR * pFilePath)
 
 		Engine::NAVI_DATA* pNaviData = new Engine::NAVI_DATA;
 
-		pNaviData->vPosition1.x = _wtof(wstrTemp.c_str());
+		pNaviData->vPosition1.x = (_float)_wtof(wstrTemp.c_str());
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		pNaviData->vPosition1.y = atof(cTemp);
+		pNaviData->vPosition1.y = (_float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR);
-		pNaviData->vPosition1.z = atof(cTemp);
+		pNaviData->vPosition1.z = (_float)atof(cTemp);
 
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		pNaviData->vPosition2.x = atof(cTemp);
+		pNaviData->vPosition2.x = (_float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		pNaviData->vPosition2.y = atof(cTemp);
+		pNaviData->vPosition2.y = (_float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR);
-		pNaviData->vPosition2.z = atof(cTemp);
+		pNaviData->vPosition2.z = (_float)atof(cTemp);
 
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		pNaviData->vPosition3.x = atof(cTemp);
+		pNaviData->vPosition3.x = (_float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		pNaviData->vPosition3.y = atof(cTemp);
+		pNaviData->vPosition3.y = (_float)atof(cTemp);
 		fin.getline(cTemp, MIN_STR);
-		pNaviData->vPosition3.z = atof(cTemp);
+		pNaviData->vPosition3.z = (_float)atof(cTemp);
 
 		pNaviData->uiIdx = uidx;
 
@@ -278,7 +344,7 @@ HRESULT CDynamicObject::Load_Text(const TCHAR * pFilePath)
 
 wchar_t * CDynamicObject::CharToWChar(const char * pstrSrc)
 {
-	int nLen = strlen(pstrSrc) + 1;
+	int nLen = (_int)strlen(pstrSrc) + 1;
 	wchar_t* pwstr = (LPWSTR)malloc(sizeof(wchar_t)* nLen);
 	mbstowcs(pwstr, pstrSrc, nLen);
 	return pwstr;
