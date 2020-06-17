@@ -37,7 +37,9 @@ public:
 
 	_bool					Get_Equip() { return m_bIsEquip; }
 	void					Set_Equip(_bool bIsEquip);
-	void					Set_Throw(_vec3 vThrowDir);
+	void					Set_Throw();
+	void					Set_CellIdx(_uint uiCellIdx);
+
 private:
 	Engine::CTransform*		m_pTransformCom = nullptr;
 	Engine::CRenderer*		m_pRendererCom = nullptr;
@@ -45,8 +47,11 @@ private:
 	Engine::CStaticMesh*	m_pMeshCom = nullptr;
 	Engine::CCollider*		m_pColliderCom = nullptr;
 	Engine::CShader*		m_pShaderCom = nullptr;
+	Engine::CNaviMesh*		m_pNaviCom = nullptr;
 
-	_vec3					m_vThrow;
+
+	_vec3					m_vThrow = { INIT_VEC3 };
+	_float					m_fAccThrow = 4.f;
 	_uint					m_iFlag = 0;
 	_bool					m_bColl = false;
 	_bool					m_bIsEquip = false;

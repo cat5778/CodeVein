@@ -2,7 +2,7 @@
 #include "Player.h"
 #include <fstream>
 #include "Export_Function.h"
-
+#include "ThirdPersonCamera.h"
 #include "ColliderManager.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -73,9 +73,11 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	//_vec3 vPos = *m_pTransformCom->Get_Info(Engine::INFO_POS);
 	//cout <<"X=" <<vPos.x << "y="<< vPos.y <<"Z="<< vPos.z << endl;
 	//cout << "Cur Cell " << m_pNaviCom->Get_CurIndex() << endl;
+
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
 	m_pMeshCom->Play_Animation(fTimeDelta*m_fAnimSpeed);
+	cout << m_fAnimSpeed << endl;
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
@@ -192,38 +194,51 @@ void CPlayer::Key_Input(const _float& fTimeDelta)
 	_bool Test = false;
 
 	IdleOption();
-
 	if (m_pKeyMgr->KeyDown(KEY_Q))
+	{
+		
 		m_bIsLockOn ? m_bIsLockOn = false : m_bIsLockOn = true;
+		m_pCam = dynamic_cast<CThirdPersonCamera*>(Engine::Get_GameObject(L"UI", L"ThirdPersonCamera"));
+		m_pCam->LockOn(m_bIsLockOn);
+	}
 
 
 
 	if (m_pKeyMgr->KeyPressing(KEY_W))
 	{
 		m_dwDirectionFlag |= FRONT;
-		if (m_eCurState == OBJ_IDLE)
+		if (CheckEnableState())
+		{
 			m_eCurState = OBJ_WALK;
+		}
 	}
+
 	if (m_pKeyMgr->KeyPressing(KEY_S))
 	{
 		m_dwDirectionFlag |= BACK;
-		if (m_eCurState == OBJ_IDLE)
+		if (CheckEnableState())
+		{
 			m_eCurState = OBJ_WALK;
+		}
 
 	}
 
 	if (m_pKeyMgr->KeyPressing(KEY_A))
 	{
 		m_dwDirectionFlag |= LEFT;
-		if (m_eCurState == OBJ_IDLE)
+		if (CheckEnableState())
+		{
 			m_eCurState = OBJ_WALK;
+		}
 
 	}
 	if (m_pKeyMgr->KeyPressing(KEY_D))
 	{
 		m_dwDirectionFlag |= RIGHT;
-		if (m_eCurState == OBJ_IDLE)
+		if (CheckEnableState())
+		{
 			m_eCurState = OBJ_WALK;
+		}
 
 	}
 	if (m_pKeyMgr->KeyPressing(KEY_SHIFT))
@@ -465,93 +480,198 @@ void CPlayer::Check_Direction(_float fTimeDelta)
 		dwDirectionFlag = m_dwDodge_DirectionFlag;
 	else		
 		dwDirectionFlag = m_dwDirectionFlag;
-
-
-
-	switch (dwDirectionFlag)
+	if (m_bIsLockOn)
 	{
-	case DIR_F:
-	{
-		if (fDgree > 5.f&&fDgree < 180.f) //왼쪽으로 외전
-			m_pTransformCom->Rotation(Engine::ROT_Y, m_fRotSpeed* fTimeDelta);
-		else if (fDgree < 355.f && fDgree >= 180.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+		if (m_pCam != nullptr &&m_pCam->Get_MonTransform() !=nullptr)
+		{
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed);
+			_vec3 vPos, vMonPos;
+
+			vPos = *m_pTransformCom->Get_Info(Engine::INFO_POS);
+			memcpy(&vMonPos, &m_pCam->Get_MonTransform()->m_matWorld, sizeof(_vec3));
+
+			_float fTargetDist = D3DXVec3Length(&(vPos - vMonPos));
+
+			if (fTargetDist > 1.f)
+				RotateToLook(fTimeDelta);
+			_vec3	vDir;
+
+			switch (dwDirectionFlag)
+			{
+			case DIR_F:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_F;
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+			}
+				break;
+			case DIR_FR:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_FR;
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_LOOK)+ *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+			
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+
+			}
+				break;
+			case DIR_R:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_R;
+					//if (CheckEnableState())
+				
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+			}
+				break;
+			case DIR_BR:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_BR;
+				vDir = -*m_pTransformCom->Get_Info(Engine::INFO_LOOK) + *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+			}
+				break;
+			case DIR_B:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_B;
+
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+				CheckMoveMesh(fTimeDelta, -vDir, false, m_fSpeed);
+			}
+			break;
+			case DIR_BL:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_BL;
+				vDir = -*m_pTransformCom->Get_Info(Engine::INFO_LOOK) - *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+			}
+				break;
+			case DIR_L:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_L;
+
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+				CheckMoveMesh(fTimeDelta, -vDir, false, m_fSpeed);
+			}
+				break;
+			case DIR_FL:
+			{
+				if (m_eCurState == OBJ_WALK)
+					m_eCurState = OBJ_LOCK_WALK_FL;
+				vDir = *m_pTransformCom->Get_Info(Engine::INFO_LOOK) - *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+
+				CheckMoveMesh(fTimeDelta, vDir, false, m_fSpeed);
+			}
+			break;
+			//default:
+				//m_eCurState =OBJ_IDLE;
+
+				break;
+			}
+		}
 	}
-	break;
-	case DIR_R:
+
+	else
 	{
-		if (fDgree >= 90.f&&fDgree <= 265.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-		else if ((fDgree >= 275.f && fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 90.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+		switch (dwDirectionFlag)
+		{
+		case DIR_F:
+		{
+			if (fDgree > 5.f&&fDgree < 180.f) //왼쪽으로 외전
+				m_pTransformCom->Rotation(Engine::ROT_Y, m_fRotSpeed* fTimeDelta);
+			else if (fDgree < 355.f && fDgree >= 180.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_RIGHT, true, m_fSpeed);  
-	}
-	break;
-	case DIR_FR:
-	{
-		if ((fDgree <= 310.f && fDgree >= 135.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-		else if ((fDgree >= 320.f&&fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 135.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+		
+				CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed);
+		
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, false);
-	}
-	break;
-	case DIR_B:
-		if (fDgree > 185.f&& fDgree < 360.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if (fDgree <= 175.f&&fDgree >= 0.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed);
+		}
 		break;
-	case DIR_BR:
-	{
-		if ((fDgree >= 45.f&&fDgree <= 220.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-		else if ((fDgree <= 360.f && fDgree >= 230.f) || (fDgree >= 0.f&& fDgree < 45.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+		case DIR_R:
+		{
+			if (fDgree >= 90.f&&fDgree <= 265.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+			else if ((fDgree >= 275.f && fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 90.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, false);
-	}
-	break;
-	case DIR_L:
-	{
-		if (fDgree >= 95.f&&fDgree <= 270.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if ((fDgree <= 85.f&& fDgree >= 0.f)||(fDgree >= 270.f&& fDgree < 360.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_RIGHT, false, m_fSpeed);
-	}
-	break;
-	case DIR_FL:
-	{
-		if ((fDgree >= 50.f&&fDgree <= 225.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if ((fDgree <= 360.f && fDgree >= 225.f) || (fDgree >= 0.f&& fDgree < 40.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+				_vec3	vRight = *m_pCameraTransformCom->Get_Info(Engine::INFO_RIGHT);
+				//D3DXVec3Cross(&vRight, &_vec3(0.f, 1.f, 0.f), &m_pCam->Get_LockOnLook()) ;
+				CheckMoveMesh(fTimeDelta, vRight, false, m_fSpeed);
 
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, true);
-	}
-	break;
-	case DIR_BL:
-	{
-		if (fDgree >= 140.f&& fDgree <= 315.f)
-			m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
-		else if ((fDgree <= 360.f&&fDgree >= 315.f) || (fDgree >= 0.f&& fDgree < 130.f))
-			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
-
-		CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, true);
-	}
-	break;
-	default:
+		}
 		break;
-	}
+		case DIR_FR:
+		{
+			if ((fDgree <= 310.f && fDgree >= 135.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+			else if ((fDgree >= 320.f&&fDgree <= 360.f) || (fDgree >= 0.f&& fDgree < 135.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
 
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, false);
+		}
+		break;
+		case DIR_B:
+			if (fDgree > 185.f&& fDgree < 360.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+			else if (fDgree <= 175.f&&fDgree >= 0.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed);
+			break;
+		case DIR_BR:
+		{
+			if ((fDgree >= 45.f&&fDgree <= 220.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+			else if ((fDgree <= 360.f && fDgree >= 230.f) || (fDgree >= 0.f&& fDgree < 45.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, false);
+		}
+		break;
+		case DIR_L:
+		{
+			if (fDgree >= 95.f&&fDgree <= 270.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+			else if ((fDgree <= 85.f&& fDgree >= 0.f) || (fDgree >= 270.f&& fDgree < 360.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_RIGHT, false, m_fSpeed);
+		}
+		break;
+		case DIR_FL:
+		{
+			if ((fDgree >= 50.f&&fDgree <= 225.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+			else if ((fDgree <= 360.f && fDgree >= 225.f) || (fDgree >= 0.f&& fDgree < 40.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, false, m_fSpeed, Engine::INFO_RIGHT, true);
+		}
+		break;
+		case DIR_BL:
+		{
+			if (fDgree >= 140.f&& fDgree <= 315.f)
+				m_pTransformCom->Rotation(Engine::ROT_Y, +m_fRotSpeed* fTimeDelta);
+			else if ((fDgree <= 360.f&&fDgree >= 315.f) || (fDgree >= 0.f&& fDgree < 130.f))
+				m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+
+			CheckMoveMesh(fTimeDelta, m_pCameraTransformCom, Engine::INFO_LOOK, true, m_fSpeed, Engine::INFO_RIGHT, true);
+		}
+		break;
+		default:
+			break;
+		}
+	}
 }
 
 void CPlayer::StateMachine()
@@ -573,39 +693,39 @@ void CPlayer::StateMachine()
 			m_fSpeed = 0.6f;
 			m_fRotSpeed = 6.f;
 
-			if (m_bIsLockOn)
-			{
-				switch (m_dwDirectionFlag)
-				{
-				case DIR_F:
-					m_pMeshCom->Set_AnimationSet(42);
-					break;
-				case DIR_R:
-					m_pMeshCom->Set_AnimationSet(40);
-					break;
-				case DIR_FR:
-					m_pMeshCom->Set_AnimationSet(40);
-					break;
-				case DIR_B:
-					m_pMeshCom->Set_AnimationSet(43);
-					break;
-				case DIR_BR:
-					m_pMeshCom->Set_AnimationSet(40);
-					break;
-				case DIR_L:
-					m_pMeshCom->Set_AnimationSet(41);
-					break;
-				case DIR_FL:
-					m_pMeshCom->Set_AnimationSet(41);
-					break;
-				case DIR_BL:
-					m_pMeshCom->Set_AnimationSet(41);
-					break;
-				default:
-					break;
-				}
-			}
-			else
+			//if (m_bIsLockOn)
+			//{
+			//	switch (m_dwDirectionFlag)
+			//	{
+			//	case DIR_F:
+			//		m_pMeshCom->Set_AnimationSet(42);
+			//		break;
+			//	case DIR_R:
+			//		m_pMeshCom->Set_AnimationSet(40);
+			//		break;
+			//	case DIR_FR:
+			//		m_pMeshCom->Set_AnimationSet(40);
+			//		break;
+			//	case DIR_B:
+			//		m_pMeshCom->Set_AnimationSet(43);
+			//		break;
+			//	case DIR_BR:
+			//		m_pMeshCom->Set_AnimationSet(40);
+			//		break;
+			//	case DIR_L:
+			//		m_pMeshCom->Set_AnimationSet(41);
+			//		break;
+			//	case DIR_FL:
+			//		m_pMeshCom->Set_AnimationSet(41);
+			//		break;
+			//	case DIR_BL:
+			//		m_pMeshCom->Set_AnimationSet(41);
+			//		break;
+			//	default:
+			//		break;
+			//	}
+			//}
+			//else
 			{
 				m_pMeshCom->Set_AnimationSet(42);
 			}
@@ -659,7 +779,7 @@ void CPlayer::StateMachine()
 			break;
 		case OBJ_DODGE:
 		{
-			m_fAnimSpeed = 2.5f;
+			m_fAnimSpeed = 2.25f;
 			m_fSpeed = 10.f;
 			m_fRotSpeed = 10.f;
 
@@ -708,7 +828,6 @@ void CPlayer::StateMachine()
 		case OBJ_ATTACK:
 		{
 			m_fAnimSpeed = 1.75f;
-
 		}
 			break;
 		case OBJ_STRONG_ATTACK:
@@ -737,6 +856,40 @@ void CPlayer::StateMachine()
 			break;
 		case OBJ_START:
 			break;
+		case OBJ_LOCK_WALK_F:
+		{
+			m_fSpeed = 1.5f;
+			m_fAnimSpeed = 1.5f;
+			m_pMeshCom->Set_AnimationSet(42);
+		}
+			break;
+		case OBJ_LOCK_WALK_FR:
+		case OBJ_LOCK_WALK_R:
+		case OBJ_LOCK_WALK_BR:
+		{
+			m_fSpeed = 1.5f;
+			m_fAnimSpeed = 1.5f;
+
+			m_pMeshCom->Set_AnimationSet(40);
+		}
+			break;
+
+		case OBJ_LOCK_WALK_B:
+		{
+			m_fSpeed = 1.5f;
+			m_fAnimSpeed = 1.5f;
+			m_pMeshCom->Set_AnimationSet(43);
+		}
+			break;
+		case OBJ_LOCK_WALK_BL:
+		case OBJ_LOCK_WALK_L:
+		case OBJ_LOCK_WALK_FL:
+		{	
+			m_fSpeed = 1.5f;
+			m_fAnimSpeed = 1.5f;
+			m_pMeshCom->Set_AnimationSet(41);
+		}
+		break;
 		case OBJ_END:
 			break;
 		default:
@@ -754,7 +907,7 @@ void CPlayer::IdleOption()
 	{
 		if (m_pMeshCom->Get_TrackPosition() >= 1.0)
 			m_dwDodge_DirectionFlag = 0;
-		if (m_pMeshCom->Get_TrackPosition() >= 2.25)
+		if (m_pMeshCom->Get_TrackPosition() >= 2.26)
 			m_eCurState = OBJ_IDLE;
 	}
 	else if (m_eCurState != OBJ_IDLE )
@@ -770,7 +923,9 @@ void CPlayer::IdleOption()
 
 void CPlayer::CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2, _bool bIsDir2Rvc)
 {
+
 	_vec3	vPos, vDir, vDiagonalDir, vOutPos;
+	
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 	pTransform->Get_Info(eDir, &vDir);
 	vDir.y = 0.f;
@@ -802,6 +957,56 @@ void CPlayer::CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, 
 	}
 
 	m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+
+}
+
+void CPlayer::CheckMoveMesh(_float fTimeDelta, _vec3 vDir, _bool bIsDirRvc, _float fSpeed)
+{
+
+	_vec3	vPos, vTempDir, vDiagonalDir, vOutPos;
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+
+	vTempDir = vDir;
+	vTempDir.y = 0.f;
+	D3DXVec3Normalize(&vTempDir, &vTempDir);
+
+	m_pNaviCom->Move_OnNaviMesh(&vPos, &(vTempDir* fSpeed* fTimeDelta), &vOutPos);
+
+	m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
+	
+	
+	
+	
+	//m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	//pTransform->Get_Info(eDir, &vDir);
+	//vDir.y = 0.f;
+	//D3DXVec3Normalize(&vDir, &vDir);
+	//if (eDir2 == Engine::INFO::INFO_END)
+	//{
+
+	//	if (bIsDirRvc)
+	//	else
+	//		m_pNaviCom->Move_OnNaviMesh(&vPos, &(-vDir * fSpeed* fTimeDelta), &vOutPos);
+
+	//}
+	//else
+	//{
+	//	pTransform->Get_Info(eDir2, &vDiagonalDir);
+	//	D3DXVec3Normalize(&vDiagonalDir, &vDiagonalDir);
+	//	if (!bIsDirRvc)
+	//		vDir *= -1.f;
+	//	if (bIsDir2Rvc)
+	//		vDiagonalDir *= -1.f;
+
+	//	vDir += vDiagonalDir;
+
+	//	D3DXVec3Normalize(&vDir, &vDir);
+
+	//	m_pNaviCom->Move_OnNaviMesh(&vPos, &(vDir * fSpeed* fTimeDelta), &vOutPos);
+
+	//}
+
+	//m_pTransformCom->Set_Pos(vOutPos.x, vOutPos.y, vOutPos.z);
 
 }
 
@@ -862,6 +1067,63 @@ void CPlayer::MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _fl
 	{
 		CheckMoveMesh(fTimeDelta, m_pTransformCom, Engine::INFO_LOOK, true, fSpeed);
 	}
+}
+
+_float CPlayer::Get_AngleOnTheLook()
+{
+	_vec3	vPos, vDir, vDiagonalDir, vOutPos, vLook;
+	_float	fDgree;
+	vLook = *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+	vDir = m_pCam->Get_LockOnLook();
+	vDir.y = 0.f;
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	fDgree = Get_Angle(vDir, vLook);
+
+	return fDgree;
+}
+
+void CPlayer::RotateToLook(_float fTimeDelta)
+{
+	_vec3 vRight, vCamLook;
+	_float fCurRatio, fDgree, fRotateDir;
+	vRight = *m_pTransformCom->Get_Info(Engine::INFO_RIGHT);
+	vRight.y = 0.f;
+	D3DXVec3Normalize(&vRight, &vRight);
+
+	vCamLook = m_pCam->Get_LockOnLook();
+	vCamLook.y = 0.f;
+	D3DXVec3Normalize(&vCamLook, &vCamLook);
+
+
+
+	fDgree = Get_AngleOnTheLook(); //캐릭터 룩과 카메라의 룩 각도 
+
+	fRotateDir = Get_Angle(vCamLook, vRight);  //회전방향 결정
+
+
+	if (cosf(D3DXToRadian(fDgree)) >= 0.97f)
+		return;
+	else
+	{
+		if (cosf(D3DXToRadian(fRotateDir)) >= 0.f)
+			m_pTransformCom->Rotation(Engine::ROT_Y, m_fRotSpeed* fTimeDelta);
+		else
+			m_pTransformCom->Rotation(Engine::ROT_Y, -m_fRotSpeed* fTimeDelta);
+	}
+
+}
+
+_bool CPlayer::CheckEnableState()
+{
+	if (m_eCurState != OBJ_ATTACK&& m_eCurState != OBJ_GUARD&&m_eCurState != OBJ_STRONG_ATTACK&&
+			m_eCurState != OBJ_CHARGE_ATTACK&&m_eCurState != OBJ_HURT && m_eCurState != OBJ_DODGE)
+	{
+		return true;
+	}
+	else
+		return false;
+
 }
 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)

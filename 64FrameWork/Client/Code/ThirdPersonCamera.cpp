@@ -98,21 +98,48 @@ void CThirdPersonCamera::Target_Renewal(const _float& fTimeDelta)
 
 	m_matWorld = (*m_pParentBoneMatrix * *m_pParentWorldMatrix);
 	memcpy(&m_vHeadPos, &m_matWorld.m[3][0], sizeof(_vec3));
-	m_vAt = m_vHeadPos;
+	if (!m_bIsLockOn)
+	{
+		m_pMonTransform = nullptr;
+		m_vAt = m_vHeadPos;
+		m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+		_vec3		vRight;
+		memcpy(&vRight, &m_pTransformCom->m_matWorld.m[0][0], sizeof(_vec3));
 
-	//m_pTransformCom->m_vInfo[Engine::INFO_LOOK] = m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
-	
-	m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+		m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(m_fVerticalAngle));
+		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_fHorizonAngle));
 
-	_vec3		vRight;
-	memcpy(&vRight, &m_pTransformCom->m_matWorld.m[0][0], sizeof(_vec3));
 
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(m_fVerticalAngle));
-	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_fHorizonAngle));
 
+	}
+	else
+	{
+		_vec3	vLook = *m_pTransformCom->Get_Info(Engine::INFO_LOOK);
+		D3DXVec3Normalize(&vLook, &vLook);
+		//m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian());
+
+
+
+		m_pMonTransform = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_Transform", Engine::ID_DYNAMIC));
+		m_vAt = *m_pMonTransform->Get_Info(Engine::INFO_POS);   // TargetPos 
+		_vec3 vTempDir = m_pTransformCom->m_vInfo[Engine::INFO_POS] - m_vAt;
+
+		//cout << Get_Angle(vLook, -vTempDir)<< endl;
+		//m_pTransformCom-
+
+		D3DXVec3Normalize(&vTempDir, &vTempDir);
+		m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + vTempDir * m_fDistance;
+		
+		//_vec3 vPos =m_pTransformCom->m_vInfo[Engine::INFO_POS];
+
+	}
 
 
 	m_vEye = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+
+	//m_pTransformCom->m_vInfo[Engine::INFO_LOOK] = m_pTransformCom->m_vInfo[Engine::INFO_POS] = m_vHeadPos + m_pTransformCom->m_vInfo[Engine::INFO_LOOK] * m_fDistance;
+	
+
 
 }
 
@@ -184,6 +211,23 @@ void CThirdPersonCamera::Mouse_Fix(void)
 		SetCursorPos(ptMouse.x, ptMouse.y);
 	}
 }
+
+float CThirdPersonCamera::Get_Angle(const D3DXVECTOR3 & a, const D3DXVECTOR3 & b)
+{
+	float fRadian = acosf(D3DXVec3Dot(&a, &b) / (D3DXVec3Length(&a) * D3DXVec3Length(&b)));
+
+	fRadian = D3DXToDegree(fRadian);
+	float fDgree = (a.x * b.z - a.z * b.x > 0.0f) ? fRadian : -fRadian;
+
+	return fDgree;
+}
+
+void CThirdPersonCamera::LockOn(_bool bIsLockOn)
+{
+	m_bIsLockOn = bIsLockOn;
+
+}
+
 
 CThirdPersonCamera* CThirdPersonCamera::Create(LPDIRECT3DDEVICE9 pGraphicDev,
 														const _vec3* pEye,

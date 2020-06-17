@@ -14,7 +14,7 @@ class CCollider;
 class CShader;
 class CColliderGroup;
 END
-
+class CThirdPersonCamera;
 class CPlayer : public Engine::CGameObject
 {
 private:
@@ -40,11 +40,14 @@ private:
 	void		StateMachine();
 	void		IdleOption();
 	void		CheckMoveMesh(_float fTimeDelta, Engine::CTransform * pTransform, Engine::INFO eDir, _bool bIsDirRvc, _float fSpeed, Engine::INFO eDir2 = Engine::INFO::INFO_END, _bool bIsDir2Rvc = false);
+	void		CheckMoveMesh(_float fTimeDelta,  _vec3 vDir,_bool bIsDirRvc, _float fSpeed);
 	void		AttackMoveSet(_float fTimeDelta);
 	void		StorngAttackMoveSet(_float fTimeDelta);
 	void		ChargeAttackMoveSet(_float fTimeDelta);
 	void		MoveAni(_float fTimeDelta, _float fMinRatio, _float fMaxRatio, _float fSpeed, _vec3 vDir);
-
+	_float		Get_AngleOnTheLook();
+	void		RotateToLook(_float fTimeDelta);
+	_bool		CheckEnableState();
 
 private:
 	Engine::CTransform*		m_pCameraTransformCom = nullptr;
@@ -58,7 +61,7 @@ private:
 	Engine::CColliderGroup*	m_pColliderGroupCom=nullptr;
 
 	CKeyMgr*				m_pKeyMgr = nullptr;
-
+	CThirdPersonCamera*		m_pCam = nullptr;
 	_int					m_iAnim = 0;
 	_vec3					m_vDir;
 	_float					m_fAnimSpeed = 1.0f;
@@ -71,7 +74,7 @@ private:
 	
 	OBJECTSTATE				m_eCurState;
 	OBJECTSTATE				m_ePreState;
-
+	_bool					m_bIsAttack=false;
 	_float					m_fChargeTime = 0.f;
 	_uint					m_uiCombo = 0;
 

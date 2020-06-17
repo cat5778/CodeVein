@@ -55,17 +55,20 @@ _int CShield::Update_GameObject(const _float& fTimeDelta)
 		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
 		m_pTransformCom->Get_WorldMatrix(&m_MatOldWorld);
 		memcpy(m_vOldPos, &m_MatOldWorld._41, sizeof(_vec3));
-	
+		
 	}
 	else
 	{
-
+		D3DXVec3TransformNormal(&m_vThrow, &_vec3(0.f, -0.25f, 1.f), &m_MatOldWorld);
+		m_fAccThrow += fTimeDelta;
+		m_vThrow *= m_fAccThrow;
+		m_vOldPos+= m_vThrow;
 		m_pTransformCom->Set_Pos(&m_vOldPos);
 
 		_matrix matRotY, matTemp;
 		D3DXMatrixRotationY(&matRotY,D3DXToRadian(60.f));
 		matTemp= matRotY*m_MatOldWorld ;
-		
+				
 		m_pTransformCom->Set_ParentMatrix(&matTemp);
 
 	}
@@ -182,6 +185,9 @@ HRESULT CShield::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
+	pComponent = m_pNaviCom = dynamic_cast<Engine::CNaviMesh*>(Engine::CNaviMesh::Create(m_pGraphicDev));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 
 
 	return S_OK;
@@ -217,9 +223,16 @@ void CShield::Set_Equip(_bool bIsEquip)
 	  
 }
 
-void CShield::Set_Throw(_vec3 vThrowDir)
+void CShield::Set_Throw()
 {
-	m_vThrow = vThrowDir;
+
+}
+
+
+void CShield::Set_CellIdx(_uint uiCellIdx)
+{
+	m_pNaviCom->Set_Index(uiCellIdx);
+	
 }
 
 CShield* CShield::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)
