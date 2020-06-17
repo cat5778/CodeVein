@@ -4,11 +4,14 @@
 #include "Export_Function.h"
 #include "ThirdPersonCamera.h"
 #include "ColliderManager.h"
-
-CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
+CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev, _uint uiIdx,_uint uiStageIdx)
 	: Engine::CGameObject(pGraphicDev)
 {
+	m_uiIdx = uiIdx;
 	m_ObjName = L"Player2";
+	m_uiStageSet = uiStageIdx;
+	m_wstrInstName = m_ObjName + L"_" + to_wstring(m_uiIdx);
+
 }
 
 CPlayer::~CPlayer(void)
@@ -16,27 +19,26 @@ CPlayer::~CPlayer(void)
 
 }
 
-
-
-
-
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	switch ((LOADMODE)LOAD_MODE)
+	switch ((LOADMODE)m_uiStageSet)
 	{
 	case LOAD_NOMAL:
 		m_pNaviCom->Set_Index(38);// Base Init Idx 38 
-
 		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 		break;
 	case LOAD_NOMAL2:
-		m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);
-		m_pNaviCom->Set_Index(0);// Base Init Idx 38 
+		m_pTransformCom->Set_Pos(-14.7f, 2.16f, -20.2f); //Boss
+		m_pNaviCom->Set_Index(70);// Base Init Idx 38 
+
+		//m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);Start
+		//m_pNaviCom->Set_Index(0);// Base Init Idx 38 
 
 		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
 		break;
 	case LOAD_NOMAL3:
+		m_pMeshCom->Set_AnimationSet(46);
 		break;
 
 	case LOAD_PLAYER:
@@ -46,8 +48,8 @@ HRESULT CPlayer::Ready_GameObject(void)
 	case LOAD_BATTLE:
 		m_pTransformCom->Set_Pos(-8.f, 0.8f, -2.6f);
 		m_pNaviCom->Set_Index(18);// Base Init Idx 38 
-
 		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
+
 		break;
 	case LOAD_END:
 		break;
@@ -57,7 +59,6 @@ HRESULT CPlayer::Ready_GameObject(void)
 
 
 	m_eCurState = OBJ_START;
-	m_pMeshCom->Set_AnimationSet(46);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
@@ -77,21 +78,23 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 	Engine::CGameObject::Update_GameObject(fTimeDelta);
 
 	m_pMeshCom->Play_Animation(fTimeDelta*m_fAnimSpeed);
-	cout << m_fAnimSpeed << endl;
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	
 	//몬스터들 전부다 들고오기
+	
 	Engine::CColliderGroup* pCollCom = dynamic_cast<Engine::CColliderGroup*>
 		(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_ColliderGroup", Engine::ID_DYNAMIC));
-	
-	Engine::CTransform* pTransCom = dynamic_cast<Engine::CTransform*>
-		(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_Transform", Engine::ID_DYNAMIC));
 
-	_bool bIsColl=m_pCalculatorCom->Collsion_Sphere(m_pColliderGroupCom->Get_CollVec(Engine::COLOPT_ATTACK),
-													pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+	if (pCollCom != nullptr)
+	{
+		Engine::CTransform* pTransCom = dynamic_cast<Engine::CTransform*>
+			(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_Transform", Engine::ID_DYNAMIC));
 
+		_bool bIsColl = m_pCalculatorCom->Collsion_Sphere(m_pColliderGroupCom->Get_CollVec(Engine::COLOPT_ATTACK),
+			pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+	}
 	
 	return 0;
 }
@@ -156,8 +159,7 @@ HRESULT CPlayer::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
-
-	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_ObjName, m_pTransformCom, m_pMeshCom);
+	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_wstrInstName, m_pTransformCom, m_pMeshCom);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_ColliderGroup", pComponent);
 
@@ -189,11 +191,13 @@ HRESULT CPlayer::Add_Component(void)
 
 void CPlayer::Key_Input(const _float& fTimeDelta)
 {
+
 	m_dwDirectionFlag = 0;
 	m_bIsShift = false;
 	_bool Test = false;
 
 	IdleOption();
+
 	if (m_pKeyMgr->KeyDown(KEY_Q))
 	{
 		
@@ -1126,9 +1130,9 @@ _bool CPlayer::CheckEnableState()
 
 }
 
-CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev, _uint uiIdx , _uint uiStageIdx)
 {
-	CPlayer*	pInstance = new CPlayer(pGraphicDev);
+	CPlayer*	pInstance = new CPlayer(pGraphicDev, uiIdx, uiStageIdx);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);

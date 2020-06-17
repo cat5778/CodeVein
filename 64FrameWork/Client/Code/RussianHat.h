@@ -8,8 +8,8 @@ END
 class CRussianHat : public CDynamicObject
 {
 public:
-	explicit				CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx);
-	explicit				CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo);
+	explicit				CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx,_uint uiStageIdx=1);
+	explicit				CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo, _uint uiStageIdx=1);
 	virtual					~CRussianHat(void);
 
 public:
@@ -26,6 +26,7 @@ private:
 	void					StateMachine()override;
 
 private://Pattern
+	void					Battle_Start(_float fTimeDelta);
 	void					Pattern(_float fTimeDelta);
 
 	void					Chaing_Target(_float fTimeDelta);
@@ -52,10 +53,11 @@ private://Pattern
 
 
 public:
-	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0);
-	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo);
+	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx = 0, _uint uiStageIdx = 0);
+	static CRussianHat*	Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx ,  TRANSFORM_INFO tInfo, _uint uiStageIdx = 0);
 
 private:
+	_bool						m_bIsStart = false;
 	_float						m_fJump=0.f;
 	RUSSIANTSTATE				m_eCurState;
 	RUSSIANTSTATE				m_ePreState;
@@ -105,3 +107,4 @@ private:
 //38. Idle_N
 //39. TShield_Apperance_L
 //40. TShield_Apperance_N
+//41

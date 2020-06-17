@@ -4,19 +4,25 @@
 #include "ColliderManager.h"
 #include <fstream>
 
-CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
+CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx, _uint uiStageIdx)
 	: Engine::CGameObject(pGraphicDev)
 {
+	m_uiStageIdx = uiStageIdx;
 	m_uiIdx = uiIdx;
 	m_ObjName = wstrName;
+	m_wstrInstName = m_ObjName + L"_" + to_wstring(m_uiIdx);
+
 }
 
-CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo)
+CDynamicObject::CDynamicObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo, _uint uiStageIdx)
 	: Engine::CGameObject(pGraphicDev)
 {
+	m_uiStageIdx = uiStageIdx;
+
 	m_uiIdx = uiIdx;
 	m_ObjName = wstrName;
 	m_tTransformInfo = tInfo;
+	m_wstrInstName = m_ObjName + L"_" + to_wstring(m_uiIdx);
 	m_bIsRespawn = true;
 }
 
@@ -377,18 +383,18 @@ void CDynamicObject::Set_TransformData()
 
 }
 
-CDynamicObject * CDynamicObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
+CDynamicObject * CDynamicObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx,_uint uiStageIdx)
 {
-	CDynamicObject*	pInstance = new CDynamicObject(pGraphicDev, wstrName, uiIdx);
+	CDynamicObject*	pInstance = new CDynamicObject(pGraphicDev, wstrName, uiIdx, uiStageIdx);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);
 
 	return pInstance;
 }
-CDynamicObject * CDynamicObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo)
+CDynamicObject * CDynamicObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo, _uint uiStageIdx)
 {
-	CDynamicObject*	pInstance = new CDynamicObject(pGraphicDev, wstrName, uiIdx, tInfo);
+	CDynamicObject*	pInstance = new CDynamicObject(pGraphicDev, wstrName, uiIdx, tInfo, uiStageIdx);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);

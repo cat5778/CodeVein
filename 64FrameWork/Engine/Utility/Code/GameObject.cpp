@@ -90,6 +90,11 @@ CComponent * CGameObject::Get_Component(const _tchar * pComponentTag, COMPONENTI
 	return pComponent;
 }
 
+wstring CGameObject::Get_InstName()
+{
+	return m_wstrInstName;
+}
+
 HRESULT Engine::CGameObject::Ready_GameObject(void)
 {
 	return S_OK;

@@ -150,15 +150,14 @@ _uint CLoading::Loading_ForStage(void)
 			L"../../Resource/Mesh/StaticMesh/Base/Weapon/SM_NormalGreatSwordA_ba01/",
 			L"SM_NormalGreatSwordA_ba01.X"),
 			E_FAIL);
-
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 			RESOURCE_STAGE,
-			L"Mesh_RussianHat",
+			L"RussianHat",
 			Engine::TYPE_DYNAMIC,
 			L"../../Resource/Mesh/DynamicMesh/RussianHat/",
 			L"RussianHat.X"),
 			E_FAIL);
-				FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 			RESOURCE_STAGE,
 			L"RussianHatShield",
 			Engine::TYPE_STATIC,
@@ -166,9 +165,6 @@ _uint CLoading::Loading_ForStage(void)
 			L"RussianHatShield.X"),
 			E_FAIL);
 		break;
-		break;
-
-
 	case LOAD_BATTLE:
 	{
 		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

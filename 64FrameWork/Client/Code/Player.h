@@ -18,7 +18,7 @@ class CThirdPersonCamera;
 class CPlayer : public Engine::CGameObject
 {
 private:
-	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev);
+	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev, _uint uiIdx = 0, _uint uiStageIdx = 0);
 	virtual ~CPlayer(void);
 
 public:
@@ -50,6 +50,7 @@ private:
 	_bool		CheckEnableState();
 
 private:
+	_uint					m_uiStageSet;
 	Engine::CTransform*		m_pCameraTransformCom = nullptr;
 	Engine::CTransform*		m_pTransformCom = nullptr;
 	Engine::CRenderer*		m_pRendererCom = nullptr;
@@ -78,9 +79,8 @@ private:
 	_float					m_fChargeTime = 0.f;
 	_uint					m_uiCombo = 0;
 
-
 public:
-	static CPlayer*		Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CPlayer*		Create(LPDIRECT3DDEVICE9 pGraphicDev, _uint uiIdx=0, _uint uiStageIdx = 0);
 
 private:
 	virtual void Free(void) override;

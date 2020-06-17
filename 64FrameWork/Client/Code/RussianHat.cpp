@@ -4,14 +4,14 @@
 #include "ColliderManager.h"
 #include "Shield.h"
 
-CRussianHat::CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
-	: CDynamicObject(pGraphicDev,wstrName,uiIdx)
+CRussianHat::CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx, _uint uiStageIdx )
+	: CDynamicObject(pGraphicDev,wstrName,uiIdx, uiStageIdx)
 {
 	
 }
 
-CRussianHat::CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo)
-	:CDynamicObject(pGraphicDev,wstrName,uiIdx,tInfo)
+CRussianHat::CRussianHat(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo, _uint uiStageIdx)
+	:CDynamicObject(pGraphicDev,wstrName,uiIdx,tInfo, uiStageIdx)
 {
 }
 
@@ -27,7 +27,7 @@ HRESULT CRussianHat::Ready_GameObject()
 	m_fAttackRange = 4.f;
 	Set_TransformData();
 
-	switch ((LOADMODE)LOAD_MODE)
+	switch ((LOADMODE)m_uiStageIdx)
 	{
 	case LOAD_NOMAL:
 		m_pNaviCom->Set_Index(38);// Base Init Idx 38 
@@ -57,7 +57,7 @@ HRESULT CRussianHat::Ready_GameObject()
 		break;
 	}
 	m_eCurState = RUSSIAN_START_IDLE;
-	
+
 	
 	
 
@@ -78,13 +78,26 @@ HRESULT CRussianHat::LateReady_GameObject()
 
 _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 {
-	srand((unsigned int)time(NULL));
-	if (CKeyMgr::GetInstance()->KeyDown(KEY_NUM1))
-		m_eCurState = RUSSIAN_DEFORMATION;
 
-	StateMachine();
-	m_fDistance=Get_TargetDist();
-	Pattern(fTimeDelta);
+
+	srand((unsigned int)time(NULL));
+	
+	if (!m_bIsStart)
+	{
+		Battle_Start(fTimeDelta);
+		StateMachine();
+
+	}
+	else
+	{
+		if (CKeyMgr::GetInstance()->KeyDown(KEY_NUM1))
+			m_eCurState = RUSSIAN_DEFORMATION;
+
+		StateMachine();
+		m_fDistance=Get_TargetDist();
+		Pattern(fTimeDelta);
+
+	}
 	
 	
 
@@ -152,7 +165,7 @@ HRESULT CRussianHat::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
-	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_ObjName, m_pTransformCom, m_pMeshCom);
+	pComponent = m_pColliderGroupCom = Engine::CColliderGroup::Create(m_pGraphicDev, m_wstrInstName, m_pTransformCom, m_pMeshCom);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_pComponentMap[Engine::ID_DYNAMIC].emplace(L"Com_ColliderGroup", pComponent);
 
@@ -190,13 +203,11 @@ void CRussianHat::StateMachine()
 
 		switch (m_eCurState)
 		{
-		case RUSSIAN_START_IDLE:
+		case RUSSIAN_START_IDLE:  
 		{
 			m_fAttackRange = 4.0f;
 			m_fAnimSpeed = 1.0f;
 			m_pMeshCom->Set_AnimationSet(39);
-			if (m_pMeshCom->Get_TrackPosition() >= m_pMeshCom->Get_Period()*0.9f)
-				m_eCurState = RUSSIAN_BATTLE_IDLE;
 			break;
 		}
 		case RUSSIAN_BATTLE_START:
@@ -367,6 +378,25 @@ void CRussianHat::StateMachine()
 
 }
 
+void CRussianHat::Battle_Start(_float fTimeDelta)
+{
+	if (m_eCurState == RUSSIAN_BATTLE_START)
+	{
+		_float fRatio = Get_AniRatio();
+		if (Get_AniRatio()>=0.7f)
+		{
+			m_bIsStart = true;
+		}
+	}
+	if (m_eCurState == RUSSIAN_START_IDLE)
+	{
+		cout << Get_TargetDist() << endl;
+		if (Get_TargetDist() <= 6.0f)
+			m_eCurState = RUSSIAN_BATTLE_START;
+	}
+
+}
+
 void CRussianHat::Pattern(_float fTimeDelta)
 {
 	if (m_fCurHp / m_fMaxHp >= 0.6f)
@@ -527,7 +557,7 @@ void CRussianHat::Tshield_Whirlwind(_float fTimeDelta)
 		else
 		{
 			RotateToTarget(fTimeDelta, 0.0f, 0.2f);
-			MoveAni(fTimeDelta, 0.2f, 0.6f , 3.0f, Get_Look());
+			MoveAni(fTimeDelta, 0.2f, 0.6f , 6.0f, Get_Look());
 		}
 	}
 }
@@ -705,7 +735,6 @@ void CRussianHat::Idle(_float fTimeDelta)
 				m_uiPattern = -1;
 			m_uiPattern++;
 			
-			cout << m_uiPattern << endl;
 		}
 			
 
@@ -744,18 +773,18 @@ void CRussianHat::Phase2(_float fTimeDelta)
 }
 
 
-CRussianHat * CRussianHat::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx)
+CRussianHat * CRussianHat::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName,_uint uiIdx, _uint uiStageIdx)
 {
-	CRussianHat*	pInstance = new CRussianHat(pGraphicDev, wstrName, uiIdx);
+	CRussianHat*	pInstance = new CRussianHat(pGraphicDev, wstrName, uiIdx, uiStageIdx);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);
 
 	return pInstance;
 }
-CRussianHat * CRussianHat::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo)
+CRussianHat * CRussianHat::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrName, _uint uiIdx, TRANSFORM_INFO tInfo, _uint uiStageIdx)
 {
-	CRussianHat*	pInstance = new CRussianHat(pGraphicDev, wstrName, uiIdx, tInfo);
+	CRussianHat*	pInstance = new CRussianHat(pGraphicDev, wstrName, uiIdx, tInfo, uiStageIdx);
 
 	if (FAILED(pInstance->Ready_GameObject()))
 		Engine::Safe_Release(pInstance);

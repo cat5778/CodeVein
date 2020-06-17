@@ -113,6 +113,8 @@ void CSphereColliderCom::Ready_SphereMesh()
 {
 	LPD3DXMESH	pSphereMesh = nullptr;
 	Engine::VTXCOL* pVertices = nullptr;
+#ifdef  _DEBUG
+
 
 	D3DXCreateSphere(m_pGraphicDev, 1.f, 10, 10, &pSphereMesh, nullptr);
 
@@ -132,13 +134,17 @@ void CSphereColliderCom::Ready_SphereMesh()
 	pSphereBuffer->Release();
 
 	pSphereMesh->Release();
+#endif //  _DEBUG
 
 }
 
 void CSphereColliderCom::Debug_IsColl()
 {
+#ifdef _DEBUG
 	if (m_bIsColl)
 	{
+
+
 		Engine::VTXCOL* pVertices = nullptr;
 		LPDIRECT3DVERTEXBUFFER9 pSphereBuffer;
 
@@ -169,6 +175,7 @@ void CSphereColliderCom::Debug_IsColl()
 		pSphereBuffer->Release();
 
 	}
+#endif // 
 }
 
 HRESULT CSphereColliderCom::Set_DMParentMatrix(const Engine::D3DXFRAME_DERIVED * pBone)
@@ -192,7 +199,10 @@ CSphereColliderCom * CSphereColliderCom::Create(LPDIRECT3DDEVICE9 pGraphicDev, w
 
 void CSphereColliderCom::Free(void)
 {
+#ifdef _DEBUG
 	Safe_Release(m_pSphereMesh);
+#endif // 
+
 	Safe_Release(m_pGraphicDev);
 
 }

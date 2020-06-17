@@ -270,9 +270,12 @@ void CColliderTool::Get_BoneName()
 	m_pDynamicMesh = dynamic_cast<Engine::CDynamicMesh*>(m_pCurSelectObj->Get_Component(L"Com_Mesh", Engine::ID_STATIC));
 	if (m_pDynamicMesh == nullptr)
 	{
+#ifdef _DEBUG
 		DE_COUT("Collider Tool 141 Error DynamicMesh is nullptr");
-
+#endif // 
 		return;
+
+
 	}
 	m_BoneTree.DeleteAllItems();
 	int a = 0;

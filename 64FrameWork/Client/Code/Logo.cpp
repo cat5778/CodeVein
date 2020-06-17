@@ -31,16 +31,12 @@ HRESULT CLogo::Ready_Scene(void)
 
 _int CLogo::Update_Scene(const _float& fTimeDelta)
 {
-	
-
 	_int iExit = Engine::CScene::Update_Scene(fTimeDelta);
 	m_ppPathlist;
 
 	if (true == m_pLoading->Get_Finish())
 	{
 		*m_ppPathlist = m_pLoading->Get_PathList();
-
-
 
 		if (Engine::Get_DIKeyState(DIK_RETURN) & 0x80)
 		{
@@ -92,10 +88,6 @@ HRESULT CLogo::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	pGameObject = CBackGround::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"BackGround", pGameObject), E_FAIL);
-
-
-
-
 
 
 

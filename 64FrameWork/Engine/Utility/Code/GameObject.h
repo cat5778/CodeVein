@@ -30,6 +30,7 @@ public:
 	wstring							Get_ObjName();
 	CComponent*						Find_Component(const _tchar* pComponentTag, COMPONENTID eID);
 	CComponent*						Get_Component(const _tchar* pComponentTag, COMPONENTID eID);
+	wstring							Get_InstName();
 
 public:
 	virtual HRESULT					Ready_GameObject(void);
@@ -46,6 +47,7 @@ protected:
 	LPDIRECT3DDEVICE9				m_pGraphicDev;
 	map<wstring, CComponent*>		m_pComponentMap[ID_END];
 	_float							m_fViewZ;
+	wstring							m_wstrInstName;
 
 	bool							m_bEnable=true;
 	wstring                         m_ObjName = L"";

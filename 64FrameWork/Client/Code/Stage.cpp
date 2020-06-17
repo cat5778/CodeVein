@@ -5,10 +5,12 @@
 #include "StaticObject.h"
 #include "RussianHat.h"
 #include "Shield.h"
+#include "Field.h"
+
 CStage::CStage(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CScene(pGraphicDev)
 {
-
+	m_uiStageIdx = 0;
 }
 
 CStage::~CStage(void)
@@ -52,9 +54,20 @@ HRESULT CStage::LateReady_Scene(void)
 
 _int CStage::Update_Scene(const _float& fTimeDelta)
 {
+	_int iEvent=Engine::CScene::Update_Scene(fTimeDelta);
+
+	if (CKeyMgr::GetInstance()->KeyDown(KEY_R))
+	{
+		Engine::CScene*		pScene = CField::Create(m_pGraphicDev);
+		if (pScene == nullptr)
+			return -1;
+
+		Engine::SetUp_Scene(pScene);
+		return iEvent;
+	}
+
 	m_fTime += fTimeDelta;
 
-	_int iEvent=Engine::CScene::Update_Scene(fTimeDelta);
 
 	return iEvent;
 }
@@ -117,20 +130,23 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
 
-
-	pGameObject = CRussianHat::Create(m_pGraphicDev,L"RussianHat",0);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"RussianHat", pGameObject), E_FAIL);
+	if (LOAD_MODE == 3)
+	{
+		pGameObject = CRussianHat::Create(m_pGraphicDev,L"RussianHat",0);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"RussianHat", pGameObject), E_FAIL);
 	
-	//Shield 
-	pGameObject = CShield::Create(m_pGraphicDev, 0);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Shield", pGameObject), E_FAIL);
+		//Shield 
+		pGameObject = CShield::Create(m_pGraphicDev, 0);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Shield", pGameObject), E_FAIL);
+
+	}
 
 
 	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
 
-	switch ((LOADMODE)LOAD_MODE)
+	switch ((LOADMODE)m_uiStageIdx)
 	{
 	case LOAD_NOMAL:
 		Load_Text(L"../../Resource/Data/Base.txt");
@@ -141,7 +157,6 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	case LOAD_NOMAL3:
 		Load_Text(L"../../Resource/Data/Base.txt");
 		break;
-
 	case LOAD_PLAYER:
 		break;
 	case LOAD_MONSTER:
@@ -301,10 +316,10 @@ HRESULT CStage::Load_Text(const _tchar * pFilePath)
 		_uint uiObjIdx = 0;
 		uiObjIdx = _wtoi(wstrTemp.substr(uiNameCnt + 1, wstring::npos).c_str());
 
-		//if (wstrTemp.find(L"Ceilling_a_ba01") != wstring::npos)
-		//	continue;
-		//if (wstrTemp.find(L"AlterCeiling_ba01") != wstring::npos)
-		//	continue;
+		if (wstrTemp.find(L"SM_Ceilling_a_ba01") != wstring::npos)
+			continue;
+		if (wstrTemp.find(L"AlterCeiling_ba01") != wstring::npos)
+			continue;
 
 		if (wstrTemp.compare(L"") == 0)
 			break;

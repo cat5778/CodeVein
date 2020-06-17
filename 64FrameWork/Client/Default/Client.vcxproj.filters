@@ -49,12 +49,6 @@
     <Filter Include="02. GameObejct\01. Stage\01. Player">
       <UniqueIdentifier>{76a36e56-7d32-4123-9c22-bc2f9f841440}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Scene\02. Public">
-      <UniqueIdentifier>{3b2e8765-c206-4e51-9baa-4e89dd7ee517}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Scene\02. Public\00. Loading">
-      <UniqueIdentifier>{c257f3c1-f6d7-4d7c-813a-b17a060ed831}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObejct\02. Public">
       <UniqueIdentifier>{296ec397-87b7-41dd-b404-e4eb6b303fc5}</UniqueIdentifier>
     </Filter>
@@ -109,6 +103,15 @@
     <Filter Include="02. GameObejct\01. Stage\10. Monster\RussianHat">
       <UniqueIdentifier>{1e4866c7-257c-4a9a-924a-1ecdc1358d84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Scene\02. Field">
+      <UniqueIdentifier>{e49e4e6d-1e90-447e-bf12-9e19b06ca0eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Scene\03. Public">
+      <UniqueIdentifier>{3b2e8765-c206-4e51-9baa-4e89dd7ee517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Scene\03. Public\00. Loading">
+      <UniqueIdentifier>{c257f3c1-f6d7-4d7c-813a-b17a060ed831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -145,7 +148,7 @@
       <Filter>02. GameObejct\01. Stage\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Loading.h">
-      <Filter>01. Scene\02. Public\00. Loading</Filter>
+      <Filter>01. Scene\03. Public\00. Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\DynamicCamera.h">
       <Filter>02. GameObejct\02. Public\01. DynamicCamera</Filter>
@@ -192,6 +195,9 @@
     <ClInclude Include="..\Code\Shield.h">
       <Filter>02. GameObejct\01. Stage\06. Shield</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Field.h">
+      <Filter>01. Scene\02. Field</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -225,7 +231,7 @@
       <Filter>02. GameObejct\01. Stage\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Loading.cpp">
-      <Filter>01. Scene\02. Public\00. Loading</Filter>
+      <Filter>01. Scene\03. Public\00. Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\DynamicCamera.cpp">
       <Filter>02. GameObejct\02. Public\01. DynamicCamera</Filter>
@@ -271,6 +277,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\Shield.cpp">
       <Filter>02. GameObejct\01. Stage\06. Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Field.cpp">
+      <Filter>01. Scene\02. Field</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

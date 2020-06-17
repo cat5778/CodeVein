@@ -30,7 +30,7 @@ public:
 protected:
 	LPDIRECT3DDEVICE9			m_pGraphicDev;
 	map<wstring, CLayer*>		m_pLayerMap;
-
+	_uint						m_uiStageIdx;
 protected:
 	virtual void				Free(void);
 

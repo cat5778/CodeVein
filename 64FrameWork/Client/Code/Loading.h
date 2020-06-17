@@ -16,6 +16,7 @@ public:
 	_bool				Get_Finish(void) const { return m_bFinish; }
 	const _tchar*		Get_LoadString(void) { return m_szLoading; }
 	list<MESH_PATH*>&	Get_PathList() {return m_pPathList;}
+
 public:
 	static _uint	CALLBACK Thread_Main(void* pArg);
 	
