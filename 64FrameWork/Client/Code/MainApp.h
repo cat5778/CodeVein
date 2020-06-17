@@ -44,7 +44,7 @@ private:
 	LPDIRECT3DDEVICE9				m_pGraphicDev = nullptr;
 	CKeyMgr*						m_pKeyMgr = nullptr;
 	CTimerManager*					m_pTimerMgr = nullptr;
-
+	CSoundMgr*						m_pSoundMgr = nullptr;
 
 	_int							m_iEvent;
 	list<MESH_PATH*>				m_ppPathList;

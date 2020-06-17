@@ -17,8 +17,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
-
+#include <intrin.h>
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -30,12 +29,14 @@
 #include <functional>
 #include <ctime>
 #include <process.h>
-
+#include <unordered_map>
 
 //Manager
 #include "KeyMgr.h"
 #include "TimerManager.h"
 #include "ColliderManager.h"
+#include "SoundMgr.h"
+
 
 //Memort Leak Check
 #ifdef _DEBUG

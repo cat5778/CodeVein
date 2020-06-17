@@ -6,7 +6,7 @@
 #include "RussianHat.h"
 #include "Shield.h"
 #include "Field.h"
-
+//#include "SoundMgr.h"
 CStage::CStage(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CScene(pGraphicDev)
 {
@@ -20,11 +20,13 @@ CStage::~CStage(void)
 
 HRESULT CStage::Ready_Scene(void)
 {
+
 	FAILED_CHECK_RETURN(Engine::CScene::Ready_Scene(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Layer(L"GameLogic"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
-
+	CSoundMgr::GetInstance()->PlayBGM(L"Adam Levine - Lost Stars Lyrics.mp3");
+	CSoundMgr::GetInstance()->SetVolume(CSoundMgr::BGM, 0.5f);
 	//쉐이더적용후추가 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	m_pGraphicDev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -149,7 +151,7 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	switch ((LOADMODE)m_uiStageIdx)
 	{
 	case LOAD_NOMAL:
-		Load_Text(L"../../Resource/Data/Base.txt");
+		//Load_Text(L"../../Resource/Data/Base.txt");
 		break;
 	case LOAD_NOMAL2:
 		Load_Text(L"../../Resource/Data/SnowMap.txt");

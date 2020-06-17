@@ -21,8 +21,8 @@ HRESULT CBackGround::Ready_GameObject(void)
 	//m_pTransformCom->m_vScale.x = 2.f;
 	//m_pTransformCom->m_vScale.y = 2.f;
 
-	m_pTransformCom->m_vScale.x = m_pTextureCom->Get_ImageInfo().Width;
-	m_pTransformCom->m_vScale.y = m_pTextureCom->Get_ImageInfo().Height;
+	m_pTransformCom->m_vScale.x = (_float) m_pTextureCom->Get_ImageInfo().Width;
+	m_pTransformCom->m_vScale.y = (_float)m_pTextureCom->Get_ImageInfo().Height;
 
 
 	return S_OK;

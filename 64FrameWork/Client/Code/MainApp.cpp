@@ -4,10 +4,9 @@
 #include "Export_Function.h"
 #include "Logo.h"
 #include "Stage.h"
-
 CMainApp::CMainApp(void)
 {
-
+	m_pSoundMgr = CSoundMgr::GetInstance();
 }
 
 CMainApp::~CMainApp(void)
@@ -22,6 +21,8 @@ HRESULT CMainApp::Ready_MainApp(void)
 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	Ready_Managers();
+	m_pSoundMgr->Initialize();
+
 	return S_OK;
 }
 
@@ -37,6 +38,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 		int a = 3;
 	}
 
+	m_pSoundMgr->UpdateSound();
 
 	return 0;
 }
@@ -134,6 +136,7 @@ void CMainApp::Free(void)
 {
 	m_pKeyMgr->DestroyInstance();
 	m_pTimerMgr->DestroyInstance();
+	m_pSoundMgr->DestroyInstance();
 	CColliderManager::GetInstance()->DestroyInstance();
 
 	Engine::Safe_Release(m_pGraphicDev);

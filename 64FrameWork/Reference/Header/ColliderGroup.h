@@ -39,6 +39,11 @@ private:
 	vector<Engine::CSphereColliderCom*> m_pStepCollVec;
 	CDynamicMesh*						m_pDynamicMesh;
 	wstring								m_wstrObjTag;
+
+
+
+
+
 public:
 	static CColliderGroup*				Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag,Engine::CTransform* pTransform, CDynamicMesh* pMesh);
 

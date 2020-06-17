@@ -16,6 +16,7 @@
 #include "Stone.h"
 #include "Sword.h"
 
+
 class CStage : public Engine::CScene
 {
 private:
