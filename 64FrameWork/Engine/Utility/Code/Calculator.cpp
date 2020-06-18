@@ -230,7 +230,12 @@ _bool CCalculator::Collsion_Sphere(const vector<Engine::CSphereColliderCom*>* pS
 			 if (fDistance <= fRadian)
 			 {
 				 pDest->Set_bIsColl(true);
+				 pDest->Set_CollisionObjName(pSource->Get_ObjTag());
 				 pSource->Set_bIsColl(true);
+
+				 pSource->Set_CollisionObjName(pDest->Get_ObjTag());
+				 wstring tempSource = pSource->Get_ObjTag();
+				 wstring tempDest= pDest->Get_ObjTag();
 				 return true;
 			 }
 

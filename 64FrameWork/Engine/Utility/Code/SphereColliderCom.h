@@ -33,6 +33,10 @@ public:
 	_uint						Get_CollIdx() { return m_uiIdx; }
 	void						Set_CollIdx(_uint uiIDx) { m_uiIdx = uiIDx; }
 	_vec3						Get_WorldPos();
+
+	void						Set_CollisionObjName(wstring wstrName) { m_wstrCollisionObj = wstrName; }
+	wstring						Get_CollisionObjName() { return m_wstrCollisionObj; }
+
 private:
 	void						Ready_SphereMesh();
 	void						Debug_IsColl();
@@ -40,6 +44,9 @@ private:
 
 
 private:
+	wstring						m_wstrCollisionObj;
+	
+
 	_float						m_fRadius			= 1.0f;
 	_vec3						m_vPos				= { 0.f,0.f,0.f };
 	_vec3						m_vWorldPos;

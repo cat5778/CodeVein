@@ -22,6 +22,9 @@ CPlayer::~CPlayer(void)
 HRESULT CPlayer::Ready_GameObject(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
+
+	if (LOAD_MODE != 0)
+		m_uiStageSet = LOAD_MODE;
 	switch ((LOADMODE)m_uiStageSet)
 	{
 	case LOAD_NOMAL:
@@ -34,8 +37,7 @@ HRESULT CPlayer::Ready_GameObject(void)
 
 		//m_pTransformCom->Set_Pos(-85.f, 1.3f, 0.01f);Start
 		//m_pNaviCom->Set_Index(0);// Base Init Idx 38 
-
-		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
+		//Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
 		break;
 	case LOAD_NOMAL3:
 		m_pMeshCom->Set_AnimationSet(46);
@@ -46,9 +48,13 @@ HRESULT CPlayer::Ready_GameObject(void)
 	case LOAD_MONSTER:
 		break;
 	case LOAD_BATTLE:
-		m_pTransformCom->Set_Pos(-8.f, 0.8f, -2.6f);
-		m_pNaviCom->Set_Index(18);// Base Init Idx 38 
-		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
+		m_pTransformCom->Set_Pos(-14.7f, 2.16f, -20.2f); //Boss
+		m_pNaviCom->Set_Index(70);// Base Init Idx 38 
+		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
+
+		//m_pTransformCom->Set_Pos(-8.f, 0.8f, -2.6f);
+		//m_pNaviCom->Set_Index(18);// Base Init Idx 38 
+		//Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 
 		break;
 	case LOAD_END:
@@ -70,7 +76,7 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 {
 	Key_Input(fTimeDelta);
 	_matrix mat = m_pTransformCom->m_matWorld;
-	
+
 	//_vec3 vPos = *m_pTransformCom->Get_Info(Engine::INFO_POS);
 	//cout <<"X=" <<vPos.x << "y="<< vPos.y <<"Z="<< vPos.z << endl;
 	//cout << "Cur Cell " << m_pNaviCom->Get_CurIndex() << endl;
@@ -93,7 +99,18 @@ _int CPlayer::Update_GameObject(const _float& fTimeDelta)
 			(Engine::Get_Component(L"GameLogic", L"RussianHat", L"Com_Transform", Engine::ID_DYNAMIC));
 
 		_bool bIsColl = m_pCalculatorCom->Collsion_Sphere(m_pColliderGroupCom->Get_CollVec(Engine::COLOPT_ATTACK),
-			pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+															pCollCom->Get_CollVec(Engine::COLOPT_HURT));
+
+
+
+		if (m_pColliderGroupCom->IsColl(Engine::COLOPT_ATTACK, Engine::STATE_ENTER))
+			cout << "공격 발생 " << endl;
+		if (m_pColliderGroupCom->IsColl(Engine::COLOPT_ATTACK, Engine::STATE_STAY))
+			cout << "공격중 " << endl;
+		if (m_pColliderGroupCom->IsColl(Engine::COLOPT_ATTACK, Engine::STATE_EXIT))
+			cout << "공격 끝 " << endl;
+
+
 	}
 	
 	return 0;

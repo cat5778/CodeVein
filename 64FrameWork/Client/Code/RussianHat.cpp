@@ -24,8 +24,11 @@ HRESULT CRussianHat::Ready_GameObject()
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	
 	m_fCurHp = m_fMaxHp = 100.f;
-	m_fAttackRange = 4.f;
+	m_fAttackRange = 10.f;
 	Set_TransformData();
+
+	if (LOAD_MODE != 0)
+		m_uiStageIdx = LOAD_MODE;
 
 	switch ((LOADMODE)m_uiStageIdx)
 	{
@@ -47,9 +50,23 @@ HRESULT CRussianHat::Ready_GameObject()
 	case LOAD_MONSTER:
 		break;
 	case LOAD_BATTLE:
-		m_pTransformCom->Set_Pos(5.3f, 0.19f, -0.95f);
-		m_pNaviCom->Set_Index(38);// Base Init Idx 38  //43 Idle
-		Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
+		//눈맵 플레이어바로앞
+		m_pTransformCom->Set_Pos(-12.32f, 2.73f, -25.3241f);
+		m_pNaviCom->Set_Index(76);// Base Init Idx 38 
+		Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
+
+
+		//보스 정위치
+		//m_pTransformCom->Set_Pos(-20.2f, 1.9f, -49.f);
+		//m_pNaviCom->Set_Index(111);// Base Init Idx 38 
+		//Load_Text(L"../../Resource/Data/NavMash/Temp5.txt");
+
+		//m_pTransformCom->Set_Pos(18.36f, 0.47f, -0.674f);
+		//m_pNaviCom->Set_Index(58);// Base Init Idx 38  //43 Idle
+
+		//m_pTransformCom->Set_Pos(5.3f, 0.19f, -0.95f);
+		//m_pNaviCom->Set_Index(38);// Snow Init Idx 38  //43 Idle
+		//Load_Text(L"../../Resource/Data/NavMash/BaseCompleteNav.txt");
 		break;
 	case LOAD_END:
 		break;
@@ -82,23 +99,23 @@ _int CRussianHat::Update_GameObject(const _float & fTimeDelta)
 
 	srand((unsigned int)time(NULL));
 	
-	if (!m_bIsStart)
-	{
-		Battle_Start(fTimeDelta);
-		StateMachine();
+	//if (!m_bIsStart)
+	//{
+	//	Battle_Start(fTimeDelta);
+	//	StateMachine();
 
-	}
-	else
-	{
-		if (CKeyMgr::GetInstance()->KeyDown(KEY_NUM1))
-			m_eCurState = RUSSIAN_DEFORMATION;
+	//}
+	//else
+	//{
+	//	if (CKeyMgr::GetInstance()->KeyDown(KEY_NUM1))
+	//		m_eCurState = RUSSIAN_DEFORMATION;
 
-		StateMachine();
-		m_fDistance=Get_TargetDist();
-		Pattern(fTimeDelta);
+	//	StateMachine();
+	//	m_fDistance=Get_TargetDist();
+	//	Pattern(fTimeDelta);
 
-	}
-	
+	//}
+	//
 	
 
 

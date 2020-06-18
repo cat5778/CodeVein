@@ -81,8 +81,10 @@ HRESULT CSphereColliderCom::Ready_Component(void)
 
 _int CSphereColliderCom::Update_Component(const _float & fTimeDelta)
 {
+
 	if (nullptr != m_pParentBoneMatrix && !m_wstrObjTag.empty())
 	{
+
 		_matrix matScale, matTrans , matView;
 		D3DXMatrixIdentity(&m_matWorld);
 		D3DXMatrixScaling(&matScale, m_fRadius, m_fRadius, m_fRadius);
@@ -94,12 +96,14 @@ _int CSphereColliderCom::Update_Component(const _float & fTimeDelta)
 		matView = m_matWorld* *m_pParentWorldMatrix;
 		memcpy(&m_vWorldPos, &m_matWorld._41, sizeof(_vec3));
 
+		
+		if (!m_bIsColl)
+			m_wstrCollisionObj.clear();
+
 		Debug_IsColl();
+
 		return 0;
 	}
-
-
-
 	return 0;
 
 }
@@ -108,6 +112,7 @@ _vec3 CSphereColliderCom::Get_WorldPos()
 {
 	return m_vWorldPos;
 }
+
 
 void CSphereColliderCom::Ready_SphereMesh()
 {

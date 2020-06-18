@@ -20,18 +20,58 @@ CColliderGroup::~CColliderGroup(void)
 
 HRESULT CColliderGroup::Ready_Component(void)
 {
+
+
 	return S_OK;
 }
 
 _int CColliderGroup::Update_Component(const _float & fTimeDelta)
 {
-	for (auto &pColl : m_pHurtCollVec)
-		pColl->Update_Component(fTimeDelta);
-	for (auto &pColl : m_pAttackCollVec)
-		pColl->Update_Component(fTimeDelta);
-	for (auto &pColl : m_pStepCollVec)
-		pColl->Update_Component(fTimeDelta);
+	for (int i = 0; i < COLOPT_END; i++)
+	{
+		for (auto &pColl : m_pCollVec[i])
+		{
+			pColl->Update_Component(fTimeDelta);
+			StateMachine((COLLOPTION)i);
+			if (pColl->IsColl())
+			{
+				//if (m_eCurState[(COLLOPTION)i] == STATE_EXIT)
+				//	m_eCurState[(COLLOPTION)i] = STATE_END;
 
+
+				//if (m_eCurState[(COLLOPTION)i] == STATE_ENTER)
+				//	m_eCurState[(COLLOPTION)i] = STATE_STAY;
+				//
+				//if (m_eCurState[(COLLOPTION)i] != STATE_ENTER && m_eCurState[(COLLOPTION)i] != STATE_STAY)
+				//	m_eCurState[(COLLOPTION)i] = STATE_ENTER;
+
+
+
+				if (m_eCurState[(COLLOPTION)i] == STATE_ENTER)
+					m_eCurState[(COLLOPTION)i] = STATE_STAY;
+
+				if (m_eCurState[(COLLOPTION)i] != STATE_ENTER && m_eCurState[(COLLOPTION)i] != STATE_STAY)
+					m_eCurState[(COLLOPTION)i] = STATE_ENTER;
+
+				break;
+
+			}
+			else
+			{
+				m_eCurState[(COLLOPTION)i] = STATE_END;
+
+
+				//if (m_eCurState[(COLLOPTION)i] == STATE_STAY)
+				//	m_eCurState[(COLLOPTION)i] = STATE_EXIT;
+				//
+				//if (m_eCurState[(COLLOPTION)i] == STATE_STAY)
+				//	m_eCurState[(COLLOPTION)i] = STATE_END;
+
+
+			}
+
+		}
+	}
 		
 	return 0;
 
@@ -39,12 +79,13 @@ _int CColliderGroup::Update_Component(const _float & fTimeDelta)
 
 void CColliderGroup::Render_Collider()
 {
-	for (auto &pColl : m_pHurtCollVec)
-		pColl->Render_Collider();
-	for (auto &pColl : m_pAttackCollVec)
-		pColl->Render_Collider();
-	for (auto &pColl : m_pStepCollVec)
-		pColl->Render_Collider();
+
+	for (int i = 0; i < COLOPT_END; i++)
+	{
+		for (auto &pColl : m_pCollVec[i])
+			pColl->Render_Collider();
+	}
+
 
 }
 
@@ -57,38 +98,27 @@ CSphereColliderCom* CColliderGroup::Add_Collider(Engine::COLLOPTION eOption,wstr
 	const Engine::D3DXFRAME_DERIVED* pBone = m_pDynamicMesh->Get_FrameByName(strBone.c_str());
 	
 	_uint uiIdx = 0;
-	for (auto &pColl : m_pHurtCollVec)
-		if (pColl->Get_CollTag().find(wstrBoneTag) != wstring::npos)
-			uiIdx++;
-	for (auto &pColl : m_pAttackCollVec)
-		if (pColl->Get_CollTag().find(wstrBoneTag) != wstring::npos)
-			uiIdx++;
-	for (auto &pColl : m_pStepCollVec)
-		if (pColl->Get_CollTag().find(wstrBoneTag) != wstring::npos)
-			uiIdx++;
+		
+	for (int i = 0; i < COLOPT_END; i++)
+	{	
+		for(auto &pColl : m_pCollVec[i])
+			if (pColl->Get_CollTag().find(wstrBoneTag) != wstring::npos)
+				uiIdx++;
+	}
 
-	
-	CSphereColliderCom* pSphereCollCom = CSphereColliderCom::Create(m_pGraphicDev,m_wstrObjTag, wstrBoneTag, m_pPartentTransform, pBone,uiIdx);
+	CSphereColliderCom* pSphereCollCom = CSphereColliderCom::Create(m_pGraphicDev,
+																	m_wstrObjTag,
+																	wstrBoneTag,
+																	m_pPartentTransform,
+																	pBone,
+																	uiIdx);
 	if (pSphereCollCom == nullptr)
 		return nullptr;
 	pSphereCollCom->Set_Radius(fRadius);
 
-	switch (eOption)
-	{
-	case Engine::COLOPT_STEP:
-		m_pStepCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_HURT:
-		m_pHurtCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_ATTACK:
-		m_pAttackCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_END:
-		break;
-	default:
-		break;
-	}
+	m_pCollVec[eOption].push_back(pSphereCollCom);
+
+
 
 	return pSphereCollCom;
 }
@@ -112,144 +142,106 @@ CSphereColliderCom * CColliderGroup::Add_Collider(Engine::COLLOPTION eOption, ws
 	pSphereCollCom->Set_Radius(fRadius);
 	pSphereCollCom->Set_Pos(vPos);
 
-	switch (eOption)
-	{
-	case Engine::COLOPT_STEP:
-		m_pStepCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_HURT:
-		m_pHurtCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_ATTACK:
-		m_pAttackCollVec.push_back(pSphereCollCom);
-		break;
-	case Engine::COLOPT_END:
-		break;
-	default:
-		break;
-	}
+
+	m_pCollVec[eOption].push_back(pSphereCollCom);
+
 
 	return pSphereCollCom;
 }
 
 void CColliderGroup::Set_Pos(Engine::COLLOPTION eOption, wstring wstrColliderTag, _vec3 vPos)
 {
-	switch (eOption)
+	for (auto &pColl : m_pCollVec[eOption])
 	{
-	case Engine::COLOPT_STEP:
-		for (auto &pColl : m_pStepCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag)==0)
-				pColl->Set_Pos(vPos);
-		}
-		break;
-	case Engine::COLOPT_HURT:
-		for (auto &pColl : m_pHurtCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
-				pColl->Set_Pos(vPos);
-		}
-
-		break;
-	case Engine::COLOPT_ATTACK:
-		for (auto &pColl : m_pAttackCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
-				pColl->Set_Pos(vPos);
-		}
-		break;
-	case Engine::COLOPT_END:
-		break;
-	default:
-		break;
+		if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
+			pColl->Set_Pos(vPos);
 	}
-
 
 
 }
 
 void CColliderGroup::Set_Radius(Engine::COLLOPTION eOption, wstring wstrColliderTag,_float fRadius)
 {
-	switch (eOption)
+	for (auto &pColl : m_pCollVec[eOption])
 	{
-	case Engine::COLOPT_STEP:
-		for (auto &pColl : m_pStepCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
-				pColl->Set_Radius(fRadius);
-		}
-		break;
-	case Engine::COLOPT_HURT:
-		for (auto &pColl : m_pHurtCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
-				pColl->Set_Radius(fRadius);
-		}
-
-		break;
-	case Engine::COLOPT_ATTACK:
-		for (auto &pColl : m_pAttackCollVec)
-		{
-			if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
-				pColl->Set_Radius(fRadius);
-		}
-		break;
-	case Engine::COLOPT_END:
-		break;
-	default:
-		break;
+		if (pColl->Get_BoneTag().compare(wstrColliderTag) == 0)
+			pColl->Set_Radius(fRadius);
 	}
+
+
 }
 
-Engine::CSphereColliderCom * CColliderGroup::Get_SphereColl(wstring wstrCollTag)
+Engine::CSphereColliderCom * CColliderGroup::Get_SphereColl(wstring eOption)
 {
 	Engine::CSphereColliderCom* pSphereColl = nullptr;
 	
-	for (auto &pColl : m_pStepCollVec)
+	for (int i = 0; i < COLOPT_END; i++)
 	{
-		if (pColl->Get_CollTag().compare(wstrCollTag) == 0)
-			pSphereColl = pColl;
-	}
-	if (pSphereColl == nullptr)
-	{
-		for (auto &pColl : m_pHurtCollVec)
+		for (auto &pColl : m_pCollVec[i])
 		{
-			if (pColl->Get_CollTag().compare(wstrCollTag) == 0)
-				pSphereColl = pColl;
+			if (pColl->Get_CollTag().compare(eOption) == 0)
+			{
+				
+				return pSphereColl= pColl;
+			}
 		}
 	}
-	else if (pSphereColl == nullptr)
-	{
-		for (auto &pColl : m_pAttackCollVec)
-		{
-			if (pColl->Get_CollTag().compare(wstrCollTag) == 0)
-				pSphereColl = pColl;
-		}
-	}
-
-	return pSphereColl;
+	return nullptr;
 }
 
 vector<Engine::CSphereColliderCom*>* CColliderGroup::Get_CollVec(Engine::COLLOPTION eOption)
 {
-	switch (eOption)
-	{
-	case Engine::COLOPT_STEP:
-		return &m_pStepCollVec;
-		break;
-	case Engine::COLOPT_HURT:
-		return &m_pHurtCollVec;
-		break;
-	case Engine::COLOPT_ATTACK:
-		return &m_pAttackCollVec;
-		break;
-	case Engine::COLOPT_END:
-		break;
-	default:
-		break;
-	}
-	return nullptr;
+	return &m_pCollVec[eOption];
+
 }
+
+vector<wstring>* CColliderGroup::Get_CollNameVec(COLLOPTION eCollOption)
+{
+	return m_wstrColObjVec[eCollOption];
+
+}
+
+
+
+void CColliderGroup::StateMachine(COLLOPTION eOption)
+{
+	if (m_eCurState[eOption] != m_ePrevState[eOption])
+	{
+		m_ePrevState[eOption] = m_eCurState[eOption];
+		switch (m_ePrevState[eOption])
+		{
+		case Engine::STATE_ENTER:
+			m_bisColl[eOption][STATE_ENTER] = true;
+			m_bisColl[eOption][STATE_STAY] = false;
+			m_bisColl[eOption][STATE_EXIT] = false;
+			break;
+		case Engine::STATE_STAY:
+			m_bisColl[eOption][STATE_ENTER] = false;
+			m_bisColl[eOption][STATE_STAY] = true;
+			m_bisColl[eOption][STATE_EXIT] = false;
+			break;
+		case Engine::STATE_EXIT:
+			m_bisColl[eOption][STATE_ENTER] = false;
+			m_bisColl[eOption][STATE_STAY] = false;
+			m_bisColl[eOption][STATE_EXIT] = true;
+			break;
+		default:
+			m_bisColl[eOption][STATE_ENTER] = false;
+			m_bisColl[eOption][STATE_STAY] = false;
+			m_bisColl[eOption][STATE_EXIT] = false;
+			break;
+		}
+	}
+
+}
+
+_bool CColliderGroup::IsColl(COLLOPTION eCollType,COLLSTATE eCollState)
+{
+	return m_bisColl[eCollType][eCollState];
+
+
+}
+
 
 CColliderGroup * CColliderGroup::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring wstrObjTag, Engine::CTransform* pTransform, CDynamicMesh * pMesh)
 {
@@ -264,25 +256,15 @@ CColliderGroup * CColliderGroup::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring w
 
 void CColliderGroup::Free(void)
 {
-	for (auto &pColl : m_pHurtCollVec)
+	for (int i = 0; i < COLOPT_END; i++)
 	{
-		if (pColl != nullptr)
+		for (auto &pColl : m_pCollVec[i])
+		{
 			pColl->Release();
-	}
-	for (auto &pColl : m_pAttackCollVec)
-	{
-		if (pColl != nullptr)
-			pColl->Release();
-	}
-
-	for (auto &pColl : m_pStepCollVec)
-	{
-		if (pColl != nullptr)
-			pColl->Release();
+		}
 	}
 
 
-		
 	Safe_Release(m_pGraphicDev);
 
 }

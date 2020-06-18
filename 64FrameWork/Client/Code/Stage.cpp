@@ -132,7 +132,7 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Sword", pGameObject), E_FAIL);
 
-	if (LOAD_MODE == 3)
+	if (LOAD_MODE == 5)
 	{
 		pGameObject = CRussianHat::Create(m_pGraphicDev,L"RussianHat",0);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
@@ -148,10 +148,13 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar* pLayerTag)
 
 	m_ppGameObjectMap = &pLayer->Get_ObjectMap();
 
+	if (LOAD_MODE != 0)
+		m_uiStageIdx = LOAD_MODE;
+
 	switch ((LOADMODE)m_uiStageIdx)
 	{
 	case LOAD_NOMAL:
-		//Load_Text(L"../../Resource/Data/Base.txt");
+		Load_Text(L"../../Resource/Data/Base.txt");
 		break;
 	case LOAD_NOMAL2:
 		Load_Text(L"../../Resource/Data/SnowMap.txt");
